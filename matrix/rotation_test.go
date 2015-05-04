@@ -2,9 +2,17 @@ package matrix
 
 import (
 	// "fmt"
+    "os"
 	"math"
 	"testing"
 )
+
+type rotation_test_struct struct{
+    pitch,yaw,roll float64
+    start_vec        *Vec3
+    want             *Vec3
+}
+var common_cases []rotation_test_struct
 
 func TestAxisAngleToQ8n(t *testing.T) {
 	cases := []struct {
@@ -55,53 +63,18 @@ func TestAxisAngleToQ8n(t *testing.T) {
 		q = AxisAngleToQ8n(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get := RotateVecQ8n(q, c.start_vec)
 		if get.Equals(c.want) == false {
-			t.Errorf("TextAxisAngleToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
+			t.Errorf("TestAxisAngleToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
 		}
 	}
 }
 
 func TestEulerToQ8n(t *testing.T) {
-	cases := []struct {
-		yaw, pitch, roll float64
-		start_vec        *Vec3
-		want             *Vec3
-	}{
-		//test basic rotations using a [0,1,0] vector
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-
-		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-
-		// basic rotation using a non major axis vector
-		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{1, 0, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{0, -1, 1}},
-
-		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}},
-		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-	}
-
 	var q *q8n
-	for testIndex, c := range cases {
-		q = EulerToQ8n(degToRad(c.yaw), degToRad(c.pitch), degToRad(c.roll))
+	for testIndex, c := range common_cases {
+		q = EulerToQ8n(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
 		get := RotateVecQ8n(q, c.start_vec)
 		if get.Equals(c.want) == false {
-			t.Errorf("TextEulerToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
+			t.Errorf("TestEulerToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
 		}
 	}
 }
@@ -141,7 +114,7 @@ func TestQ8nToAxisAngle(t *testing.T) {
 			!closeEquals(get_x, v.X, epsilon) ||
 			!closeEquals(get_y, v.Y, epsilon) ||
 			!closeEquals(get_z, v.Z, epsilon) {
-			t.Errorf("TextQ8nToAxisAngle %d %v %f %f %f %f\n%f %f %f %f\n", testIndex, v, radToDeg(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
+			t.Errorf("TestQ8nToAxisAngle %d %v %f %f %f %f\n%f %f %f %f\n", testIndex, v, radToDeg(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
 		}
 	}
 }
@@ -163,7 +136,7 @@ func TestMultMatVec(t *testing.T) {
         m.Load(c.mat)
         get := MultMat4Vec3(m,c.orig_v)
         if get.Equals(c.want) == false {
-            t.Errorf("TextMultMat4Vec3 %d \n%v\n%v\n\n", testIndex, m, get)
+            t.Errorf("TestMultMat4Vec3 %d \n%v\n%v\n\n", testIndex, m, get)
         }
     }
 }
@@ -171,99 +144,104 @@ func TestMultMatVec(t *testing.T) {
 
 
 func TestEulerToMat4(t *testing.T) {
-    cases := []struct {
-        yaw, pitch, roll float64
-        start_vec        *Vec3
-        want             *Vec3
-    }{
-        //test basic rotations using a [0,1,0] vector
-        {0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-        {0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-        {90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-        {0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-        {0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-        {-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-        {0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-
-        // test basic rotation using a [1,0,0] vector
-        {0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-        {0, 90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-        {90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-        {0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-        {0, -90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-        {-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-        {0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-
-        // basic rotation using a non major axis vector
-        {0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-        {0, 90, 0, &Vec3{1, -1, 0}, &Vec3{1, 0, -1}},
-        {90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{0, -1, 1}},
-
-        // two rotations
-        {90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-        {90, 45, 0, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}},
-        {45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-        {45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-    }
-
     var m *Mat4
-    for testIndex, c := range cases {
+    for testIndex, c := range common_cases {
         // m = EulerToMat4(degToRad(c.yaw), degToRad(c.pitch), degToRad(c.roll))
-        m = EulerToMat4(degToRad(c.yaw),degToRad(c.pitch),degToRad(c.roll))
+        m = EulerToMat4(degToRad(c.pitch),degToRad(c.yaw),degToRad(c.roll))
         get := MultMat4Vec3(m,c.start_vec)
         if get.Equals(c.want) == false {
-            t.Errorf("TextEulerToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
+            t.Errorf("TestEulerToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
         }
     }
 }
 
 
 func TestMat4ToQ8n(t *testing.T) {
-    cases := []struct {
-        yaw, pitch, roll float64
-        start_vec        *Vec3
-        want             *Vec3
-    }{
-        //test basic rotations using a [0,1,0] vector
-        {0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-        {0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-        {90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-        {0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-        {0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-        {-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-        {0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-
-        // test basic rotation using a [1,0,0] vector
-        {0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-        {0, 90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-        {90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-        {0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-        {0, -90, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-        {-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-        {0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-
-        // basic rotation using a non major axis vector
-        {0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-        {0, 90, 0, &Vec3{1, -1, 0}, &Vec3{1, 0, -1}},
-        {90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{0, -1, 1}},
-
-        // two rotations
-        {90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-        {90, 45, 0, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}},
-        {45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-        {45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-    }
-
     var m *Mat4
     var q *q8n
-    for testIndex, c := range cases {
-        // m = EulerToMat4(degToRad(c.yaw), degToRad(c.pitch), degToRad(c.roll))
-        m = EulerToMat4(degToRad(c.yaw),degToRad(c.pitch),degToRad(c.roll))
+    for testIndex, c := range common_cases {
+        m = EulerToMat4(degToRad(c.pitch),degToRad(c.yaw),degToRad(c.roll))
         q = Mat4ToQ8n(m)
 
         get := RotateVecQ8n(q, c.start_vec)
         if get.Equals(c.want) == false {
-            t.Errorf("TextMat4ToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
+            t.Errorf("TestMat4ToQ8n %d \n %v\n%v\n\n", testIndex, q, get)
         }
     }
+}
+
+func TestMat4ToEuler(t *testing.T) {
+    var m *Mat4
+    for testIndex, c := range common_cases {
+        m = EulerToMat4(degToRad(c.pitch),degToRad(c.yaw),degToRad(c.roll))
+        x,y,z := Mat4ToEuler(m)
+
+        if x != degToRad(c.pitch) || y != degToRad(c.yaw) || z != degToRad(c.roll){
+            t.Errorf("TestMat4ToEuler %d %f %f %f",testIndex,x,y,z)
+        }
+    }
+}
+
+func TestQ8nToMat4(t *testing.T) {
+    var m *Mat4
+    var q *q8n
+    for testIndex, c := range common_cases {
+        q =  EulerToQ8n(degToRad(c.pitch),degToRad(c.yaw),degToRad(c.roll))
+        m = Q8nToMat4(q)
+
+        get := MultMat4Vec3(m,c.start_vec)
+        if get.Equals(c.want) == false {
+            t.Errorf("TestQ8nToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
+        }
+    }
+}
+
+// func TestQ8nToEuler(t *testing.T) {
+//     var q *q8n
+//     for testIndex, c := range common_cases {
+//         q =  EulerToQ8n(degToRad(c.yaw),degToRad(c.pitch),degToRad(c.roll))
+//         yaw,pitch,roll :=  Q8nToEuler(q)
+
+//         if(!closeEquals(yaw,   degToRad(c.yaw),epsilon) ||
+//             !closeEquals(pitch,degToRad(c.pitch),epsilon) ||
+//             !closeEquals(roll, degToRad(c.roll),epsilon)){
+//             t.Errorf("TestQ8nToEuler %d %f %f %f ",testIndex,yaw,pitch,roll)
+//         }
+//     }
+// }
+
+func TestMain(m *testing.M){
+    common_cases = []rotation_test_struct {
+        //test basic rotations using a [0,1,0] vector
+        // pitch,yaw,roll
+        {0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+        {0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+        {90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
+        {0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
+        {0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+        {-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
+        {0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},//6
+
+        // test basic rotation using a [1,0,0] vector
+        {0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+        {0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
+        {90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+        {0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
+        {0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
+        {-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+        {0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//13
+
+        // basic rotation using a non major axis vector
+        {0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
+        {0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
+        {90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}},//16
+
+        // two rotations
+        {90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+        {90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
+        {45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+        {45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
+    }
+
+    os.Exit(m.Run())
 }

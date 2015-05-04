@@ -58,12 +58,14 @@ func (this *Mat4) Equals(other *Mat4) bool {
 }
 
 // Retrieve the element at column/x and row/y
+// 0 indexed
 // Does not do any bounds checking
 func (this *Mat4) Get(col, row int) float64 {
 	return this.mat[row*mat4Dim+col]
 }
 
 // Set the value at the specified columnd and row.
+// 0 indexed
 // Does not do any bounds checking
 func (this *Mat4) Set(col, row int, value float64) *Mat4 {
 	this.mat[row*mat4Dim+col] = value
@@ -95,11 +97,13 @@ func (this *Mat4) DumpOpenGL() (mat [16]float64) {
 }
 
 // Retrieve the element at the given index
+// 0 indexed
 func (this *Mat4) GetAt(index int) float64 {
 	return this.mat[index]
 }
 
 // Set the element of the matrix specified at the index to the given value
+// 0 indexed
 // Return a pointer to the 'this'
 func (this *Mat4) SetAt(index int, value float64) *Mat4 {
 	this.mat[index] = value
@@ -107,6 +111,7 @@ func (this *Mat4) SetAt(index int, value float64) *Mat4 {
 }
 
 // Set the specified row of the matrix to the given x,y,z,w values
+// 0 indexed
 // Does not do bounds checking of the row
 func (this *Mat4) SetRow(row int, x, y, z, w float64) *Mat4 {
 	this.mat[row*mat4Dim] = x
@@ -117,6 +122,7 @@ func (this *Mat4) SetRow(row int, x, y, z, w float64) *Mat4 {
 }
 
 // Set the specified column of the matrix to the given x,y,z,w values
+// 0 indexed
 // Does not do bounds checking on the col
 func (this *Mat4) SetCol(col int, x, y, z, w float64) *Mat4 {
 	this.mat[mat4Dim*0+col] = x
@@ -127,6 +133,7 @@ func (this *Mat4) SetCol(col int, x, y, z, w float64) *Mat4 {
 }
 
 // Retrieve the x,y,z,w elements from the specivied row
+// 0 indexed
 // Does not bounds check the row
 func (this *Mat4) GetRow(row int) (x, y, z, w float64) {
 	x = this.mat[row*mat4Dim]
@@ -137,6 +144,7 @@ func (this *Mat4) GetRow(row int) (x, y, z, w float64) {
 }
 
 // Retrieve the x,y,z,w elements from the specified column
+// 0 indexed
 // Does not bounds check the column
 func (this *Mat4) GetCol(col int) (x, y, z, w float64) {
 	x = this.mat[mat4Dim*0+col]
