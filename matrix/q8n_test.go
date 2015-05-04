@@ -189,7 +189,12 @@ func TestConjugate(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Conjugate()
 		if get.Equals(test.want) == false {
-			t.Errorf("TestNorm %d", testIndex)
+			t.Errorf("TestConjugate %d", testIndex)
+		}
+
+		get = test.orig.ConjugateIn()
+		if get.Equals(test.want) == false {
+			t.Errorf("TestConjugateIn %d", testIndex)
 		}
 
 	}
@@ -210,6 +215,12 @@ func TestInverse(t *testing.T) {
 		get := test.orig.Inverse().Mult(test.orig)
 		if get.Equals(idenq8n) == false {
 			t.Errorf("TestInverse %d", testIndex)
+		}
+
+		orig := *test.orig
+		get = test.orig.InverseIn().MultIn(&orig)
+		if get.Equals(idenq8n) == false {
+			t.Errorf("TestInverseIn %d", testIndex)
 		}
 	}
 }

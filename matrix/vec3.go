@@ -5,7 +5,6 @@ import (
 	"math"
 )
 
-
 // A Vector 3 containing the three components
 // X, Y, Z
 type Vec3 struct {
@@ -93,7 +92,6 @@ func (this *Vec3) OuterIn(other *Vec3) *Vec3 {
 	return this
 }
 
-
 // Returns the Dot product between 'this' and the other vector
 func (this *Vec3) Dot(other *Vec3) float64 {
 	return this.X*other.X +
@@ -119,7 +117,6 @@ func (this *Vec3) CrossIn(other *Vec3) *Vec3 {
 	return this
 }
 
-
 // Checks for equality between the vectors.
 // Equal is all elemnets are equal within an epsilon ( < 0.0000001)
 func (this *Vec3) Equals(other *Vec3) bool {
@@ -127,7 +124,6 @@ func (this *Vec3) Equals(other *Vec3) bool {
 		closeEquals(this.Y, other.Y, epsilon) &&
 		closeEquals(this.Z, other.Z, epsilon)
 }
-
 
 // Return the length of the vector
 // sqrt(x^2 + y^2 + z^2)

@@ -87,10 +87,26 @@ func (this *q8n) MultIn(q *q8n) *q8n {
 // Conjugate is defined as [w,-x,-y,-z]
 func (this *q8n) Conjugate() *q8n {
 	out := *this
-	out.x = -this.x
-	out.y = -this.y
-	out.z = -this.z
-	return &out
+	return out.ConjugateIn()
+}
+
+// Calc the conjugate of the quaternion and store the result in 'this'
+func (this *q8n) ConjugateIn() *q8n {
+	this.x = -this.x
+	this.y = -this.y
+	this.z = -this.z
+	return this
+}
+
+func (this *q8n) InverseIn() *q8n {
+	this.ConjugateIn()
+	n := this.SqrdNorm()
+
+	if closeEquals(n, 0, epsilon) {
+		return this
+	}
+
+	return this.MultInConst(1 / n)
 }
 
 // Return a new quaternion which is the inverse of 'this'
@@ -124,7 +140,6 @@ func (this *q8n) ToUnit() *q8n {
 	}
 	return this.MultInConst(1 / m)
 }
-
 
 // Returns the norm of this quaternion
 // sqrt(x^2 + y^2 + z^2 + w^2)

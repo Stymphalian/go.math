@@ -45,7 +45,6 @@ func NewMat4(
 	return &out
 }
 
-
 // Compare this matrix to the other.
 // Return true if all elements between them are the same.
 // Equality is measured using an epsilon (< 0.0000001)
@@ -57,7 +56,6 @@ func (this *Mat4) Equals(other *Mat4) bool {
 	}
 	return true
 }
-
 
 // Retrieve the element at column/x and row/y
 // Does not do any bounds checking
@@ -71,7 +69,6 @@ func (this *Mat4) Set(col, row int, value float64) *Mat4 {
 	this.mat[row*mat4Dim+col] = value
 	return this
 }
-
 
 // Load the matrix with 16 floats
 // Specified in Row-Major order
@@ -95,6 +92,18 @@ func (this *Mat4) DumpOpenGL() (mat [16]float64) {
 	mat[8], mat[9], mat[10], mat[11] = this.GetCol(2)
 	mat[12], mat[13], mat[14], mat[15] = this.GetCol(3)
 	return
+}
+
+// Retrieve the element at the given index
+func (this *Mat4) GetAt(index int) float64 {
+	return this.mat[index]
+}
+
+// Set the element of the matrix specified at the index to the given value
+// Return a pointer to the 'this'
+func (this *Mat4) SetAt(index int, value float64) *Mat4 {
+	this.mat[index] = value
+	return this
 }
 
 // Set the specified row of the matrix to the given x,y,z,w values
@@ -136,7 +145,6 @@ func (this *Mat4) GetCol(col int) (x, y, z, w float64) {
 	w = this.mat[mat4Dim*3+col]
 	return
 }
-
 
 // Add in a constant value to all the terms fo the matrix
 // Returns a pointer to 'this'
@@ -250,7 +258,6 @@ func det2x2(x, y, z, w float64) float64 {
 	return x*w - y*z
 }
 
-
 // Calculate the determinant of a 3x3 matrix
 // Values are given in Row-Major order
 func det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3 float64) float64 {
@@ -261,7 +268,6 @@ func det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3 float64) float64 {
 		b1*det2x2(a2, a3, c2, c3) +
 		c1*det2x2(a2, a3, b2, b3))
 }
-
 
 // Get the determinant of the matrix
 // Uses a straight-up Cramers-Rule implementation.
@@ -288,7 +294,6 @@ func (this *Mat4) Determinant() float64 {
 			this.mat[5], this.mat[6], this.mat[7],
 			this.mat[9], this.mat[10], this.mat[11]))
 }
-
 
 // Returns a new matrix which is the Adjoint matrix of this
 func (this *Mat4) Adjoint() *Mat4 {
@@ -361,7 +366,6 @@ func (this *Mat4) String() string {
 		this.mat[12], this.mat[13], this.mat[14], this.mat[15])
 }
 
-
 func (this *Mat4) ToTranslate(x, y, z float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[3] = x
@@ -378,7 +382,6 @@ func (this *Mat4) ToScale(x, y, z float64) *Mat4 {
 	return this
 }
 
-
 func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
 	// 0   -z     y    0
 	// z    0    -x    0
@@ -386,7 +389,7 @@ func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
 	// 0    0     0    1
 
 	this.ToIdentity()
-	this.mat[0],this.mat[5],this.mat[10] = 0,0,0
+	this.mat[0], this.mat[5], this.mat[10] = 0, 0, 0
 
 	this.mat[6] = -x
 	this.mat[9] = x
@@ -409,4 +412,3 @@ func (this *Mat4) ToRotateAll(x, y, z float64) *Mat4 {
 func (this *Mat4) ToRotateAxis(delta float64, axis *Vec3) *Mat4 {
 	return this
 }
-

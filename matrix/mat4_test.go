@@ -65,6 +65,20 @@ func TestMatGettersSetter(t *testing.T) {
 			t.Errorf("TestMatGetttersSetter wantAfterSet %d %v", testIndex, get)
 		}
 	}
+
+	orig := &Mat4{[16]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}}
+	for k, _ := range orig.Dump() {
+		get := orig.GetAt(k)
+		if get != float64(k+1) {
+			t.Errorf("TestMatGetterSetter GetAt %d %v", k, get)
+		}
+
+		orig.SetAt(k, float64((k+1)*10))
+		get = orig.GetAt(k)
+		if get != float64((k+1)*10) {
+			t.Errorf("TestMatGetterSetter SetAt %d", k)
+		}
+	}
 }
 
 // Test Load Array
@@ -563,86 +577,84 @@ func TestInverseMatrix(t *testing.T) {
 	}
 }
 
+func TestToTranslate(t *testing.T) {
+	cases := []struct {
+		x, y, z float64
+		want    [16]float64
+	}{
+		{0, 0, 0, [16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}},
+		{1, 2, 3, [16]float64{1, 0, 0, 1, 0, 1, 0, 2, 0, 0, 1, 3, 0, 0, 0, 1}},
+		{-1, -2, -3, [16]float64{1, 0, 0, -1, 0, 1, 0, -2, 0, 0, 1, -3, 0, 0, 0, 1}},
+	}
 
-func TestToTranslate(t *testing.T){
-    cases:= []struct {
-        x,y,z float64
-        want [16]float64
-    }{
-        {0,0,0,[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1}},
-        {1,2,3,[16]float64{1,0,0,1,0,1,0,2,0,0,1,3,0,0,0,1}},
-        {-1,-2,-3,[16]float64{1,0,0,-1,0,1,0,-2,0,0,1,-3,0,0,0,1}},
-    }
+	orig := &Mat4{}
+	for testIndex, c := range cases {
 
-    orig := &Mat4{}
-    for testIndex,c := range cases {
-
-        orig.ToTranslate(c.x,c.y,c.z)
-        get := orig.Dump()
-        for k,_ := range(c.want){
-            if( c.want[k] !=  get[k]){
-                t.Errorf("TestToTranslate %d",testIndex)
-                break
-            }
-        }
-    }
+		orig.ToTranslate(c.x, c.y, c.z)
+		get := orig.Dump()
+		for k, _ := range c.want {
+			if c.want[k] != get[k] {
+				t.Errorf("TestToTranslate %d", testIndex)
+				break
+			}
+		}
+	}
 }
 
+func TestToScale(t *testing.T) {
+	cases := []struct {
+		x, y, z float64
+		want    [16]float64
+	}{
+		{0, 0, 0, [16]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+		{1, 2, 3, [16]float64{1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1}},
+		{-1, -2, -3, [16]float64{-1, 0, 0, 0, 0, -2, 0, 0, 0, 0, -3, 0, 0, 0, 0, 1}},
+	}
 
-func TestToScale(t *testing.T){
-    cases:= []struct {
-        x,y,z float64
-        want [16]float64
-    }{
-        {0,0,0,[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}},
-        {1,2,3,[16]float64{1,0,0,0,0,2,0,0,0,0,3,0,0,0,0,1}},
-        {-1,-2,-3,[16]float64{-1,0,0,0,0,-2,0,0,0,0,-3,0,0,0,0,1}},
-    }
+	orig := &Mat4{}
+	for testIndex, c := range cases {
 
-    orig := &Mat4{}
-    for testIndex,c := range cases {
-
-        orig.ToScale(c.x,c.y,c.z)
-        get := orig.Dump()
-        for k,_ := range(c.want){
-            if( c.want[k] !=  get[k]){
-                t.Errorf("TestToScale %d",testIndex)
-                break
-            }
-        }
-    }
+		orig.ToScale(c.x, c.y, c.z)
+		get := orig.Dump()
+		for k, _ := range c.want {
+			if c.want[k] != get[k] {
+				t.Errorf("TestToScale %d", testIndex)
+				break
+			}
+		}
+	}
 }
 
-func TestToSkew(t *testing.T){
-    cases:= []struct {
-        x,y,z float64
-        want [16]float64
-    }{
-        {0,0,0,[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}},
-        {1,2,3,[16]float64{
-            0,-3,2,0,
-            3,0,-1,0,
-            -2,1,0,0,
-            0,0,0,1,
-        }},
-        {-1,-2,-3,[16]float64{
-            0,3,-2,0,
-            -3,0,1,0,
-            2,-1,0,0,
-            0,0,0,1,
-        }},
-    }
+func TestToSkew(t *testing.T) {
+	cases := []struct {
+		x, y, z float64
+		want    [16]float64
+	}{
+		{0, 0, 0, [16]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
+		{1, 2, 3, [16]float64{
+			0, -3, 2, 0,
+			3, 0, -1, 0,
+			-2, 1, 0, 0,
+			0, 0, 0, 1,
+		}},
+		{-1, -2, -3, [16]float64{
+			0, 3, -2, 0,
+			-3, 0, 1, 0,
+			2, -1, 0, 0,
+			0, 0, 0, 1,
+		}},
+	}
 
-    orig := &Mat4{}
-    for testIndex,c := range cases {
+	orig := &Mat4{}
+	for testIndex, c := range cases {
 
-        orig.ToSkew(c.x,c.y,c.z)
-        get := orig.Dump()
-        for k,_ := range(c.want){
-            if( c.want[k] !=  get[k]){
-                t.Errorf("TestToScale %d",testIndex)
-                break
-            }
-        }
-    }
+		orig.ToSkew(c.x, c.y, c.z)
+		get := orig.Dump()
+		for k, _ := range c.want {
+			if c.want[k] != get[k] {
+				t.Errorf("TestToScale %d", testIndex)
+				break
+			}
+		}
+	}
 }

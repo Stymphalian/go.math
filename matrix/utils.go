@@ -18,7 +18,6 @@ func closeEquals(a, b, eps float64) bool {
 	}
 }
 
-
 // Convert from a degree to a radian
 func degToRad(a float64) float64 {
 	return a * math.Pi / 180.0
