@@ -600,10 +600,12 @@ func TestInverseMatrix(t *testing.T) {
 			t.Errorf("TestInverse %d %v", testIndex, get_inverse_flag)
 			continue
 		}
+		if get_inverse_flag == false {
+			continue
+		}
 
 		mat := m.Inverse()
 		get := mat.Dump()
-
 		for k, _ := range c.want {
 			if closeEquals(get[k], c.want[k], 0.0001) == false {
 				t.Errorf("TestInverse %d %d %v %v", testIndex, k, get[k], c.want[k])

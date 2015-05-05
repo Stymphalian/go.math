@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	// "fmt"
+	"fmt"
 	"math"
 	"os"
 	"testing"
@@ -120,6 +120,63 @@ func TestQ8nToAxisAngle(t *testing.T) {
 	}
 }
 
+func TestMat4ToAxisAngle(t *testing.T) {
+	cases := []struct {
+		angle, x, y, z float64
+	}{
+		//test basic rotations using a [1,0,0] vector
+		{90, 1, 0, 0},
+		{90, 0, 1, 0},
+		{90, 0, 0, 1},
+		{45, 1, 0, 0},
+		{45, 0, 1, 0},
+		{45, 0, 0, 1}, //5
+		{180, 1, 0, 0},
+		{180, 0, 1, 0},
+		{180, 0, 0, 1},
+		{90, 1, 1, 0},
+		{90, 1, 1, 0}, //10
+		{90, 0, -1, 1},
+		{45, 1, 0, 1},
+		{45, 0, 1, 0},
+		{45, 1, 0, 1},
+		{180, 1, -2, 0}, //15
+		{180, 0, 1, 20},
+		{180, 0, 20, 1},
+		{180, -4, 4, 1},
+	}
+
+	var m *Mat4
+	for testIndex, c := range cases {
+		v := &Vec3{c.x, c.y, c.z}
+		v.NormalizeIn()
+		m = AxisAngleToMat4(degToRad(c.angle), v.X, v.Y, v.Z)
+		get_angle, get_x, get_y, get_z := Mat4ToAxisAngle(m)
+
+		m2 := AxisAngleToMat4(get_angle,get_x,get_y,get_z)
+		v2 := MultMat4Vec3(m,&Vec3{1,0,0})
+		v3 := MultMat4Vec3(m2,&Vec3{1,0,0})
+		if( v2.Equals(v3) == false) {
+			fmt.Printf("Not good %d %2.5f %2.5f %2.5f %2.5f %2.5f %2.5f\n",testIndex,v2.X,v2.Y,v2.Z, v3.X,v3.Y,v3.Z)
+		}
+
+		if !closeEquals(radToDeg(get_angle), c.angle, epsilon) ||
+			!closeEquals(get_x, v.X, epsilon) ||
+			!closeEquals(get_y, v.Y, epsilon) ||
+			!closeEquals(get_z, v.Z, epsilon) {
+
+			if closeEquals(get_angle,math.Pi,epsilon) &&
+				closeEquals (math.Abs(get_x)-math.Abs(v.X),0,epsilon) &&
+				closeEquals(math.Abs(get_y)-math.Abs(v.Y),0,epsilon) &&
+				closeEquals(math.Abs(get_z)-math.Abs(v.Z),0,epsilon) {
+				continue
+			}else{
+				t.Errorf("TestMat4ToAxisAngle %d %v \n%f %f %f %f\n%f %f %f %f\n", testIndex, v, radToDeg(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
+			}
+		}
+	}
+}
+
 func TestMultMatVec(t *testing.T) {
 	cases := []struct {
 		mat          [16]float64
@@ -195,17 +252,17 @@ func TestQ8nToMat4(t *testing.T) {
 }
 
 func TestQ8nToEuler(t *testing.T) {
-    var q *q8n
-    for testIndex, c := range common_cases {
-        q =  EulerToQ8n(degToRad(c.pitch),degToRad(c.yaw),degToRad(c.roll))
-        pitch,yaw,roll :=  Q8nToEuler(q)
+	var q *q8n
+	for testIndex, c := range common_cases {
+		q = EulerToQ8n(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
+		pitch, yaw, roll := Q8nToEuler(q)
 
-        if(!closeEquals(yaw,   degToRad(c.yaw),epsilon) ||
-            !closeEquals(pitch,degToRad(c.pitch),epsilon) ||
-            !closeEquals(roll, degToRad(c.roll),epsilon)){
-            t.Errorf("TestQ8nToEuler %d %f %f %f ",testIndex,pitch,yaw,roll)
-        }
-    }
+		if !closeEquals(yaw, degToRad(c.yaw), epsilon) ||
+			!closeEquals(pitch, degToRad(c.pitch), epsilon) ||
+			!closeEquals(roll, degToRad(c.roll), epsilon) {
+			t.Errorf("TestQ8nToEuler %d %f %f %f ", testIndex, pitch, yaw, roll)
+		}
+	}
 }
 
 func TestAxisAngleToMat4(t *testing.T) {
@@ -234,7 +291,7 @@ func TestAxisAngleToMat4(t *testing.T) {
 		{-90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
 		{-90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
 		{360, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{180, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},//15
+		{180, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}}, //15
 
 		// test negative axes
 		{90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
@@ -244,12 +301,12 @@ func TestAxisAngleToMat4(t *testing.T) {
 		{-90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{-90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
 		{360, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{180, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//23
+		{180, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //23
 
 		// test arbitraty axis
 		{360, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{90, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.5, 0.5, -0.7071067811}},
-		{45, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.85355339059, 0.1464466094067, -0.5}},//26
+		{45, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.85355339059, 0.1464466094067, -0.5}}, //26
 	}
 
 	var m *Mat4
@@ -257,6 +314,13 @@ func TestAxisAngleToMat4(t *testing.T) {
 		c.axis.NormalizeIn()
 		m = AxisAngleToMat4_2(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get := MultMat4Vec3(m, c.start_vec)
+		if get.Equals(c.want) == false {
+			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
+		}
+
+		c.axis.NormalizeIn()
+		m = AxisAngleToMat4(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
+		get = MultMat4Vec3(m, c.start_vec)
 		if get.Equals(c.want) == false {
 			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -293,7 +357,7 @@ func TestMain(m *testing.M) {
 		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
 		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
 		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},//21
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //21
 	}
 
 	os.Exit(m.Run())

@@ -320,12 +320,11 @@ func (this *Mat4) Adjoint() *Mat4 {
 	c1, c2, c3, c4 := this.mat[8], this.mat[9], this.mat[10], this.mat[11]
 	d1, d2, d3, d4 := this.mat[12], this.mat[13], this.mat[14], this.mat[15]
 
-	m := Mat4{}
-
 	// 0 1 2 3 			a1 a2 a3 a4
 	// 4 5 6 7 			b1 b2 b3 b4
 	// 8 9 10 11 		c1 c2 c3 c4
 	// 12 13 14 15 		d1 d2 d3 d4
+	m := Mat4{}
 	m.mat[0] = det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4)
 	m.mat[1] = -det3x3(b1, b3, b4, c1, c3, c4, d1, d3, d4)
 	m.mat[2] = det3x3(b1, b2, b4, c1, c2, c4, d1, d2, d4)
@@ -356,12 +355,11 @@ func (this *Mat4) Adjoint() *Mat4 {
 // The inverse of a valid rotation matrix should just be the transpose
 func (this *Mat4) Inverse() *Mat4 {
 	out := *this
-
 	det := out.Determinant()
+
 	// if closeEquals(det, 0, epsilon) {
 	// 	return nil, false
 	// }
-
 	adj := out.Adjoint()
 	return adj.DivInConst(det)
 }
@@ -371,6 +369,21 @@ func (this *Mat4) Inverse() *Mat4 {
 // Internally it checks to see if the determinant is zero.
 func (this *Mat4) HasInverse() bool {
 	return !closeEquals(this.Determinant(), 0, epsilon)
+}
+
+func (this *Mat4) IsIdentity() bool {
+	iden := [16]float64{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	}
+	for k, _ := range iden {
+		if !closeEquals(this.mat[k], iden[k], 0) {
+			return false
+		}
+	}
+	return true
 }
 
 // Sets the matrix to the identity matrix
