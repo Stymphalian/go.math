@@ -256,6 +256,7 @@ func TestQ8nToEuler(t *testing.T) {
 	for testIndex, c := range common_cases {
 		q = EulerToQ8n(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
 		pitch, yaw, roll := Q8nToEuler(q)
+		// pitch, yaw, roll := QuatToEuler(q)
 
 		if !closeEquals(yaw, degToRad(c.yaw), epsilon) ||
 			!closeEquals(pitch, degToRad(c.pitch), epsilon) ||
@@ -329,6 +330,8 @@ func TestAxisAngleToMat4(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	common_cases = []rotation_test_struct{
+		// {0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
 		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},

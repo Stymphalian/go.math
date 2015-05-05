@@ -127,12 +127,20 @@ func Q8nToEuler(q *q8n) (pitch, yaw, roll float64) {
 		pitch = 0
 		return
 	}
+
+	// fmt.Println(test)
 	sqx := q.x * q.x
 	sqy := q.y * q.y
 	sqz := q.z * q.z
 	yaw = math.Atan2(2*q.y*q.w-2*q.x*q.z, 1-2*sqy-2*sqz)
 	roll = math.Asin(2 * test)
 	pitch = math.Atan2(2*q.x*q.w-2*q.y*q.z, 1-2*sqx-2*sqz)
+
+	// if closeEquals(math.Pi,yaw,epsilon) && closeEquals(math.Pi,pitch,epsilon){
+	// 	roll = math.Pi - roll
+	// 	yaw = 0
+	// 	pitch = 0
+	// }
 	return
 }
 
@@ -421,7 +429,7 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 
 	// The rotation matrix we are using will be of the following form
 	// cos(x) is abbreviated as cx ( similarily sin(x) = sx)
-	//
+	// This corresponds to the pitch => yaw => roll rotation matrix
 	// cz*cy       cz*sy*sx - sz*cx         sz*sx + cz*cx*sy   | r11 r12 r13
 	// sz*cy       cz*cx + sx*sy*sz         sz*sy*cx - cz*sx   | r21 r22 r23
 	// -sy         sx*cy                    cx*cy              | r31 r32 r33
@@ -430,7 +438,7 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 	// 1) Find the 'y' angle
 	//      This is easily accomplished because term r31 is simply '-sin(y)'
 	// 2) There are two possible angles for y because
-	//      sin(y) == sin( pi - y)
+	//      sin(y) == sin(pi - y)
 	// 3) To find the value of x, we observe the following
 	//      r32/r33 = tan(x)
 	//      (sin(x)cos(y)) / (cos(x)cos(y))
@@ -452,10 +460,30 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 		x = z + math.Atan2(mat.Get(0, 1), mat.Get(0, 2))
 	} else {
 		y = -math.Asin(r31)
-		// y = math.Pi + math.Asin(r31) // alt-solution
 		cos_y := math.Cos(y)
 		x = math.Atan2(mat.Get(2, 1)/cos_y, mat.Get(2, 2)/cos_y)
 		z = math.Atan2(mat.Get(1, 0)/cos_y, mat.Get(0, 0)/cos_y)
+
+
+		m01,m10 := mat.Get(0,1),mat.Get(1,0)
+		m02,m20 := mat.Get(0,2),mat.Get(2,0)
+		m12,m21 := mat.Get(1,2),mat.Get(2,1)
+		if closeEquals(math.Abs(m01-m10), 0, epsilon) &&
+			closeEquals(math.Abs(m02-m20), 0, epsilon) &&
+			closeEquals(math.Abs(m12-m21), 0, epsilon) {
+			// singularity check
+			// Checking for cases in which the angle is either 0 or 180
+
+			if !mat.IsIdentity() {
+				// If the angle is 0, then the rotation matrix will be the identity matrix
+				// A 0 angle means that there is an arbitrary axis.
+
+				y = math.Pi - y
+				cos_y := math.Cos(y)
+				x = math.Atan2(mat.Get(2, 1)/cos_y, mat.Get(2, 2)/cos_y)
+				z = math.Atan2(mat.Get(1, 0)/cos_y, mat.Get(0, 0)/cos_y)
+			}
+		}
 	}
 
 	pitch = x
@@ -497,7 +525,7 @@ func MultMat4Vec3(m *Mat4, v *Vec3) *Vec3 {
 
 // Apply the matrix against the Vector
 // Return a new vector with the result v*m
-func MultVec3Mat4(m *Mat4, v *Vec3) *Vec3 {
+func MultVec3Mat4(v *Vec3,m *Mat4) *Vec3 {
 	// 0   1   2   3
 	// 4   5   6   7
 	// 8   9   10  11
@@ -524,3 +552,80 @@ func RotateVecQ8n(q *q8n, v *Vec3) *Vec3 {
 	}
 	return &Vec3{rs.x, rs.y, rs.z}
 }
+
+
+// func ArcTanAngle(X,Y float64) float64 {
+//     if (X == 0){
+//         if (Y == 1){
+//         	return math.Pi/2
+//         } else{
+//         	return -math.Pi /2
+//         }
+//     } else if (X > 0){
+//         return math.Atan(Y / X);
+//     }else if (X < 0){
+//         if (Y > 0){
+//         	return math.Atan(Y/X) + math.Pi
+//         } else{
+//         	return math.Atan(Y/X) - math.Pi
+//         }
+//     }else{
+//         return 0
+//     }
+// }
+
+// func AngleTo( from , location *Vec3) *Vec3{
+// 	angle := &Vec3{}
+// 	v3 := location.Sub(from).NormalizeIn()
+// 	angle.X = math.Asin(v3.Y)
+// 	angle.Y = ArcTanAngle(-v3.Z,-v3.X)
+// 	return angle
+// }
+
+// func QuatToEuler(rotation *q8n) (float64,float64,float64){
+// 	forward := RotateVecQ8n(rotation,&Vec3{0,0,-1})
+// 	up := RotateVecQ8n(rotation,&Vec3{0,1,0})
+// 	rotationAxes := AngleTo(&Vec3{0,0,0},forward)
+// 	if rotationAxes.X == math.Pi/2{
+// 		rotationAxes.Y = ArcTanAngle(up.Z,up.X)
+// 		rotationAxes.Z = 0
+// 	}else if rotationAxes.X == -math.Pi/2{
+// 		rotationAxes.Y = ArcTanAngle(-up.Z,-up.X)
+// 		rotationAxes.Z = 0
+// 	}else{
+// 		mat := &Mat4{}
+// 		mat.ToRotateY(-rotationAxes.Y)
+// 		up = MultVec3Mat4(up,mat)
+// 		mat.ToRotateX(-rotationAxes.X)
+// 		up = MultVec3Mat4(up,mat)
+// 		rotationAxes.Z = ArcTanAngle(up.Y,-up.X)
+// 	}
+// 	return rotationAxes.X,rotationAxes.Y,rotationAxes.Z
+// }
+
+// //converts a Quaternion to Euler angles (X = pitch, Y = yaw, Z = roll)
+// public static Vector3 QuaternionToEuler(Quaternion rotation)
+// {
+//     Vector3 rotationaxes = new Vector3();
+
+//     Vector3 forward = Vector3.Transform(Vector3.Forward, rotation);
+//     Vector3 up = Vector3.Transform(Vector3.Up, rotation);
+//     rotationaxes = AngleTo(new Vector3(), forward);
+//     if (rotationaxes.X == MathHelper.PiOver2)
+//     {
+//         rotationaxes.Y = ArcTanAngle(up.Z, up.X);
+//         rotationaxes.Z = 0;
+//     }
+//     else if (rotationaxes.X == -MathHelper.PiOver2)
+//     {
+//         rotationaxes.Y = ArcTanAngle(-up.Z, -up.X);
+//         rotationaxes.Z = 0;
+//     }
+//     else
+//     {
+//         up = Vector3.Transform(up, Matrix.CreateRotationY(-rotationaxes.Y));
+//         up = Vector3.Transform(up, Matrix.CreateRotationX(-rotationaxes.X));
+//         rotationaxes.Z = ArcTanAngle(up.Y, -up.X);
+//     }
+//     return rotationaxes;
+// }
