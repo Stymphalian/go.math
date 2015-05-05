@@ -60,14 +60,14 @@ func (this *Mat4) Equals(other *Mat4) bool {
 // Retrieve the element at column/x and row/y
 // 0 indexed
 // Does not do any bounds checking
-func (this *Mat4) Get(col, row int) float64 {
+func (this *Mat4) Get(row,col int) float64 {
 	return this.mat[row*mat4Dim+col]
 }
 
 // Set the value at the specified columnd and row.
 // 0 indexed
 // Does not do any bounds checking
-func (this *Mat4) Set(col, row int, value float64) *Mat4 {
+func (this *Mat4) Set(row,col int, value float64) *Mat4 {
 	this.mat[row*mat4Dim+col] = value
 	return this
 }
@@ -341,16 +341,26 @@ func (this *Mat4) Adjoint() *Mat4 {
 
 // Returns a new matrix which is the inverse matrix of this
 // The bool flag is false if an inverse does not exist
-func (this *Mat4) Inverse() (*Mat4, bool) {
+// TODO: Needs further testing
+// Try out with rotation matrices.
+// The inverse of a valid rotation matrix should just be the transpose
+func (this *Mat4) Inverse() (*Mat4) {
 	out := *this
 
 	det := out.Determinant()
-	if closeEquals(det, 0, epsilon) {
-		return nil, false
-	}
+	// if closeEquals(det, 0, epsilon) {
+	// 	return nil, false
+	// }
 
 	adj := out.Adjoint()
-	return adj.DivInConst(det), true
+	return adj.DivInConst(det)
+}
+
+// Returns true if the inverse of this matrix exists
+// False otherwise
+// Internally it checks to see if the determinant is zero.
+func (this *Mat4) HasInverse() bool {
+	return !closeEquals(this.Determinant(),0,epsilon)
 }
 
 // Sets the matrix to the identity matrix

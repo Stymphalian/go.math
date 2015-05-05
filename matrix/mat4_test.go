@@ -55,12 +55,12 @@ func TestMatGettersSetter(t *testing.T) {
 	}
 
 	for testIndex, c := range cases {
-		get := c.orig.Get(c.x, c.y)
+		get := c.orig.Get(c.y, c.x)
 		if get != c.wantBeforeSet {
 			t.Errorf("TestMatGetttersSetter wantBeforeSet %d %v", testIndex, get)
 		}
 
-		get = c.orig.Set(c.x, c.y, c.wantAfterSet).Get(c.x, c.y)
+		get = c.orig.Set(c.y, c.x, c.wantAfterSet).Get(c.y, c.x)
 		if get != c.wantAfterSet {
 			t.Errorf("TestMatGetttersSetter wantAfterSet %d %v", testIndex, get)
 		}
@@ -543,7 +543,11 @@ func TestAdjoint(t *testing.T) {
 
 func TestInverseMatrix(t *testing.T) {
 	m := &Mat4{}
-	m.Load([16]float64{
+	cases := []struct{
+		orig,want [16]float64
+		want_inverse_flag bool
+	}{
+		{[16]float64{
 		0.5 * 0.5,
 		-0.5 * 0.866,
 		0.866,
@@ -559,20 +563,33 @@ func TestInverseMatrix(t *testing.T) {
 		-0.5 * 0.5,
 		0,
 
-		0, 0, 0, 1})
-
-	mat, _ := m.Inverse()
-	get := mat.Dump()
-	want := [16]float64{
+		0, 0, 0, 1},[16]float64{
 		-0.451227, 1.06758, 0.285991, 0,
 		0.822806, -0.946666, 1.21058, 0,
 		1.6964, -0.781524, 0.522727, 0,
-		0, 0, 0, 1}
+		0, 0, 0, 1},true},
+		{[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},false},
+		{[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},
+			[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},true},
+	}
 
-	for k, _ := range want {
-		if closeEquals(get[k], want[k], 0.0001) == false {
-			t.Errorf("TestInverse %d %v %v", k, get[k], want[k])
-			break
+	for testIndex,c := range cases {
+		m.Load(c.orig)
+		get_inverse_flag := m.HasInverse()
+		if get_inverse_flag != c.want_inverse_flag {
+				t.Errorf("TestInverse %d %v",testIndex,get_inverse_flag)
+				continue
+		}
+
+		mat := m.Inverse()
+		get := mat.Dump()
+
+		for k, _ := range c.want {
+			if closeEquals(get[k], c.want[k], 0.0001) == false {
+				t.Errorf("TestInverse %d %d %v %v",testIndex, k, get[k], c.want[k])
+				break
+			}
 		}
 	}
 }
