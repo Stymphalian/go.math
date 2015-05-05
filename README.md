@@ -21,3 +21,11 @@ so many of the choices I make will be so that it can work with OpenGL
 
 # Get
 go get http://github.com/Stymphalian/go.math/matrix
+
+
+# TODO
+Functions for  
+1. Perspective matrix
+2. Projection matrx
+3. Orthographic matrix
+4. Frustum,FieldOfView matrix

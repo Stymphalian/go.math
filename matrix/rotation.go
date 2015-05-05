@@ -175,7 +175,84 @@ func Q8nToMat4(q *q8n) (mat *Mat4) {
 	return
 }
 
-func AxisAngleToMat4_2(angle float64, a, b, c float64) *Mat4 {
+// {{x/v,-y/v,0},{y/v,x/v,0},{0,0,1}}
+// {{z,0,v},{0,1,0},{-v,0,z}}
+// -- {{(x z)/v, -(y/v), x}, {(y z)/v, x/v, y}, {-v, 0, z}}
+// {{c,-s,0},{s,c,0},{0,0,1}}
+// ---{{-((s y)/v) + (c x z)/v, -((c y)/v) - (s x z)/v, x}, {(s x)/v + (c y z)/v, (c x)/v - (s y z)/v, y}, {-(c v), s v, z}}
+
+
+// {{A/v, B/v, x}, {C/v,D/v, y}, {-(c v), s v, z}}
+// {{(x z)/v,(y z)/v,-v}, { -(y/v), x/v,0}, {x,y, z}}
+
+func AxisAngleToMat4_2(angle float64, x,y,z float64) *Mat4{
+	// References:
+	// http://inside.mines.edu/fs_home/gmurray/ArbitraryAxisRotation/
+	// http://www.engr.uvic.ca/~mech410/lectures/4_2_RotateArbi.pdf
+	// Basic idea behind this method.
+	// 1. Rotate the axis into the xz plane ( rotate around the x-axis or z-axis) R_xz
+	// 2. Rotate the axis onto the z-axis ( rotate about y-axis) R_y
+	// 3. Apply the rotation around the z-axis R_theta
+	// 4. Apply the inverse rotation matrix R_y
+	// 5. Apply the inverse rotation matrix R_xz
+
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+	// normalize the x,y,z axis components to make our life easier
+	L := math.Sqrt(x*x + y*y + z*z)
+	x,y,z = x/L,y/L,z/L
+
+	if( closeEquals(x,1,epsilon) &&
+		closeEquals(y,0,epsilon) &&
+		closeEquals(z,0,epsilon)){
+		// specified axis is aligned with the x-axis; therefore
+		// perform the R_xz rotation about the z-axis instead.
+		v := math.Sqrt(x*x + y*y)
+		A := c*z*s -s*y
+		B := (-c*y -s*x*z)
+		C := s*x + c*y*s
+		D := c*x -s*y*s
+
+		mat := &Mat4{}
+		mat.ToIdentity()
+		mat.Set(0,0,v*v*x*x + A*z*x - B*y)
+		mat.Set(0,1,v*v*y*x + B*x + A*y*z)
+		mat.Set(0,2,x*z -A)
+
+		mat.Set(1,0,x*y*v*v - D*y + C*x*z)
+		mat.Set(1,1,v*v*y*y + C*z*y + D*x)
+		mat.Set(1,2,y*z -C)
+
+		mat.Set(2,0,x*z*(1- c)-s*y)
+		mat.Set(2,1,s*x + y*z*(1-c))
+		mat.Set(2,2,c*v*v +z*z)
+		return mat
+	}else{
+		// rotate about the x-axis
+		v := math.Sqrt(y*y + z*z)
+		A:= (s*z - x*y*c)
+		B:= (c*z + x*y*s)
+		C:= (-x*z*c-y*s)
+		D:= (x*z*s -y*c)
+
+		mat := &Mat4{}
+		mat.ToIdentity()
+		mat.Set(0,0, c*v*v + x*x)
+		mat.Set(0,1, x*y*(1-c) - s*z)
+		mat.Set(0,2, s*y + x*z*(1-c))
+
+		mat.Set(1,0, A + x*y)
+		mat.Set(1,1, v*v*y*y - A*x*y + B*z)
+		mat.Set(1,2, v*v*z*y - B*y - A*x*z)
+
+		mat.Set(2,0, C + x*z)
+		mat.Set(2,1, z*y*v*v - C*x*y + D*z)
+		mat.Set(2,2, z*z*v*v - C*x*x - D*y)
+		return mat
+	}
+}
+
+func AxisAngleToMat4(angle float64, a, b, c float64) *Mat4 {
 	eye := &Vec3{0, 0, 0}
 	at := &Vec3{a, b, c}
 	up := &Vec3{0,1,0}
@@ -203,89 +280,6 @@ func AxisAngleToMat4_2(angle float64, a, b, c float64) *Mat4 {
 	rotMat.Set(1, 1, math.Cos(angle))
 
 	return mat.Transpose().MultIn(rotMat).MultIn(mat)
-}
-func AxisAngleToMat4(angle float64, a, b, c float64) *Mat4 {
-	// The algorithm works as follows:
-	// 	translate to origin( not in this one)
-	// 	rotate into xz plane
-	// 	rotation onto z axis
-	// 	rotate around the y-axis
-	// 	undo rotation about z-axis
-	// 	undo rotation from xz plane
-	// 	un-translate
-	xzMat := &Mat4{}
-	yMat := &Mat4{}
-	inv_xzMat := &Mat4{}
-	inv_yMat := &Mat4{}
-	rotMat := &Mat4{}
-
-	V := math.Sqrt(b*b + c*c)
-	L := math.Sqrt(a*a + b*b + c*c)
-	if closeEquals(V, 0, epsilon) {
-		V := math.Sqrt(a*a + b*b)
-		xzMat.ToIdentity()
-		xzMat.Set(0, 0, a/V)
-		xzMat.Set(0, 1, b/V)
-		xzMat.Set(1, 0, -b/V)
-		xzMat.Set(1, 1, a/V)
-
-		inv_xzMat.ToIdentity()
-		inv_xzMat.Set(0, 0, a/V)
-		inv_xzMat.Set(0, 1, -b/V)
-		inv_xzMat.Set(1, 0, b/V)
-		inv_xzMat.Set(1, 1, a/V)
-
-		yMat.ToIdentity()
-		yMat.Set(0, 0, c/L)
-		yMat.Set(0, 2, -V/L)
-		yMat.Set(2, 0, V/L)
-		yMat.Set(2, 2, c/L)
-
-		inv_yMat.ToIdentity()
-		inv_yMat.Set(0, 0, c/L)
-		inv_yMat.Set(0, 2, V/L)
-		inv_yMat.Set(2, 0, -V/L)
-		inv_yMat.Set(2, 2, c/L)
-	} else {
-		xzMat.ToIdentity()
-		xzMat.Set(1, 1, c/V)
-		xzMat.Set(1, 2, -b/V)
-		xzMat.Set(2, 1, b/V)
-		xzMat.Set(2, 2, c/V)
-
-		inv_xzMat.ToIdentity()
-		inv_xzMat.Set(1, 1, c/V)
-		inv_xzMat.Set(1, 2, b/V)
-		inv_xzMat.Set(2, 1, -b/V)
-		inv_xzMat.Set(2, 2, c/V)
-
-		yMat.ToIdentity()
-		yMat.Set(0, 0, V/L)
-		yMat.Set(0, 2, -a/L)
-		yMat.Set(2, 0, a/L)
-		yMat.Set(2, 2, V/L)
-
-		inv_yMat.ToIdentity()
-		inv_yMat.Set(0, 0, V/L)
-		inv_yMat.Set(0, 2, a/L)
-		inv_yMat.Set(2, 0, -a/L)
-		inv_yMat.Set(2, 2, V/L)
-	}
-
-	rotMat.ToIdentity()
-	rotMat.Set(0, 0, math.Cos(angle))
-	rotMat.Set(0, 1, -math.Sin(angle))
-	rotMat.Set(1, 0, math.Sin(angle))
-	rotMat.Set(1, 1, math.Cos(angle))
-
-	out := inv_xzMat.Mult(inv_yMat).MultIn(rotMat).MultIn(yMat).MultIn(xzMat)
-	fmt.Println(inv_xzMat.Mult(inv_yMat), "\n")
-	fmt.Println(rotMat, "\n")
-	fmt.Println(yMat.Mult(xzMat), "\n")
-
-	fmt.Println(out, "\n***\n")
-	fmt.Println(AxisAngleToMat4_2(angle, a, b, c), "\n-----\n")
-	return out
 }
 
 // Return a matrix representing the specified rotations in euler angles
@@ -398,43 +392,6 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 	roll = z
 	return
 }
-
-// func Mat4ToEuler(mat *Mat4) (angle_x, angle_y, angle_z float64) {
-// 	//Calculate Y-axis angle
-// 	var trx, try, C float64
-
-// 	angle_y = -math.Asin(mat.mat[8])
-// 	C = math.Cos(angle_y)
-
-// 	// Gimbal lock?
-// 	if math.Abs(C) > 0.005 {
-// 		// No, so get X-axis angle
-// 		trx = mat.mat[10] / C
-// 		try = -mat.mat[6] / C
-
-// 		angle_x = math.Atan2(try, trx)
-
-// 		// get the z-axis angle
-// 		trx =  mat.mat[0] / C // Get Z-axis angle
-// 		try = -mat.mat[1] / C
-
-// 		angle_z = math.Atan2(try, trx)
-// 	} else {
-// 		// gimball lock has occured
-// 		// set the x-axis angle to zero
-// 		angle_x = 0
-// 		// And calculate Z-axis angle
-// 		trx = mat.mat[5]
-// 		try = mat.mat[4]
-// 		angle_z = math.Atan2(try, trx)
-// 	}
-
-// 	// clamp all the angles into the proper ranges
-// 	angle_x = clamp(angle_x, 0, 2*math.Pi)
-// 	angle_y = clamp(angle_y, 0, 2*math.Pi)
-// 	angle_z = clamp(angle_z, 0, 2*math.Pi)
-// 	return
-// }
 
 // // I need to test this...
 // func LookAtMat44(eye,center,up *Vec3) (mat *Mat4){
