@@ -29,18 +29,18 @@ func AxisAngleToQ8n(angle float64, x, y, z float64) *q8n {
 // Perform the operation in the order
 // pitch => yaw => row
 // x => y => z
-func EulerToQ8n(pitch,yaw,roll float64) *q8n {
+func EulerToQ8n(pitch, yaw, roll float64) *q8n {
 	yawQ := &q8n{math.Cos(yaw / 2), 0, math.Sin(yaw / 2), 0}
 	pitchQ := &q8n{math.Cos(pitch / 2), math.Sin(pitch / 2), 0, 0}
 	rollQ := &q8n{math.Cos(roll / 2), 0, 0, math.Sin(roll / 2)}
 
 	// note must be applied in reverse order
-    // pitch => yaw => roll
-    return rollQ.MultIn(yawQ).MultIn(pitchQ)
+	// pitch => yaw => roll
+	return rollQ.MultIn(yawQ).MultIn(pitchQ)
 }
 
 func Mat4ToQ8n(mat *Mat4) *q8n {
-    // Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
+	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
 	// 0  1  2  3
 	// 4  5  6  7
 	// 8  9  10 11
@@ -68,7 +68,7 @@ func Mat4ToQ8n(mat *Mat4) *q8n {
 		}
 	}
 
-    // TODO : UNTESTED!!!
+	// TODO : UNTESTED!!!
 	var w, x, y, z, s float64
 	switch max_col {
 	case 0:
@@ -110,110 +110,216 @@ func Q8nToAxisAngle(q *q8n) (angle, x, y, z float64) {
 	return
 }
 
-
 // NOT DONE!
-func Q8nToEuler(q *q8n) (pitch,yaw,roll float64){
-    // Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+func Q8nToEuler(q *q8n) (pitch, yaw, roll float64) {
+	// Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
-    test := q.x*q.y + q.z*q.w
-    fmt.Println(test)
-    if (test > 0.499) { // singularity at north pole
-        yaw = 2 * math.Atan2(q.x,q.w)
-        roll = math.Pi/2
-        pitch = 0
-        return
-    }
-    if (test < -0.499) { // singularity at south pole
-        yaw = -2 * math.Atan2(q.x,q.w)
-        roll = -math.Pi/2
-        pitch = 0
-        return
-    }
-    sqx := q.x*q.x
-    sqy := q.y*q.y
-    sqz := q.z*q.z
-    yaw = math.Atan2(2*q.y*q.w-2*q.x*q.z , 1 - 2*sqy - 2*sqz)
-    roll = math.Asin(2*test)
-    pitch = math.Atan2(2*q.x*q.w-2*q.y*q.z , 1 - 2*sqx - 2*sqz)
-    return
+	test := q.x*q.y + q.z*q.w
+	fmt.Println(test)
+	if test > 0.499 { // singularity at north pole
+		yaw = 2 * math.Atan2(q.x, q.w)
+		roll = math.Pi / 2
+		pitch = 0
+		return
+	}
+	if test < -0.499 { // singularity at south pole
+		yaw = -2 * math.Atan2(q.x, q.w)
+		roll = -math.Pi / 2
+		pitch = 0
+		return
+	}
+	sqx := q.x * q.x
+	sqy := q.y * q.y
+	sqz := q.z * q.z
+	yaw = math.Atan2(2*q.y*q.w-2*q.x*q.z, 1-2*sqy-2*sqz)
+	roll = math.Asin(2 * test)
+	pitch = math.Atan2(2*q.x*q.w-2*q.y*q.z, 1-2*sqx-2*sqz)
+	return
 }
 
 //Calculates a Mat4 from the provided quaternion
-func Q8nToMat4(q *q8n) (mat *Mat4){
-    // Reference
-    // Derivation of the below matrix can be found here
-    // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
-    //     1 - 2y² - 2z²    2yx - 2wz        2xz + 2wy
-    // M=  2xy + 2wz        1 - 2x² - 2z²    2yz - 2wx
-    //     2xz - 2wy        2yz + 2wx        1 - 2x² - 2y²
+func Q8nToMat4(q *q8n) (mat *Mat4) {
+	// Reference
+	// Derivation of the below matrix can be found here
+	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
+	//     1 - 2y² - 2z²    2yx - 2wz        2xz + 2wy
+	// M=  2xy + 2wz        1 - 2x² - 2z²    2yz - 2wx
+	//     2xz - 2wy        2yz + 2wx        1 - 2x² - 2y²
 
-	w,x,y,z := q.w,q.x,q.y,q.z
+	w, x, y, z := q.w, q.x, q.y, q.z
 
-    mat = &Mat4{}
-    // 0 1 2 3
-    // 4 5 6 7
-    // 8 9 10 11
-    // 12 13 14 15
-    mat.mat[0] = 1 - 2*y*y - 2*z*z
-    mat.mat[1] = 2*y*z - 2*w*z
-    mat.mat[2] = 2*x*z + 2*w*y
-    mat.mat[3] = 0
+	mat = &Mat4{}
+	// 0 1 2 3
+	// 4 5 6 7
+	// 8 9 10 11
+	// 12 13 14 15
+	mat.mat[0] = 1 - 2*y*y - 2*z*z
+	mat.mat[1] = 2*y*z - 2*w*z
+	mat.mat[2] = 2*x*z + 2*w*y
+	mat.mat[3] = 0
 
-    mat.mat[4] = 2*x*y + 2*w*z
-    mat.mat[5] = 1 - 2*x*x - 2*z*z
-    mat.mat[6] = 2*y*z - 2*w*x
-    mat.mat[7] = 0
+	mat.mat[4] = 2*x*y + 2*w*z
+	mat.mat[5] = 1 - 2*x*x - 2*z*z
+	mat.mat[6] = 2*y*z - 2*w*x
+	mat.mat[7] = 0
 
-    mat.mat[8] = 2*x*z - 2*w*y
-    mat.mat[9] = 2*y*z + 2*w*x
-    mat.mat[10] = 1 - 2*x*x - 2*y*y
-    mat.mat[11] = 0
+	mat.mat[8] = 2*x*z - 2*w*y
+	mat.mat[9] = 2*y*z + 2*w*x
+	mat.mat[10] = 1 - 2*x*x - 2*y*y
+	mat.mat[11] = 0
 
-    mat.mat[12] = 0
-    mat.mat[13] = 0
-    mat.mat[14] = 0
-    mat.mat[15] = 1
-    return
+	mat.mat[12] = 0
+	mat.mat[13] = 0
+	mat.mat[14] = 0
+	mat.mat[15] = 1
+	return
 }
 
+func AxisAngleToMat4_2(angle float64, a, b, c float64) *Mat4 {
+	eye := &Vec3{0, 0, 0}
+	at := &Vec3{a, b, c}
+	up := &Vec3{0,1,0}
 
-func AxisAngleToMat4(angle float64, x, y, z float64) (mat *Mat4) {
-	return nil
+	if at.Equals(&Vec3{0,1,0}) {
+		up = &Vec3{0, 0, -1}
+	} else if at.Equals(&Vec3{0,-1,0}) {
+		up = &Vec3{0, 0, 1}
+	}
+
+	forward := at.Sub(eye).NormalizeIn()
+	right := up.Cross(forward).NormalizeIn()
+	up = forward.Cross(right).NormalizeIn()
+
+	mat := NewMat4(right.X, right.Y, right.Z, 0,
+		up.X, up.Y, up.Z, 0,
+		forward.X, forward.Y, forward.Z, 0,
+		0, 0, 0, 1)
+
+	rotMat := &Mat4{}
+	rotMat.ToIdentity()
+	rotMat.Set(0, 0, math.Cos(angle))
+	rotMat.Set(0, 1, -math.Sin(angle))
+	rotMat.Set(1, 0, math.Sin(angle))
+	rotMat.Set(1, 1, math.Cos(angle))
+
+	return mat.Transpose().MultIn(rotMat).MultIn(mat)
 }
+func AxisAngleToMat4(angle float64, a, b, c float64) *Mat4 {
+	// The algorithm works as follows:
+	// 	translate to origin( not in this one)
+	// 	rotate into xz plane
+	// 	rotation onto z axis
+	// 	rotate around the y-axis
+	// 	undo rotation about z-axis
+	// 	undo rotation from xz plane
+	// 	un-translate
+	xzMat := &Mat4{}
+	yMat := &Mat4{}
+	inv_xzMat := &Mat4{}
+	inv_yMat := &Mat4{}
+	rotMat := &Mat4{}
 
+	V := math.Sqrt(b*b + c*c)
+	L := math.Sqrt(a*a + b*b + c*c)
+	if closeEquals(V, 0, epsilon) {
+		V := math.Sqrt(a*a + b*b)
+		xzMat.ToIdentity()
+		xzMat.Set(0, 0, a/V)
+		xzMat.Set(0, 1, b/V)
+		xzMat.Set(1, 0, -b/V)
+		xzMat.Set(1, 1, a/V)
+
+		inv_xzMat.ToIdentity()
+		inv_xzMat.Set(0, 0, a/V)
+		inv_xzMat.Set(0, 1, -b/V)
+		inv_xzMat.Set(1, 0, b/V)
+		inv_xzMat.Set(1, 1, a/V)
+
+		yMat.ToIdentity()
+		yMat.Set(0, 0, c/L)
+		yMat.Set(0, 2, -V/L)
+		yMat.Set(2, 0, V/L)
+		yMat.Set(2, 2, c/L)
+
+		inv_yMat.ToIdentity()
+		inv_yMat.Set(0, 0, c/L)
+		inv_yMat.Set(0, 2, V/L)
+		inv_yMat.Set(2, 0, -V/L)
+		inv_yMat.Set(2, 2, c/L)
+	} else {
+		xzMat.ToIdentity()
+		xzMat.Set(1, 1, c/V)
+		xzMat.Set(1, 2, -b/V)
+		xzMat.Set(2, 1, b/V)
+		xzMat.Set(2, 2, c/V)
+
+		inv_xzMat.ToIdentity()
+		inv_xzMat.Set(1, 1, c/V)
+		inv_xzMat.Set(1, 2, b/V)
+		inv_xzMat.Set(2, 1, -b/V)
+		inv_xzMat.Set(2, 2, c/V)
+
+		yMat.ToIdentity()
+		yMat.Set(0, 0, V/L)
+		yMat.Set(0, 2, -a/L)
+		yMat.Set(2, 0, a/L)
+		yMat.Set(2, 2, V/L)
+
+		inv_yMat.ToIdentity()
+		inv_yMat.Set(0, 0, V/L)
+		inv_yMat.Set(0, 2, a/L)
+		inv_yMat.Set(2, 0, -a/L)
+		inv_yMat.Set(2, 2, V/L)
+	}
+
+	rotMat.ToIdentity()
+	rotMat.Set(0, 0, math.Cos(angle))
+	rotMat.Set(0, 1, -math.Sin(angle))
+	rotMat.Set(1, 0, math.Sin(angle))
+	rotMat.Set(1, 1, math.Cos(angle))
+
+	out := inv_xzMat.Mult(inv_yMat).MultIn(rotMat).MultIn(yMat).MultIn(xzMat)
+	fmt.Println(inv_xzMat.Mult(inv_yMat), "\n")
+	fmt.Println(rotMat, "\n")
+	fmt.Println(yMat.Mult(xzMat), "\n")
+
+	fmt.Println(out, "\n***\n")
+	fmt.Println(AxisAngleToMat4_2(angle, a, b, c), "\n-----\n")
+	return out
+}
 
 // Return a matrix representing the specified rotations in euler angles
 // Rotations are applied in the order pitch => yaw => roll
-func EulerToMat4(pitch,yaw,roll float64) (mat *Mat4) {
-    mat = &Mat4{}
-    cx := math.Cos(pitch)
-    sx := math.Sin(pitch)
-    cy := math.Cos(yaw)
-    sy := math.Sin(yaw)
-    cz := math.Cos(roll)
-    sz := math.Sin(roll)
+func EulerToMat4(pitch, yaw, roll float64) (mat *Mat4) {
+	mat = &Mat4{}
+	cx := math.Cos(pitch)
+	sx := math.Sin(pitch)
+	cy := math.Cos(yaw)
+	sy := math.Sin(yaw)
+	cz := math.Cos(roll)
+	sz := math.Sin(roll)
 
-    // This matrix was derived by multiplying each indiviudual rotation matrix
-    // together into a single matrix.
-    // note the matrices are applied in reverse order compared to the application
-    // of the rotations.
-    //   roll         yaw             pitch
-    // | cz  -sz  0 | | cy   0   sy | | 1    0    0  |
-    // | sz   cz  0 |x| 0    1   0  |x| 0    cx  -sx |
-    // | 0    0   1 | | -sy  0   cy | | 0    sx   cx |
+	// This matrix was derived by multiplying each indiviudual rotation matrix
+	// together into a single matrix.
+	// note the matrices are applied in reverse order compared to the application
+	// of the rotations.
+	//   roll         yaw             pitch
+	// | cz  -sz  0 | | cy   0   sy | | 1    0    0  |
+	// | sz   cz  0 |x| 0    1   0  |x| 0    cx  -sx |
+	// | 0    0   1 | | -sy  0   cy | | 0    sx   cx |
 
-    // first row
-    mat.mat[0] = cz*cy
-    mat.mat[1] = cz*sy*sx - sz*cx
-    mat.mat[2] = sz*sx + cz*cx*sy
-    // second row
-    mat.mat[4] = sz*cy
-    mat.mat[5] = cz*cx + sx*sy*sz
-    mat.mat[6] = sz*sy*cx - cz*sx
-    // third row
-    mat.mat[8] = -sy
-    mat.mat[9] = sx*cy
-    mat.mat[10] = cy*cx
+	// first row
+	mat.mat[0] = cz * cy
+	mat.mat[1] = cz*sy*sx - sz*cx
+	mat.mat[2] = sz*sx + cz*cx*sy
+	// second row
+	mat.mat[4] = sz * cy
+	mat.mat[5] = cz*cx + sx*sy*sz
+	mat.mat[6] = sz*sy*cx - cz*sx
+	// third row
+	mat.mat[8] = -sy
+	mat.mat[9] = sx * cy
+	mat.mat[10] = cy * cx
 
 	mat.mat[3] = 0
 	mat.mat[7] = 0
@@ -229,76 +335,75 @@ func Mat44ToAxisAngle(mat *Mat4) (angle, x, y, z float64) {
 	return
 }
 
-
 // Return the pitch,yaw and roll values for the given rotation matrix
 // Assumption is that mat is a valid rotation matrix
 // following the conventions of this package
 // (x-y-z rotation order,row-major order, right-handed)
-func Mat4ToEuler(mat *Mat4) (pitch,yaw,roll float64){
-    // The method for calculating the euler angles from a rotation matrix
-    // uses the method described in this document
-    // http://staff.city.ac.uk/~sbbh653/publications/euler.pdf
+func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
+	// The method for calculating the euler angles from a rotation matrix
+	// uses the method described in this document
+	// http://staff.city.ac.uk/~sbbh653/publications/euler.pdf
 
-    // The rotation matrix we are using will be of the following form
-    // cos(x) is abbreviated as cx ( similarily sin(x) = sx)
-    //
-    // cz*cy       cz*sy*sx - sz*cx         sz*sx + cz*cx*sy   | r11 r12 r13
-    // sz*cy       cz*cx + sx*sy*sz         sz*sy*cx - cz*sx   | r21 r22 r23
-    // -sy         sx*cy                    cx*cy              | r31 r32 r33
+	// The rotation matrix we are using will be of the following form
+	// cos(x) is abbreviated as cx ( similarily sin(x) = sx)
+	//
+	// cz*cy       cz*sy*sx - sz*cx         sz*sx + cz*cx*sy   | r11 r12 r13
+	// sz*cy       cz*cx + sx*sy*sz         sz*sy*cx - cz*sx   | r21 r22 r23
+	// -sy         sx*cy                    cx*cy              | r31 r32 r33
 
-    // We want to determine the x,y,z angles
-    // 1) Find the 'y' angle
-    //      This is easily accomplished because term r31 is simply '-sin(y)'
-    // 2) There are two possible angles for y because
-    //      sin(y) == sin( pi - y)
-    // 3) To find the value of x, we observe the following
-    //      r32/r33 = tan(x)
-    //      (sin(x)cos(y)) / (cos(x)cos(y))
-    //      (sin(x)/cos(x)) == tan(x) by defn.
-    // 4) Therefore we can calculate x by.
-    //      x = atan2(r32,r33)
+	// We want to determine the x,y,z angles
+	// 1) Find the 'y' angle
+	//      This is easily accomplished because term r31 is simply '-sin(y)'
+	// 2) There are two possible angles for y because
+	//      sin(y) == sin( pi - y)
+	// 3) To find the value of x, we observe the following
+	//      r32/r33 = tan(x)
+	//      (sin(x)cos(y)) / (cos(x)cos(y))
+	//      (sin(x)/cos(x)) == tan(x) by defn.
+	// 4) Therefore we can calculate x by.
+	//      x = atan2(r32,r33)
 
-    var x,y,z float64
-    r31 := mat.Get(2,0)
-    if closeEquals(r31,1,epsilon) {
-        // we are in gimbal lock
-        z = 0
-        y = -math.Pi/2
-        x = -z + math.Atan2(-mat.Get(0,1),-mat.Get(0,2))
-    }else if  closeEquals(r31,-1,epsilon){
-        // we are in gimbal lock
-        z = 0
-        y = math.Pi/2
-        x = z + math.Atan2(mat.Get(0,1),mat.Get(0,2))
-    }else{
-        y = -math.Asin(r31)
-        // y = math.Pi + math.Asin(r31) // alt-solution
-        cos_y := math.Cos(y)
-        x = math.Atan2(mat.Get(2,1)/cos_y,mat.Get(2,2)/cos_y)
-        z = math.Atan2(mat.Get(1,0)/cos_y,mat.Get(0,0)/cos_y)
+	var x, y, z float64
+	r31 := mat.Get(2, 0)
+	if closeEquals(r31, 1, epsilon) {
+		// we are in gimbal lock
+		fmt.Println("1")
+		z = 0
+		y = -math.Pi / 2
+		x = -z + math.Atan2(-mat.Get(0, 1), -mat.Get(0, 2))
+	} else if closeEquals(r31, -1, epsilon) {
+		// we are in gimbal lock
+		fmt.Println("-1")
+		z = 0
+		y = math.Pi / 2
+		x = z + math.Atan2(mat.Get(0, 1), mat.Get(0, 2))
+	} else {
+		fmt.Println("normal")
+		y = -math.Asin(r31)
+		// y = math.Pi + math.Asin(r31) // alt-solution
+		cos_y := math.Cos(y)
+		x = math.Atan2(mat.Get(2, 1)/cos_y, mat.Get(2, 2)/cos_y)
+		z = math.Atan2(mat.Get(1, 0)/cos_y, mat.Get(0, 0)/cos_y)
 
-        // y2 := math.Pi + math.Asin(r31) // alt-solution
-        // cos_y2 := math.Cos(y2)
-        // x2 := math.Atan2(mat.Get(2,1)/cos_y2,mat.Get(2,2)/cos_y2)
-        // z2 := math.Atan2(mat.Get(1,0)/cos_y2,mat.Get(0,0)/cos_y2)
+		// y2 := math.Pi + math.Asin(r31) // alt-solution
+		// cos_y2 := math.Cos(y2)
+		// x2 := math.Atan2(mat.Get(2,1)/cos_y2,mat.Get(2,2)/cos_y2)
+		// z2 := math.Atan2(mat.Get(1,0)/cos_y2,mat.Get(0,0)/cos_y2)
 
-        // fmt.Printf("%2.4f %2.5f %2.5f %2.5f %2.5f %2.5f \n",x,y,z,x2,y2,z2)
-    }
+		// fmt.Printf("%2.4f %2.5f %2.5f %2.5f %2.5f %2.5f \n",x,y,z,x2,y2,z2)
+	}
 
-    pitch = -x
-    yaw = -y
-    roll = -z
-    return
+	pitch = x
+	yaw = y
+	roll = z
+	return
 }
-
 
 // func Mat4ToEuler(mat *Mat4) (angle_x, angle_y, angle_z float64) {
 // 	//Calculate Y-axis angle
 // 	var trx, try, C float64
 
-// 	//var D float64
-// 	angle_y = -math.Asin(mat.mat[2])
-// 	//D = angle_y
+// 	angle_y = -math.Asin(mat.mat[8])
 // 	C = math.Cos(angle_y)
 
 // 	// Gimbal lock?
@@ -382,8 +487,8 @@ func RotateVecQ8n(q *q8n, v *Vec3) *Vec3 {
 	inv_q := q.Inverse()
 	rs := q.Mult(vq).MultIn(inv_q)
 
-	if !closeEquals(rs.w,0,epsilon) {
-		fmt.Println("What not zero!",rs)
+	if !closeEquals(rs.w, 0, epsilon) {
+		fmt.Println("What not zero!", rs)
 	}
 	return &Vec3{rs.x, rs.y, rs.z}
 }

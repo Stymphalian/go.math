@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"fmt"
+	"math"
 )
 
 const (
@@ -60,14 +61,14 @@ func (this *Mat4) Equals(other *Mat4) bool {
 // Retrieve the element at column/x and row/y
 // 0 indexed
 // Does not do any bounds checking
-func (this *Mat4) Get(row,col int) float64 {
+func (this *Mat4) Get(row, col int) float64 {
 	return this.mat[row*mat4Dim+col]
 }
 
 // Set the value at the specified columnd and row.
 // 0 indexed
 // Does not do any bounds checking
-func (this *Mat4) Set(row,col int, value float64) *Mat4 {
+func (this *Mat4) Set(row, col int, value float64) *Mat4 {
 	this.mat[row*mat4Dim+col] = value
 	return this
 }
@@ -241,6 +242,12 @@ func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 	return this
 }
 
+func (this *Mat4) Mult(o *Mat4) *Mat4 {
+	out := *this
+	out.MultIn(o)
+	return &out
+}
+
 // Returns a new matrix which is transpose to 'this'
 func (this *Mat4) Transpose() *Mat4 {
 	out := *this
@@ -250,19 +257,18 @@ func (this *Mat4) Transpose() *Mat4 {
 
 // Take the transpose of this matrix.
 func (this *Mat4) TransposeIn() *Mat4 {
-	m00,m01,m02,m03 := this.GetRow(0)
-	m10,m11,m12,m13 := this.GetRow(1)
-	m20,m21,m22,m23 := this.GetRow(2)
-	m30,m31,m32,m33 := this.GetRow(3)
+	m00, m01, m02, m03 := this.GetRow(0)
+	m10, m11, m12, m13 := this.GetRow(1)
+	m20, m21, m22, m23 := this.GetRow(2)
+	m30, m31, m32, m33 := this.GetRow(3)
 
-	this.SetCol(0,m00,m01,m02,m03)
-	this.SetCol(1,m10,m11,m12,m13)
-	this.SetCol(2,m20,m21,m22,m23)
-	this.SetCol(3,m30,m31,m32,m33)
+	this.SetCol(0, m00, m01, m02, m03)
+	this.SetCol(1, m10, m11, m12, m13)
+	this.SetCol(2, m20, m21, m22, m23)
+	this.SetCol(3, m30, m31, m32, m33)
 
 	return this
 }
-
 
 // Calculate the determinant of a 2x2 matrix
 // Values are givein in Row-Major order
@@ -348,7 +354,7 @@ func (this *Mat4) Adjoint() *Mat4 {
 // TODO: Needs further testing
 // Try out with rotation matrices.
 // The inverse of a valid rotation matrix should just be the transpose
-func (this *Mat4) Inverse() (*Mat4) {
+func (this *Mat4) Inverse() *Mat4 {
 	out := *this
 
 	det := out.Determinant()
@@ -364,7 +370,7 @@ func (this *Mat4) Inverse() (*Mat4) {
 // False otherwise
 // Internally it checks to see if the determinant is zero.
 func (this *Mat4) HasInverse() bool {
-	return !closeEquals(this.Determinant(),0,epsilon)
+	return !closeEquals(this.Determinant(), 0, epsilon)
 }
 
 // Sets the matrix to the identity matrix
@@ -425,12 +431,32 @@ func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
 	return this
 }
 
-// rotations can be done in a variety of ways.
-// We leave that to the rotation package.
-// angles is rad
-func (this *Mat4) ToRotateAll(x, y, z float64) *Mat4 {
+// Make this matrix into a rotation matrix about the x-axis
+func (this *Mat4) ToRotateX(x float64) *Mat4 {
+	this.ToIdentity()
+	this.mat[5] = math.Cos(x)
+	this.mat[6] = -math.Sin(x)
+	this.mat[9] = math.Sin(x)
+	this.mat[10] = math.Cos(x)
 	return this
 }
-func (this *Mat4) ToRotateAxis(delta float64, axis *Vec3) *Mat4 {
+
+// Make this matrix into a rotation matrix about the y-axis
+func (this *Mat4) ToRotateY(y float64) *Mat4 {
+	this.ToIdentity()
+	this.mat[0] = math.Cos(y)
+	this.mat[2] = math.Sin(y)
+	this.mat[8] = -math.Sin(y)
+	this.mat[10] = math.Cos(y)
+	return this
+}
+
+// Make this matrix into a rotation matrix about the z-axis
+func (this *Mat4) ToRotateZ(z float64) *Mat4 {
+	this.ToIdentity()
+	this.mat[0] = math.Cos(z)
+	this.mat[1] = -math.Sin(z)
+	this.mat[4] = math.Sin(z)
+	this.mat[5] = math.Cos(z)
 	return this
 }

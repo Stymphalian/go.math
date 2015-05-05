@@ -109,11 +109,10 @@ func (this *Vec3) Cross(other *Vec3) *Vec3 {
 // Store the result into 'this'
 // Return a pointer to 'this'
 func (this *Vec3) CrossIn(other *Vec3) *Vec3 {
-	var out Vec3
-	out.X = (this.Y*other.Z - other.Y*this.Z)
-	out.Y = (this.X*other.Z - other.X*this.Z)
-	out.Z = (this.X*other.Y - other.X*this.Y)
-	*this = out
+	x := (this.Y*other.Z - other.Y*this.Z)
+	y := -(this.X*other.Z - other.X*this.Z)
+	z := (this.X*other.Y - other.X*this.Y)
+	this.X, this.Y, this.Z = x, y, z
 	return this
 }
 

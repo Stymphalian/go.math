@@ -182,6 +182,8 @@ func TestCrossVec3(t *testing.T) {
 		{&Vec3{1, 2, 3}, &Vec3{0, 0, 0}, &Vec3{0, 0, 0}},
 		{&Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
 		{&Vec3{1, 2, 3}, &Vec3{-1, -2, -3}, &Vec3{0, 0, 0}},
+		{&Vec3{math.Sqrt(2), math.Sqrt(2), 0}, &Vec3{0, 0, -1}, &Vec3{-math.Sqrt(2), math.Sqrt(2), 0}},
+		{&Vec3{0, 0, -1}, &Vec3{math.Sqrt(2), math.Sqrt(2), 0}, &Vec3{math.Sqrt(2), -math.Sqrt(2), 0}},
 	}
 
 	for testIndex, test := range cases {

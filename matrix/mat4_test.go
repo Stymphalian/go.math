@@ -552,53 +552,53 @@ func TestAdjoint(t *testing.T) {
 
 func TestInverseMatrix(t *testing.T) {
 	m := &Mat4{}
-	cases := []struct{
-		orig,want [16]float64
+	cases := []struct {
+		orig, want        [16]float64
 		want_inverse_flag bool
 	}{
 		{[16]float64{
-		0.5 * 0.5,
-		-0.5 * 0.866,
-		0.866,
-		0,
+			0.5 * 0.5,
+			-0.5 * 0.866,
+			0.866,
+			0,
 
-		0.866*0.866*0.866 + 0.5*0.5,
-		-0.866*0.866*0.866 + 0.5*0.5,
-		0.866 * 0.5,
-		0,
+			0.866*0.866*0.866 + 0.5*0.5,
+			-0.866*0.866*0.866 + 0.5*0.5,
+			0.866 * 0.5,
+			0,
 
-		-0.5*0.866*0.5 + 0.866*0.866,
-		0.5*0.866*0.866 + 0.866*0.5,
-		-0.5 * 0.5,
-		0,
+			-0.5*0.866*0.5 + 0.866*0.866,
+			0.5*0.866*0.866 + 0.866*0.5,
+			-0.5 * 0.5,
+			0,
 
-		0, 0, 0, 1},[16]float64{
-		-0.451227, 1.06758, 0.285991, 0,
-		0.822806, -0.946666, 1.21058, 0,
-		1.6964, -0.781524, 0.522727, 0,
-		0, 0, 0, 1},true},
-		{[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},false},
-		{[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},
-			[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},true},
+			0, 0, 0, 1}, [16]float64{
+			-0.451227, 1.06758, 0.285991, 0,
+			0.822806, -0.946666, 1.21058, 0,
+			1.6964, -0.781524, 0.522727, 0,
+			0, 0, 0, 1}, true},
+		{[16]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			[16]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, false},
+		{[16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+			[16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}, true},
 		{[16]float64{
-			math.Cos(math.Pi/2),-math.Sin(math.Pi/2),0,0,
-			math.Sin(math.Pi/2),math.Cos(math.Pi/2),0,0,
-			0,0,1,0,
-			0,0,0,1},
+			math.Cos(math.Pi / 2), -math.Sin(math.Pi / 2), 0, 0,
+			math.Sin(math.Pi / 2), math.Cos(math.Pi / 2), 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1},
 			[16]float64{
-				math.Cos(math.Pi/2),math.Sin(math.Pi/2),0,0,
-				-math.Sin(math.Pi/2),math.Cos(math.Pi/2),0,0,
-				0,0,1,0,
-				0,0,0,1},true},
+				math.Cos(math.Pi / 2), math.Sin(math.Pi / 2), 0, 0,
+				-math.Sin(math.Pi / 2), math.Cos(math.Pi / 2), 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1}, true},
 	}
 
-	for testIndex,c := range cases {
+	for testIndex, c := range cases {
 		m.Load(c.orig)
 		get_inverse_flag := m.HasInverse()
 		if get_inverse_flag != c.want_inverse_flag {
-				t.Errorf("TestInverse %d %v",testIndex,get_inverse_flag)
-				continue
+			t.Errorf("TestInverse %d %v", testIndex, get_inverse_flag)
+			continue
 		}
 
 		mat := m.Inverse()
@@ -606,7 +606,7 @@ func TestInverseMatrix(t *testing.T) {
 
 		for k, _ := range c.want {
 			if closeEquals(get[k], c.want[k], 0.0001) == false {
-				t.Errorf("TestInverse %d %d %v %v",testIndex, k, get[k], c.want[k])
+				t.Errorf("TestInverse %d %d %v %v", testIndex, k, get[k], c.want[k])
 				break
 			}
 		}
