@@ -2,7 +2,7 @@ package matrix
 
 import (
 	// "fmt"
-	// "math"
+	"math"
 	"testing"
 )
 
@@ -472,6 +472,15 @@ func TestTranspose(t *testing.T) {
 				break
 			}
 		}
+
+		orig.Load(c.orig)
+		get = orig.TransposeIn().Dump()
+		for k, _ := range c.want {
+			if closeEquals(get[k], c.want[k], epsilon) == false {
+				t.Errorf("TestTransposeIn %d %d", testIndex, k)
+				break
+			}
+		}
 	}
 }
 
@@ -572,6 +581,16 @@ func TestInverseMatrix(t *testing.T) {
 			[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},false},
 		{[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},
 			[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1},true},
+		{[16]float64{
+			math.Cos(math.Pi/2),-math.Sin(math.Pi/2),0,0,
+			math.Sin(math.Pi/2),math.Cos(math.Pi/2),0,0,
+			0,0,1,0,
+			0,0,0,1},
+			[16]float64{
+				math.Cos(math.Pi/2),math.Sin(math.Pi/2),0,0,
+				-math.Sin(math.Pi/2),math.Cos(math.Pi/2),0,0,
+				0,0,1,0,
+				0,0,0,1},true},
 	}
 
 	for testIndex,c := range cases {

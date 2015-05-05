@@ -243,22 +243,26 @@ func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 
 // Returns a new matrix which is transpose to 'this'
 func (this *Mat4) Transpose() *Mat4 {
-	var out Mat4
-	var x, y, z, w float64
-	x, y, z, w = this.GetRow(0)
-	out.SetCol(0, x, y, z, w)
-
-	x, y, z, w = this.GetRow(1)
-	out.SetCol(1, x, y, z, w)
-
-	x, y, z, w = this.GetRow(2)
-	out.SetCol(2, x, y, z, w)
-
-	x, y, z, w = this.GetRow(3)
-	out.SetCol(3, x, y, z, w)
-
+	out := *this
+	out.TransposeIn()
 	return &out
 }
+
+// Take the transpose of this matrix.
+func (this *Mat4) TransposeIn() *Mat4 {
+	m00,m01,m02,m03 := this.GetRow(0)
+	m10,m11,m12,m13 := this.GetRow(1)
+	m20,m21,m22,m23 := this.GetRow(2)
+	m30,m31,m32,m33 := this.GetRow(3)
+
+	this.SetCol(0,m00,m01,m02,m03)
+	this.SetCol(1,m10,m11,m12,m13)
+	this.SetCol(2,m20,m21,m22,m23)
+	this.SetCol(3,m30,m31,m32,m33)
+
+	return this
+}
+
 
 // Calculate the determinant of a 2x2 matrix
 // Values are givein in Row-Major order
