@@ -1,4 +1,4 @@
-package matrix
+package lmath
 
 import (
 	//"fmt"
@@ -10,6 +10,7 @@ import (
 type Vec3 struct {
 	X, Y, Z float64
 }
+
 
 // Returns a new vector which is the result of adding 'this' with the
 // other vector

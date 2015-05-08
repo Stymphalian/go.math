@@ -1,4 +1,4 @@
-package matrix
+package lmath
 
 import (
 	"math"
@@ -7,14 +7,14 @@ import (
 
 func TestEquals(t *testing.T) {
 	cases := []struct {
-		orig, other *q8n
+		orig, other *Quat
 		want        bool
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}, true},
-		{&q8n{1, 0, 0, 0}, &q8n{0, 0, 0, 0}, false},
-		{&q8n{1, 2, 3, 4}, &q8n{1.000, 2.000, 3.00, 4.0}, true},
-		{&q8n{-1, -2, 3, 4}, &q8n{-1, -2, 3, 4}, true},
-		{&q8n{-1, 2, 3, 4}, &q8n{-1, -2, 3, 4}, false},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, true},
+		{&Quat{1, 0, 0, 0}, &Quat{0, 0, 0, 0}, false},
+		{&Quat{1, 2, 3, 4}, &Quat{1.000, 2.000, 3.00, 4.0}, true},
+		{&Quat{-1, -2, 3, 4}, &Quat{-1, -2, 3, 4}, true},
+		{&Quat{-1, 2, 3, 4}, &Quat{-1, -2, 3, 4}, false},
 	}
 
 	for testIndex, test := range cases {
@@ -28,16 +28,16 @@ func TestEquals(t *testing.T) {
 func TestSet(t *testing.T) {
 	cases := []struct {
 		x, y, z, w float64
-		want       *q8n
+		want       *Quat
 	}{
-		{0, 0, 0, 0, &q8n{0, 0, 0, 0}},
-		{1, 2, 3, 4, &q8n{1, 2, 3, 4}},
-		{0.1, 0.2, 0.3, 0.4, &q8n{0.1, 0.2, 0.3, 0.4}},
-		{-0.1, 0.2, -0.3, 0.4, &q8n{-0.1, 0.2, -0.3, 0.4}},
+		{0, 0, 0, 0, &Quat{0, 0, 0, 0}},
+		{1, 2, 3, 4, &Quat{1, 2, 3, 4}},
+		{0.1, 0.2, 0.3, 0.4, &Quat{0.1, 0.2, 0.3, 0.4}},
+		{-0.1, 0.2, -0.3, 0.4, &Quat{-0.1, 0.2, -0.3, 0.4}},
 	}
 
 	for testIndex, test := range cases {
-		orig := &q8n{-1, -1, -1, -1}
+		orig := &Quat{-1, -1, -1, -1}
 		get := orig.Set(test.x, test.y, test.z, test.w)
 		if get.Equals(test.want) == false {
 			t.Errorf("TestSet %d", testIndex)
@@ -47,14 +47,14 @@ func TestSet(t *testing.T) {
 
 func TestMultConst(t *testing.T) {
 	cases := []struct {
-		orig, want *q8n
+		orig, want *Quat
 		scale      float64
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}, 2},
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}, -1},
-		{&q8n{1, 2, 3, 4}, &q8n{-1, -2, -3, -4}, -1},
-		{&q8n{1, 2, 3, 4}, &q8n{2, 4, 6, 8}, 2},
-		{&q8n{1, 2, 3, 4}, &q8n{0, 0, 0, 0}, 0},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, 2},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{-1, -2, -3, -4}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{2, 4, 6, 8}, 2},
+		{&Quat{1, 2, 3, 4}, &Quat{0, 0, 0, 0}, 0},
 	}
 
 	for testIndex, test := range cases {
@@ -72,15 +72,15 @@ func TestMultConst(t *testing.T) {
 
 func TestAdd(t *testing.T) {
 	cases := []struct {
-		orig, other, want *q8n
+		orig, other, want *Quat
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}},
-		{&q8n{0, 0, 0, 0}, &q8n{1, 2, 3, 4}, &q8n{1, 2, 3, 4}},
-		{&q8n{1, 0, 0, 0}, &q8n{0, 1, 0, 0}, &q8n{1, 1, 0, 0}},
-		{&q8n{0, 1, 0, 0}, &q8n{1, 0, 0, 0}, &q8n{1, 1, 0, 0}},
-		{&q8n{1, 2, 3, 4}, &q8n{5, 6, 7, 8}, &q8n{6, 8, 10, 12}},
-		{&q8n{1, -2, 3, -4}, &q8n{1, -2, 3, -4}, &q8n{2, -4, 6, -8}},
-		{&q8n{1, 2, 3, 4}, &q8n{1, -2, 3, -4}, &q8n{2, 0, 6, 0}},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}},
+		{&Quat{0, 0, 0, 0}, &Quat{1, 2, 3, 4}, &Quat{1, 2, 3, 4}},
+		{&Quat{1, 0, 0, 0}, &Quat{0, 1, 0, 0}, &Quat{1, 1, 0, 0}},
+		{&Quat{0, 1, 0, 0}, &Quat{1, 0, 0, 0}, &Quat{1, 1, 0, 0}},
+		{&Quat{1, 2, 3, 4}, &Quat{5, 6, 7, 8}, &Quat{6, 8, 10, 12}},
+		{&Quat{1, -2, 3, -4}, &Quat{1, -2, 3, -4}, &Quat{2, -4, 6, -8}},
+		{&Quat{1, 2, 3, 4}, &Quat{1, -2, 3, -4}, &Quat{2, 0, 6, 0}},
 	}
 
 	for testIndex, test := range cases {
@@ -98,14 +98,14 @@ func TestAdd(t *testing.T) {
 
 func TestMult(t *testing.T) {
 	cases := []struct {
-		orig, other, want *q8n
+		orig, other, want *Quat
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}},
-		{&q8n{0, 0, 0, 0}, &q8n{1, 2, 3, 4}, &q8n{0, 0, 0, 0}},
-		{&q8n{1, 0, 0, 0}, &q8n{0, 1, 0, 0}, &q8n{0, 1, 0, 0}},
-		{&q8n{0, 1, 0, 0}, &q8n{1, 0, 0, 0}, &q8n{0, 1, 0, 0}},
-		{&q8n{1, 2, 3, 4}, &q8n{5, 6, 7, 8}, &q8n{-60, 12, 30, 24}},
-		{&q8n{1, -2, 3, -4}, &q8n{1, -2, 3, -4}, &q8n{-28, -4, 6, -8}},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}},
+		{&Quat{0, 0, 0, 0}, &Quat{1, 2, 3, 4}, &Quat{0, 0, 0, 0}},
+		{&Quat{1, 0, 0, 0}, &Quat{0, 1, 0, 0}, &Quat{0, 1, 0, 0}},
+		{&Quat{0, 1, 0, 0}, &Quat{1, 0, 0, 0}, &Quat{0, 1, 0, 0}},
+		{&Quat{1, 2, 3, 4}, &Quat{5, 6, 7, 8}, &Quat{-60, 12, 30, 24}},
+		{&Quat{1, -2, 3, -4}, &Quat{1, -2, 3, -4}, &Quat{-28, -4, 6, -8}},
 	}
 
 	for testIndex, test := range cases {
@@ -124,15 +124,15 @@ func TestMult(t *testing.T) {
 func TestToUnit(t *testing.T) {
 	mag := math.Sqrt(30)
 	cases := []struct {
-		orig, want *q8n
+		orig, want *Quat
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}},
-		{&q8n{1, 0, 0, 0}, &q8n{1, 0, 0, 0}},
-		{&q8n{0, 1, 0, 0}, &q8n{0, 1, 0, 0}},
-		{&q8n{0, -1, 0, 0}, &q8n{0, -1, 0, 0}},
-		{&q8n{1, 2, 3, 4}, &q8n{1 / mag, 2 / mag, 3 / mag, 4 / mag}},
-		{&q8n{1 / mag, 2 / mag, 3 / mag, 4 / mag}, &q8n{1 / mag, 2 / mag, 3 / mag, 4 / mag}},
-		{&q8n{1, -2, 3, -4}, &q8n{1 / mag, -2 / mag, 3 / mag, -4 / mag}},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}},
+		{&Quat{1, 0, 0, 0}, &Quat{1, 0, 0, 0}},
+		{&Quat{0, 1, 0, 0}, &Quat{0, 1, 0, 0}},
+		{&Quat{0, -1, 0, 0}, &Quat{0, -1, 0, 0}},
+		{&Quat{1, 2, 3, 4}, &Quat{1 / mag, 2 / mag, 3 / mag, 4 / mag}},
+		{&Quat{1 / mag, 2 / mag, 3 / mag, 4 / mag}, &Quat{1 / mag, 2 / mag, 3 / mag, 4 / mag}},
+		{&Quat{1, -2, 3, -4}, &Quat{1 / mag, -2 / mag, 3 / mag, -4 / mag}},
 	}
 
 	for testIndex, test := range cases {
@@ -147,16 +147,16 @@ func TestNorm(t *testing.T) {
 	mag := math.Sqrt(30)
 
 	cases := []struct {
-		orig *q8n
+		orig *Quat
 		want float64
 	}{
-		{&q8n{0, 0, 0, 0}, 0},
-		{&q8n{1, 0, 0, 0}, 1},
-		{&q8n{0, 1, 0, 0}, 1},
-		{&q8n{0, -1, 0, 0}, 1},
-		{&q8n{1, 2, 3, 4}, mag},
-		{&q8n{1 / mag, 2 / mag, 3 / mag, 4 / mag}, 1},
-		{&q8n{1, -2, 3, -4}, mag},
+		{&Quat{0, 0, 0, 0}, 0},
+		{&Quat{1, 0, 0, 0}, 1},
+		{&Quat{0, 1, 0, 0}, 1},
+		{&Quat{0, -1, 0, 0}, 1},
+		{&Quat{1, 2, 3, 4}, mag},
+		{&Quat{1 / mag, 2 / mag, 3 / mag, 4 / mag}, 1},
+		{&Quat{1, -2, 3, -4}, mag},
 	}
 
 	for testIndex, test := range cases {
@@ -175,15 +175,15 @@ func TestNorm(t *testing.T) {
 func TestConjugate(t *testing.T) {
 	mag := math.Sqrt(30)
 	cases := []struct {
-		orig, want *q8n
+		orig, want *Quat
 	}{
-		{&q8n{0, 0, 0, 0}, &q8n{0, 0, 0, 0}},
-		{&q8n{1, 0, 0, 0}, &q8n{1, 0, 0, 0}},
-		{&q8n{1, 1, 0, 0}, &q8n{1, -1, 0, 0}},
-		{&q8n{1, -1, 0, 0}, &q8n{1, 1, 0, 0}},
-		{&q8n{1, 2, 3, 4}, &q8n{1, -2, -3, -4}},
-		{&q8n{1 / mag, 2 / mag, 3 / mag, 4 / mag}, &q8n{1 / mag, -2 / mag, -3 / mag, -4 / mag}},
-		{&q8n{1, -2, 3, -4}, &q8n{1, 2, -3, 4}},
+		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}},
+		{&Quat{1, 0, 0, 0}, &Quat{1, 0, 0, 0}},
+		{&Quat{1, 1, 0, 0}, &Quat{1, -1, 0, 0}},
+		{&Quat{1, -1, 0, 0}, &Quat{1, 1, 0, 0}},
+		{&Quat{1, 2, 3, 4}, &Quat{1, -2, -3, -4}},
+		{&Quat{1 / mag, 2 / mag, 3 / mag, 4 / mag}, &Quat{1 / mag, -2 / mag, -3 / mag, -4 / mag}},
+		{&Quat{1, -2, 3, -4}, &Quat{1, 2, -3, 4}},
 	}
 
 	for testIndex, test := range cases {
@@ -201,25 +201,25 @@ func TestConjugate(t *testing.T) {
 }
 func TestInverse(t *testing.T) {
 	cases := []struct {
-		orig *q8n
+		orig *Quat
 	}{
-		{&q8n{1, 0, 0, 0}},
-		{&q8n{1, 1, 0, 0}},
-		{&q8n{1, -1, 0, 0}},
-		{&q8n{1, 2, 3, 4}},
-		{&q8n{1, -2, 3, -4}},
+		{&Quat{1, 0, 0, 0}},
+		{&Quat{1, 1, 0, 0}},
+		{&Quat{1, -1, 0, 0}},
+		{&Quat{1, 2, 3, 4}},
+		{&Quat{1, -2, 3, -4}},
 	}
 
-	idenq8n := &q8n{1, 0, 0, 0}
+	idenQuat := &Quat{1, 0, 0, 0}
 	for testIndex, test := range cases {
 		get := test.orig.Inverse().Mult(test.orig)
-		if get.Equals(idenq8n) == false {
+		if get.Equals(idenQuat) == false {
 			t.Errorf("TestInverse %d", testIndex)
 		}
 
 		orig := *test.orig
 		get = test.orig.InverseIn().MultIn(&orig)
-		if get.Equals(idenq8n) == false {
+		if get.Equals(idenQuat) == false {
 			t.Errorf("TestInverseIn %d", testIndex)
 		}
 	}

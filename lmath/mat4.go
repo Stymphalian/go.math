@@ -1,4 +1,4 @@
-package matrix
+package lmath
 
 import (
 	"fmt"
@@ -256,6 +256,7 @@ func (this *Mat4) Transpose() *Mat4 {
 }
 
 // Take the transpose of this matrix.
+// can definitely be way more efficient
 func (this *Mat4) TransposeIn() *Mat4 {
 	m00, m01, m02, m03 := this.GetRow(0)
 	m10, m11, m12, m13 := this.GetRow(1)
@@ -356,12 +357,8 @@ func (this *Mat4) Adjoint() *Mat4 {
 func (this *Mat4) Inverse() *Mat4 {
 	out := *this
 	det := out.Determinant()
-
-	// if closeEquals(det, 0, epsilon) {
-	// 	return nil, false
-	// }
-	adj := out.Adjoint()
-	return adj.DivInConst(det)
+	return out.Adjoint().DivInConst(det)
+	//return adj.DivInConst(det)
 }
 
 // Returns true if the inverse of this matrix exists
