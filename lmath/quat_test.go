@@ -468,10 +468,10 @@ func TestFromMat4Quat(t *testing.T) {
 		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
 	}
 
-	var m *Mat4
+	m := &Mat4{}
 	q := &Quat{}
 	for testIndex, c := range common_cases {
-		m = EulerToMat4(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
+		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		q.FromMat4(m)
 		get := q.RotateVec3(c.start_vec)
 		if get.Eq(c.want) == false {
@@ -564,15 +564,20 @@ func TestMat4Quat(t *testing.T) {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		m = q.Mat4()
 
-		get := MultMat4Vec3(m, c.start_vec)
+		get := m.MultVec3(c.start_vec)
+		//get := MultMat4Vec3(m, c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 	}
 }
 
-func TestQuatToEulerQuat(t *testing.T) {
-	common_cases2 := []rotation_test_struct{
+func TestEulerQuat(t *testing.T) {
+	common_cases2 := []struct{
+		pitch, yaw, roll float64
+		start_vec        *Vec3
+		want             *Vec3
+	}{
 		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
 		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//2
@@ -595,18 +600,18 @@ func TestQuatToEulerQuat(t *testing.T) {
 
 		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//2
+		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//20
 	 	{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
 
 	 	//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},//22
 		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
 		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
 		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //28
 
 		// test basic rotation using a [1,0,0] vector
 		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
@@ -615,18 +620,18 @@ func TestQuatToEulerQuat(t *testing.T) {
 		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
 		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
 		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //35
 
 		// basic rotation using a non major axis vector
 		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
 		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //38
 
 		// two rotations
 		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
 		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
 		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
 	}
 
 	q := &Quat{}

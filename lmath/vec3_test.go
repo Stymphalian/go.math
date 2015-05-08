@@ -308,6 +308,5 @@ func TestSetVec3(t *testing.T) {
 		if get.Eq(test.want) == false {
 			t.Errorf("TestSetVec3 %d", testIndex)
 		}
-
 	}
 }

@@ -216,8 +216,8 @@ func (this* Vec3) MultMat4(right *Mat4) *Vec3{
 	// 8   9   10  11
 	// 12  13  14  15
 	return &Vec3{
-		this.X*right.GetAt(0) + this.Y*right.GetAt(4) + this.Z*right.GetAt(8) + right.GetAt(12),
-		this.X*right.GetAt(1) + this.Y*right.GetAt(5) + this.Z*right.GetAt(9) + right.GetAt(13),
-		this.X*right.GetAt(2) + this.Y*right.GetAt(6) + this.Z*right.GetAt(10) + right.GetAt(14),
+		this.X*right.At(0) + this.Y*right.At(4) + this.Z*right.At(8) + right.At(12),
+		this.X*right.At(1) + this.Y*right.At(5) + this.Z*right.At(9) + right.At(13),
+		this.X*right.At(2) + this.Y*right.At(6) + this.Z*right.At(10) + right.At(14),
 	}
 }

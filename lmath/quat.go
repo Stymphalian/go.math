@@ -304,9 +304,9 @@ func (this *Quat) FromMat4(mat* Mat4) (*Quat){
 		s := 0.5 / math.Sqrt(trace)
 		return this.Set(
 			0.25 / s,
-			(mat.GetAt(9) - mat.GetAt(6)) * s,
-			(mat.GetAt(2) - mat.GetAt(8)) * s,
-			(mat.GetAt(4) - mat.GetAt(1)) * s,
+			(mat.At(9) - mat.At(6)) * s,
+			(mat.At(2) - mat.At(8)) * s,
+			(mat.At(4) - mat.At(1)) * s,
 		)
 	}
 
@@ -325,23 +325,23 @@ func (this *Quat) FromMat4(mat* Mat4) (*Quat){
 	var w, x, y, z, s float64
 	switch max_col {
 	case 0:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(0)-mat.GetAt(5)-mat.GetAt(10))
+		s = 2 * math.Sqrt(1.0+mat.At(0)-mat.At(5)-mat.At(10))
 		x = 0.5 / 2
-		y = (mat.GetAt(4) + mat.GetAt(1)) / s
-		z = (mat.GetAt(8) + mat.GetAt(2)) / s
-		w = (mat.GetAt(9) + mat.GetAt(6)) / s
+		y = (mat.At(4) + mat.At(1)) / s
+		z = (mat.At(8) + mat.At(2)) / s
+		w = (mat.At(9) + mat.At(6)) / s
 	case 1:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(5)-mat.GetAt(0)-mat.GetAt(10))
-		x = (mat.GetAt(4) + mat.GetAt(1)) / s
+		s = 2 * math.Sqrt(1.0+mat.At(5)-mat.At(0)-mat.At(10))
+		x = (mat.At(4) + mat.At(1)) / s
 		y = 0.5 / 2
-		z = (mat.GetAt(9) + mat.GetAt(6)) / s
-		w = (mat.GetAt(8) + mat.GetAt(2)) / s
+		z = (mat.At(9) + mat.At(6)) / s
+		w = (mat.At(8) + mat.At(2)) / s
 	case 2:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(10)-mat.GetAt(0)-mat.GetAt(5))
-		x = (mat.GetAt(8) + mat.GetAt(2)) / s
-		y = (mat.GetAt(9) + mat.GetAt(6)) / s
+		s = 2 * math.Sqrt(1.0+mat.At(10)-mat.At(0)-mat.At(5))
+		x = (mat.At(8) + mat.At(2)) / s
+		y = (mat.At(9) + mat.At(6)) / s
 		z = 0.5 / 2
-		w = (mat.GetAt(4) + mat.GetAt(1)) / s
+		w = (mat.At(4) + mat.At(1)) / s
 	}
 
 	return this.Set(w,x,y,z)

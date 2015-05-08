@@ -19,7 +19,7 @@ func TestNewMat4(t *testing.T) {
 		5, 6, 7, 8,
 		9, 10, 11, 12,
 		13, 14, 15, 16)
-	if m.Equals(m2) == false {
+	if m.Eq(m2) == false {
 		t.Errorf("TestNewMat ")
 	}
 }
@@ -68,13 +68,13 @@ func TestMatGettersSetter(t *testing.T) {
 
 	orig := &Mat4{[16]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}}
 	for k, _ := range orig.Dump() {
-		get := orig.GetAt(k)
+		get := orig.At(k)
 		if get != float64(k+1) {
 			t.Errorf("TestMatGetterSetter GetAt %d %v", k, get)
 		}
 
 		orig.SetAt(k, float64((k+1)*10))
-		get = orig.GetAt(k)
+		get = orig.At(k)
 		if get != float64((k+1)*10) {
 			t.Errorf("TestMatGetterSetter SetAt %d", k)
 		}
@@ -132,7 +132,7 @@ func TestGetRow(t *testing.T) {
 	var x, y, z, w float64
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		x, y, z, w = m.GetRow(c.rowIndex)
+		x, y, z, w = m.Row(c.rowIndex)
 		if x != c.want[0] || y != c.want[1] || z != c.want[2] || w != c.want[3] {
 			t.Errorf("TestGetRow %d", testIndex)
 		}
@@ -156,7 +156,7 @@ func TestSetRow(t *testing.T) {
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m.SetRow(c.rowIndex, c.x, c.y, c.z, c.w)
-		x, y, z, w = m.GetRow(c.rowIndex)
+		x, y, z, w = m.Row(c.rowIndex)
 		if x != c.x || y != c.y || z != c.z || w != c.w {
 			t.Errorf("TestSetRow %d", testIndex)
 		}
@@ -179,7 +179,7 @@ func TestGetCol(t *testing.T) {
 	var x, y, z, w float64
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		x, y, z, w = m.GetCol(c.colIndex)
+		x, y, z, w = m.Col(c.colIndex)
 		if x != c.want[0] || y != c.want[1] || z != c.want[2] || w != c.want[3] {
 			t.Errorf("TestGetRow %d", testIndex)
 		}
@@ -203,14 +203,14 @@ func TestSetCol(t *testing.T) {
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m.SetCol(c.colIndex, c.x, c.y, c.z, c.w)
-		x, y, z, w = m.GetCol(c.colIndex)
+		x, y, z, w = m.Col(c.colIndex)
 		if x != c.x || y != c.y || z != c.z || w != c.w {
 			t.Errorf("TestSetRow %d", testIndex)
 		}
 	}
 }
 
-func TestAddInConst(t *testing.T) {
+func TestAddInScalar(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -226,19 +226,19 @@ func TestAddInConst(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.AddInConst(c.value)
+		m.AddInScalar(c.value)
 
 		get := m.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]+c.value {
-				t.Errorf("TestAddInConst %d %d", testIndex, k)
+				t.Errorf("TestAddInScalar %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestSubInConst(t *testing.T) {
+func TestSubInScalar(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -254,19 +254,19 @@ func TestSubInConst(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.SubInConst(c.value)
+		m.SubInScalar(c.value)
 
 		get := m.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]-c.value {
-				t.Errorf("TestSubInConst %d %d", testIndex, k)
+				t.Errorf("TestSubInScalar %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestMultInConst(t *testing.T) {
+func TestMultInScalar(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -282,19 +282,19 @@ func TestMultInConst(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.MultInConst(c.value)
+		m.MultInScalar(c.value)
 
 		get := m.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]*c.value {
-				t.Errorf("TestMultInConst %d %d", testIndex, k)
+				t.Errorf("TestMultInScalar %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestDivInConst(t *testing.T) {
+func TestDivInScalar(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -310,12 +310,12 @@ func TestDivInConst(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.DivInConst(c.value)
+		m.DivInScalar(c.value)
 
 		get := m.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]/c.value, epsilon) == false {
-				t.Errorf("TestDivInConst %d %d", testIndex, k)
+				t.Errorf("TestDivInScalar %d %d", testIndex, k)
 				break
 			}
 		}
@@ -696,3 +696,280 @@ func TestToSkew(t *testing.T) {
 		}
 	}
 }
+
+
+func TestMultVec3Mat4(t *testing.T) {
+	cases := []struct {
+		mat          [16]float64
+		orig_v, want *Vec3
+	}{
+		{[16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{[16]float64{2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{2, 0, 0}},
+		{[16]float64{2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1}, &Vec3{1, 1, 1}, &Vec3{2, 2, 2}},
+		{[16]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, &Vec3{1, 0, 0}, &Vec3{5, 13, 21}},
+		{[16]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, &Vec3{1, 2, 3}, &Vec3{18, 46, 74}},
+	}
+
+	m := &Mat4{}
+	for testIndex, c := range cases {
+		m.Load(c.mat)
+		get := m.MultVec3(c.orig_v)
+		if get.Eq(c.want) == false {
+			t.Errorf("TestMultVec3Mat4 %d \n%v\n%v\n\n", testIndex, m, get)
+		}
+	}
+}
+
+
+func TestFromAxisAngleMat4(t *testing.T) {
+	cases := []struct {
+		angle     float64
+		axis      *Vec3
+		start_vec *Vec3
+		want      *Vec3
+	}{
+
+		//test basic rotations using a [1,0,0] vector
+		{90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
+		{90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+		{-90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
+		{-90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{-90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
+		{360, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{180, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //7
+
+		//test basic rotations using a [0,1,0] vector
+		{90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
+		{90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+		{-90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{-90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
+		{-90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
+		{360, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{180, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}}, //15
+
+		// test negative axes
+		{90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
+		{90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
+		{-90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
+		{-90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{-90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+		{360, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{180, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //23
+
+		// test arbitraty axis
+		{360, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{90, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.5, 0.5, -0.7071067811}},
+		{45, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.85355339059, 0.1464466094067, -0.5}}, //26
+	}
+
+	m := &Mat4{}
+	for testIndex, c := range cases {
+		c.axis.NormalizeIn()
+		m.FromAxisAngle(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
+
+		get := m.MultVec3(c.start_vec)
+		if get.Eq(c.want) == false {
+			t.Errorf("TestFromAxisAngleMat4 %d \n%v\n%v\n\n", testIndex, m, get)
+		}
+	}
+}
+
+func TestAxisAngleMat4(t *testing.T) {
+	cases := []struct {
+		angle, x, y, z float64
+	}{
+		//test basic rotations using a [1,0,0] vector
+		{90, 1, 0, 0},
+		{90, 0, 1, 0},
+		{90, 0, 0, 1},
+		{45, 1, 0, 0},
+		{45, 0, 1, 0},
+		{45, 0, 0, 1}, //5
+		{180, 1, 0, 0},
+		{180, 0, 1, 0},
+		{180, 0, 0, 1},
+		{90, 1, 1, 0},
+		{90, 1, 1, 0}, //10
+		{90, 0, -1, 1},
+		{45, 1, 0, 1},
+		{45, 0, 1, 0},
+		{45, 1, 0, 1},
+		{180, 1, -2, 0}, //15
+		{180, 0, 1, 20},
+		{180, 0, 20, 1},
+		{180, -4, 4, 1},
+	}
+
+	m := &Mat4{}
+	for testIndex, c := range cases {
+		v := &Vec3{c.x, c.y, c.z}
+		v.NormalizeIn()
+		m.FromAxisAngle(Radians(c.angle), v.X, v.Y, v.Z)
+		get_angle, get_x, get_y, get_z := m.AxisAngle()
+
+		if !closeEq(Degrees(get_angle), c.angle, epsilon) ||
+			!closeEq(get_x, v.X, epsilon) ||
+			!closeEq(get_y, v.Y, epsilon) ||
+			!closeEq(get_z, v.Z, epsilon) {
+
+			if closeEq(get_angle, math.Pi, epsilon) &&
+				closeEq(math.Abs(get_x)-math.Abs(v.X), 0, epsilon) &&
+				closeEq(math.Abs(get_y)-math.Abs(v.Y), 0, epsilon) &&
+				closeEq(math.Abs(get_z)-math.Abs(v.Z), 0, epsilon) {
+				continue
+			} else {
+				t.Errorf("TestAxisAngleMat4 %d %v \n%f %f %f %f\n%f %f %f %f\n",
+					testIndex, v, Degrees(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
+			}
+		}
+	}
+}
+
+func TestFromEulerMat4(t *testing.T) {
+	common_cases := []struct {
+		pitch, yaw, roll float64
+		start_vec        *Vec3
+		want             *Vec3
+	}{
+		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//2
+		{180, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},//5
+		{180, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
+		{0, 180, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
+		{0, 0, 180, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //8
+
+		{180, 0, 0, &Vec3{-1, 0, 0}, &Vec3{-1, 0, 0}},
+		{0, 180, 0, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},//11
+		{180, 0, 0, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},
+		{0, 180, 0, &Vec3{0, -1, 0}, &Vec3{0, -1, 0}},
+		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},//14
+		{180, 0, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
+		{0, 180, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
+		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}},//17
+
+		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//2
+	 	{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
+
+		//test basic rotations using a [0,1,0] vector
+		// pitch,yaw,roll
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
+		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
+		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+
+		// test basic rotation using a [1,0,0] vector
+		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
+		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
+		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
+		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+
+		// basic rotation using a non major axis vector
+		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
+		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
+		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+
+		// two rotations
+		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
+		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+	}
+
+	m := &Mat4{}
+	for testIndex, c := range common_cases {
+		// m = EulerToMat4(Radians(c.yaw), Radians(c.pitch), Radians(c.roll))
+		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
+		get := m.MultVec3(c.start_vec)
+		if get.Eq(c.want) == false {
+			t.Errorf("TestFromEulerMat4 %d \n%v\n%v\n\n", testIndex, m, get)
+		}
+	}
+}
+
+func TestEulerMat4(t *testing.T) {
+	common_cases := []struct {
+		pitch, yaw, roll float64
+		start_vec        *Vec3
+		want             *Vec3
+	}{
+		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//2
+		{180, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},//5
+		{180, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
+		{0, 180, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
+		{0, 0, 180, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //8
+
+		{180, 0, 0, &Vec3{-1, 0, 0}, &Vec3{-1, 0, 0}},
+		{0, 180, 0, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},//11
+		{180, 0, 0, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},
+		{0, 180, 0, &Vec3{0, -1, 0}, &Vec3{0, -1, 0}},
+		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},//14
+		{180, 0, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
+		{0, 180, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
+		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}},//17
+
+		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//2
+	 	{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
+
+		//test basic rotations using a [0,1,0] vector
+		// pitch,yaw,roll
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
+		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
+		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
+		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+
+		// test basic rotation using a [1,0,0] vector
+		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
+		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
+		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
+		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+
+		// basic rotation using a non major axis vector
+		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
+		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
+		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+
+		// two rotations
+		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
+		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+	}
+
+	m := &Mat4{}
+	for testIndex, c := range common_cases {
+		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
+		x, y, z := m.Euler()
+		if x != Radians(c.pitch) || y != Radians(c.yaw) || z != Radians(c.roll) {
+			t.Errorf("TestEulerMat4 %d %f %f %f", testIndex, x, y, z)
+		}
+	}
+}
+
