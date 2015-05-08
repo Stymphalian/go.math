@@ -741,6 +741,19 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 	return
 }
 
+// Creates a rotation matrix from the given quaternion
+// returns this
+func (this *Mat4) FromQuat(q *Quat) *Mat4 {
+	*this = *q.Mat4()
+	return this
+}
+
+// Returns the quaternion represented by this rotation matrix.
+func (this *Mat4) Quat() *Quat {
+	q := &Quat{}
+	return q.FromMat4(this)
+}
+
 func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
 	// 0   1   2   3
 	// 4   5   6   7
