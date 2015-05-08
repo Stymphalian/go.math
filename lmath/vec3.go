@@ -120,9 +120,9 @@ func (this *Vec3) CrossIn(other *Vec3) *Vec3 {
 // Checks for equality between the vectors.
 // Equal is all elemnets are equal within an epsilon ( < 0.0000001)
 func (this *Vec3) Equals(other *Vec3) bool {
-	return closeEquals(this.X, other.X, epsilon) &&
-		closeEquals(this.Y, other.Y, epsilon) &&
-		closeEquals(this.Z, other.Z, epsilon)
+	return closeEq(this.X, other.X, epsilon) &&
+		closeEq(this.Y, other.Y, epsilon) &&
+		closeEq(this.Z, other.Z, epsilon)
 }
 
 // Return the length of the vector

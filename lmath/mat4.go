@@ -51,7 +51,7 @@ func NewMat4(
 // Equality is measured using an epsilon (< 0.0000001)
 func (this *Mat4) Equals(other *Mat4) bool {
 	for k, _ := range this.mat {
-		if closeEquals(this.mat[k], other.mat[k], epsilon) == false {
+		if closeEq(this.mat[k], other.mat[k], epsilon) == false {
 			return false
 		}
 	}
@@ -365,7 +365,7 @@ func (this *Mat4) Inverse() *Mat4 {
 // False otherwise
 // Internally it checks to see if the determinant is zero.
 func (this *Mat4) HasInverse() bool {
-	return !closeEquals(this.Determinant(), 0, epsilon)
+	return !closeEq(this.Determinant(), 0, epsilon)
 }
 
 func (this *Mat4) IsIdentity() bool {
@@ -376,7 +376,7 @@ func (this *Mat4) IsIdentity() bool {
 		0, 0, 0, 1,
 	}
 	for k, _ := range iden {
-		if !closeEquals(this.mat[k], iden[k], 0) {
+		if !closeEq(this.mat[k], iden[k], 0) {
 			return false
 		}
 	}

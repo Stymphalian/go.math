@@ -12,171 +12,6 @@ import (
 // All angles are specified in Radians
 // rotations are applied in Yaw => Pitch => Roll order
 
-// Create a quaternion from the specified angle and axis
-// Angle [radians]
-// The axis should be normalized!
-func AxisAngleToQuat(angle float64, x, y, z float64) *Quat {
-	return &Quat{
-		math.Cos(angle / 2),
-		math.Sin(angle/2) * x,
-		math.Sin(angle/2) * y,
-		math.Sin(angle/2) * z,
-	}
-}
-
-// Create a quaternion from the specified euler angles
-// Perform the operation in the order
-// pitch(x) => yaw(y) => row(z)
-func EulerToQuat(pitch, yaw, roll float64) *Quat {
-	yawQ := &Quat{math.Cos(yaw / 2), 0, math.Sin(yaw / 2), 0}
-	pitchQ := &Quat{math.Cos(pitch / 2), math.Sin(pitch / 2), 0, 0}
-	rollQ := &Quat{math.Cos(roll / 2), 0, 0, math.Sin(roll / 2)}
-
-	// note must be applied in reverse order
-	// pitch => yaw => roll
-	return rollQ.MultIn(yawQ).MultIn(pitchQ)
-}
-
-// Create a quaternion from the specified rotation matrix.
-// Assumption is that the matrix is a valid rotation matrix.
-func Mat4ToQuat(mat *Mat4) *Quat {
-	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
-	// 0  1  2  3
-	// 4  5  6  7
-	// 8  9  10 11
-	// 12 13 14 15
-	trace := mat.Get(0, 0) + mat.Get(1, 1) + mat.Get(2, 2) + 1
-
-	if trace > 0 {
-		s := 0.5 / math.Sqrt(trace)
-		return &Quat{
-			0.25 / s,
-			(mat.GetAt(9) - mat.GetAt(6)) * s,
-			(mat.GetAt(2) - mat.GetAt(8)) * s,
-			(mat.GetAt(4) - mat.GetAt(1)) * s,
-		}
-	}
-
-	// Find the column which has the maximum diagonal value
-	max_col := 0
-	champ := mat.Get(0, 0)
-	for col := 1; col < 3; col += 1 {
-		cand := mat.Get(col, col)
-		if cand > champ {
-			champ = cand
-			max_col = col
-		}
-	}
-
-	// TODO : UNTESTED!!!
-	var w, x, y, z, s float64
-	switch max_col {
-	case 0:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(0)-mat.GetAt(5)-mat.GetAt(10))
-		x = 0.5 / 2
-		y = (mat.GetAt(4) + mat.GetAt(1)) / s
-		z = (mat.GetAt(8) + mat.GetAt(2)) / s
-		w = (mat.GetAt(9) + mat.GetAt(6)) / s
-	case 1:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(5)-mat.GetAt(0)-mat.GetAt(10))
-		x = (mat.GetAt(4) + mat.GetAt(1)) / s
-		y = 0.5 / 2
-		z = (mat.GetAt(9) + mat.GetAt(6)) / s
-		w = (mat.GetAt(8) + mat.GetAt(2)) / s
-	case 2:
-		s = 2 * math.Sqrt(1.0+mat.GetAt(10)-mat.GetAt(0)-mat.GetAt(5))
-		x = (mat.GetAt(8) + mat.GetAt(2)) / s
-		y = (mat.GetAt(9) + mat.GetAt(6)) / s
-		z = 0.5 / 2
-		w = (mat.GetAt(4) + mat.GetAt(1)) / s
-	}
-
-	return &Quat{w, x, y, z}
-}
-
-// Takes the provided quaternion and returns the angle axis components
-// The returned values are ambiguous. There is no way to know if the original
-// angle and axis were specified using -ve angle or +ve angle
-// Take the case such as 90 around the axis [-1,0,0]
-// compared to the case of -90 around the axis [1,0,0]
-// There is no ways to tell which one the user specified.
-// Therefore by convention, this will always return  +ve angle case.
-func QuatToAxisAngle(q *Quat) (angle, x, y, z float64) {
-	angle = 2 * math.Acos(q.w)
-	s := math.Sin(angle / 2)
-	x = q.x / s
-	y = q.y / s
-	z = q.z / s
-	return
-}
-
-// Extract out the euler angles from the quaternion
-// Extract out the angles assuming the quaterion is encoded
-// as pitch -> yaw -> roll
-func QuatToEuler(q *Quat) (pitch, yaw, roll float64) {
-	// Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
-
-	test := q.x*q.y + q.z*q.w
-	if test > 0.499 { // singularity at north pole
-		yaw = 2 * math.Atan2(q.x, q.w)
-		roll = math.Pi / 2
-		pitch = 0
-		return
-	}
-	if test < -0.499 { // singularity at south pole
-		yaw = -2 * math.Atan2(q.x, q.w)
-		roll = -math.Pi / 2
-		pitch = 0
-		return
-	}
-
-	sqx := q.x * q.x
-	sqy := q.y * q.y
-	sqz := q.z * q.z
-	yaw = math.Atan2(2*q.y*q.w-2*q.x*q.z, 1-2*sqy-2*sqz)
-	roll = math.Asin(2 * test)
-	pitch = math.Atan2(2*q.x*q.w-2*q.y*q.z, 1-2*sqx-2*sqz)
-
-	return
-}
-
-//Calculates a Mat4 from the provided quaternion
-func QuatToMat4(q *Quat) (mat *Mat4) {
-	// Reference
-	// Derivation of the below matrix can be found here
-	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
-	//     1 - 2y² - 2z²    2yx - 2wz        2xz + 2wy
-	// M=  2xy + 2wz        1 - 2x² - 2z²    2yz - 2wx
-	//     2xz - 2wy        2yz + 2wx        1 - 2x² - 2y²
-
-	w, x, y, z := q.w, q.x, q.y, q.z
-
-	mat = &Mat4{}
-	// 0 1 2 3
-	// 4 5 6 7
-	// 8 9 10 11
-	// 12 13 14 15
-	mat.mat[0] = 1 - 2*y*y - 2*z*z
-	mat.mat[1] = 2*y*z - 2*w*z
-	mat.mat[2] = 2*x*z + 2*w*y
-	mat.mat[3] = 0
-
-	mat.mat[4] = 2*x*y + 2*w*z
-	mat.mat[5] = 1 - 2*x*x - 2*z*z
-	mat.mat[6] = 2*y*z - 2*w*x
-	mat.mat[7] = 0
-
-	mat.mat[8] = 2*x*z - 2*w*y
-	mat.mat[9] = 2*y*z + 2*w*x
-	mat.mat[10] = 1 - 2*x*x - 2*y*y
-	mat.mat[11] = 0
-
-	mat.mat[12] = 0
-	mat.mat[13] = 0
-	mat.mat[14] = 0
-	mat.mat[15] = 1
-	return
-}
 
 // Return a rotation matrix which rotates a vector about the axis [x,y,z] with
 // the given angle (radians).
@@ -212,9 +47,9 @@ func AxisAngleToMat4_2(angle float64, x, y, z float64) *Mat4 {
 	L := math.Sqrt(x*x + y*y + z*z)
 	x, y, z = x/L, y/L, z/L
 
-	if closeEquals(x, 1, epsilon) &&
-		closeEquals(y, 0, epsilon) &&
-		closeEquals(z, 0, epsilon) {
+	if closeEq(x, 1, epsilon) &&
+		closeEq(y, 0, epsilon) &&
+		closeEq(z, 0, epsilon) {
 		// specified axis is aligned with the x-axis; therefore
 		// perform the R_xz rotation about the z-axis instead.
 		v := math.Sqrt(x*x + y*y)
@@ -344,9 +179,9 @@ func Mat4ToAxisAngle(mat *Mat4) (angle, x, y, z float64) {
 	m10, m11, m12 := mat.Get(1, 0), mat.Get(1, 1), mat.Get(1, 2)
 	m20, m21, m22 := mat.Get(2, 0), mat.Get(2, 1), mat.Get(2, 2)
 
-	if closeEquals(math.Abs(m01-m10), 0, epsilon) &&
-		closeEquals(math.Abs(m02-m20), 0, epsilon) &&
-		closeEquals(math.Abs(m12-m21), 0, epsilon) {
+	if closeEq(math.Abs(m01-m10), 0, epsilon) &&
+		closeEq(math.Abs(m02-m20), 0, epsilon) &&
+		closeEq(math.Abs(m12-m21), 0, epsilon) {
 		// singularity check
 		// Checking for cases in which the angle is either 0 or 180
 
@@ -443,12 +278,12 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 
 	var x, y, z float64
 	r31 := mat.Get(2, 0)
-	if closeEquals(r31, 1, epsilon) {
+	if closeEq(r31, 1, epsilon) {
 		// we are in gimbal lock
 		z = 0
 		y = -math.Pi / 2
 		x = -z + math.Atan2(-mat.Get(0, 1), -mat.Get(0, 2))
-	} else if closeEquals(r31, -1, epsilon) {
+	} else if closeEq(r31, -1, epsilon) {
 		// we are in gimbal lock
 		z = 0
 		y = math.Pi / 2
@@ -462,9 +297,9 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 		m01, m10 := mat.Get(0, 1), mat.Get(1, 0)
 		m02, m20 := mat.Get(0, 2), mat.Get(2, 0)
 		m12, m21 := mat.Get(1, 2), mat.Get(2, 1)
-		if closeEquals(math.Abs(m01-m10), 0, epsilon) &&
-			closeEquals(math.Abs(m02-m20), 0, epsilon) &&
-			closeEquals(math.Abs(m12-m21), 0, epsilon) {
+		if closeEq(math.Abs(m01-m10), 0, epsilon) &&
+			closeEq(math.Abs(m02-m20), 0, epsilon) &&
+			closeEq(math.Abs(m12-m21), 0, epsilon) {
 			// singularity check
 			// Checking for cases in which the angle is either 0 or 180
 
@@ -500,7 +335,7 @@ func Mat4ToEuler(mat *Mat4) (pitch, yaw, roll float64) {
 // }
 
 func IsRotationMatrix(m *Mat4) bool {
-	return closeEquals(m.Determinant(), 1, epsilon) && m.Mult(m.Transpose()).IsIdentity()
+	return closeEq(m.Determinant(), 1, epsilon) && m.Mult(m.Transpose()).IsIdentity()
 }
 
 // Apply the matrix against the Vector
@@ -529,17 +364,4 @@ func MultVec3Mat4(v *Vec3, m *Mat4) *Vec3 {
 		v.X*m.mat[1] + v.Y*m.mat[5] + v.Z*m.mat[9] + m.mat[13],
 		v.X*m.mat[2] + v.Y*m.mat[6] + v.Z*m.mat[10] + m.mat[14],
 	}
-}
-
-// TODO this can be made faster by assuming that
-// the quaternion is a unit quaternion
-// This might be a vaild assumption that we can make
-// because the X,Y,Z,W parameters are private and read-only
-func RotateVecQuat(q *Quat, v *Vec3) *Vec3 {
-	vq := &Quat{0.0, v.X, v.Y, v.Z}
-	//inv_q := q.Conjugate()
-	inv_q := q.Inverse()
-	rs := q.Mult(vq).MultIn(inv_q)
-
-	return &Vec3{rs.x, rs.y, rs.z}
 }

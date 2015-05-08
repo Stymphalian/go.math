@@ -314,7 +314,7 @@ func TestDivInConst(t *testing.T) {
 
 		get := m.Dump()
 		for k, _ := range c.orig {
-			if closeEquals(get[k], c.orig[k]/c.value, epsilon) == false {
+			if closeEq(get[k], c.orig[k]/c.value, epsilon) == false {
 				t.Errorf("TestDivInConst %d %d", testIndex, k)
 				break
 			}
@@ -345,7 +345,7 @@ func TestAddIn(t *testing.T) {
 
 		get := m.Dump()
 		for k, _ := range c.orig {
-			if closeEquals(get[k], c.orig[k]+c.other[k], epsilon) == false {
+			if closeEq(get[k], c.orig[k]+c.other[k], epsilon) == false {
 				t.Errorf("TestAddIn %d %d", testIndex, k)
 				break
 			}
@@ -376,7 +376,7 @@ func TestSubIn(t *testing.T) {
 
 		get := m.Dump()
 		for k, _ := range c.orig {
-			if closeEquals(get[k], c.orig[k]-c.other[k], epsilon) == false {
+			if closeEq(get[k], c.orig[k]-c.other[k], epsilon) == false {
 				t.Errorf("TestSubIn %d %d", testIndex, k)
 				break
 			}
@@ -423,7 +423,7 @@ func TestMultIn(t *testing.T) {
 
 		get := orig.Dump()
 		for k, _ := range c.orig {
-			if closeEquals(get[k], c.want[k], epsilon) == false {
+			if closeEq(get[k], c.want[k], epsilon) == false {
 				t.Errorf("TestMultIn %d %d", testIndex, k)
 				// fmt.Println(orig, "\n")
 				break
@@ -467,7 +467,7 @@ func TestTranspose(t *testing.T) {
 		get := orig.Transpose().Dump()
 
 		for k, _ := range c.want {
-			if closeEquals(get[k], c.want[k], epsilon) == false {
+			if closeEq(get[k], c.want[k], epsilon) == false {
 				t.Errorf("TestTranspose %d %d", testIndex, k)
 				break
 			}
@@ -476,7 +476,7 @@ func TestTranspose(t *testing.T) {
 		orig.Load(c.orig)
 		get = orig.TransposeIn().Dump()
 		for k, _ := range c.want {
-			if closeEquals(get[k], c.want[k], epsilon) == false {
+			if closeEq(get[k], c.want[k], epsilon) == false {
 				t.Errorf("TestTransposeIn %d %d", testIndex, k)
 				break
 			}
@@ -506,7 +506,7 @@ func TestDeterminant(t *testing.T) {
 		0, 0, 0, 1})
 
 	get := m.Determinant()
-	if closeEquals(get, want, epsilon) == false {
+	if closeEq(get, want, epsilon) == false {
 		t.Errorf("TestDeterminant %v", get)
 	}
 }
@@ -543,7 +543,7 @@ func TestAdjoint(t *testing.T) {
 		// NOTE: the check uses lower precision because
 		// the adjoint values I got from wolframalpha
 		// only went up to 6 places
-		if closeEquals(get[k], want[k], 0.0001) == false {
+		if closeEq(get[k], want[k], 0.0001) == false {
 			t.Errorf("TestAdjoint %d %v %v", k, get[k], want[k])
 			break
 		}
@@ -607,7 +607,7 @@ func TestInverseMatrix(t *testing.T) {
 		mat := m.Inverse()
 		get := mat.Dump()
 		for k, _ := range c.want {
-			if closeEquals(get[k], c.want[k], 0.0001) == false {
+			if closeEq(get[k], c.want[k], 0.0001) == false {
 				t.Errorf("TestInverse %d %d %v %v", testIndex, k, get[k], c.want[k])
 				break
 			}

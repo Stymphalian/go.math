@@ -15,111 +15,6 @@ type rotation_test_struct struct {
 
 var common_cases []rotation_test_struct
 
-func TestAxisAngleToQuat(t *testing.T) {
-	cases := []struct {
-		angle     float64
-		axis      *Vec3
-		start_vec *Vec3
-		want      *Vec3
-	}{
-		//test basic rotations using a [1,0,0] vector
-		{90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{-90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{-90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{360, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{180, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-
-		//test basic rotations using a [0,1,0] vector
-		{90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{-90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{-90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{360, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{180, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-
-		// test negative axes
-		{90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{-90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{-90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{-90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{360, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{180, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-
-		// test arbitraty axis
-		{360, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.5, 0.5, -0.7071067811}},
-		{45, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.85355339059, 0.1464466094067, -0.5}},
-	}
-
-	var q *Quat
-	for testIndex, c := range cases {
-		c.axis.NormalizeIn()
-		q = AxisAngleToQuat(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
-		get := RotateVecQuat(q, c.start_vec)
-		if get.Equals(c.want) == false {
-			t.Errorf("TestAxisAngleToQuat %d \n %v\n%v\n\n", testIndex, q, get)
-		}
-	}
-}
-
-func TestEulerToQuat(t *testing.T) {
-	var q *Quat
-	for testIndex, c := range common_cases {
-		q = EulerToQuat(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
-		get := RotateVecQuat(q, c.start_vec)
-		if get.Equals(c.want) == false {
-			t.Errorf("TestEulerToQuat %d \n %v\n%v\n\n", testIndex, q, get)
-		}
-	}
-}
-
-func TestQuatToAxisAngle(t *testing.T) {
-	cases := []struct {
-		angle, x, y, z float64
-	}{
-		//test basic rotations using a [1,0,0] vector
-		{90, 1, 0, 0},
-		{90, 0, 1, 0},
-		{90, 0, 0, 1},
-		{45, 1, 0, 0},
-		{45, 0, 1, 0},
-		{45, 0, 0, 1},
-		{180, 1, 0, 0},
-		{180, 0, 1, 0},
-		{180, 0, 0, 1},
-		{90, 1, 1, 0},
-		{90, 1, 1, 0},
-		{90, 0, -1, 1},
-		{45, 1, 0, 1},
-		{45, 0, 1, 0},
-		{45, 1, 0, 1},
-		{180, 1, -2, 0},
-		{180, 0, 1, 20},
-		{180, -4, 4, 1},
-	}
-
-	var q *Quat
-	for testIndex, c := range cases {
-		v := &Vec3{c.x, c.y, c.z}
-		v.NormalizeIn()
-		q = AxisAngleToQuat(degToRad(c.angle), v.X, v.Y, v.Z)
-		get_angle, get_x, get_y, get_z := QuatToAxisAngle(q)
-		if !closeEquals(radToDeg(get_angle), c.angle, epsilon) ||
-			!closeEquals(get_x, v.X, epsilon) ||
-			!closeEquals(get_y, v.Y, epsilon) ||
-			!closeEquals(get_z, v.Z, epsilon) {
-			t.Errorf("TestQuatToAxisAngle %d %v %f %f %f %f\n%f %f %f %f\n", testIndex, v, radToDeg(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
-		}
-	}
-}
-
 func TestMat4ToAxisAngle(t *testing.T) {
 	cases := []struct {
 		angle, x, y, z float64
@@ -150,7 +45,7 @@ func TestMat4ToAxisAngle(t *testing.T) {
 	for testIndex, c := range cases {
 		v := &Vec3{c.x, c.y, c.z}
 		v.NormalizeIn()
-		m = AxisAngleToMat4(degToRad(c.angle), v.X, v.Y, v.Z)
+		m = AxisAngleToMat4(Radians(c.angle), v.X, v.Y, v.Z)
 		get_angle, get_x, get_y, get_z := Mat4ToAxisAngle(m)
 
 		m2 := AxisAngleToMat4(get_angle, get_x, get_y, get_z)
@@ -160,18 +55,18 @@ func TestMat4ToAxisAngle(t *testing.T) {
 			fmt.Printf("Not good %d %2.5f %2.5f %2.5f %2.5f %2.5f %2.5f\n", testIndex, v2.X, v2.Y, v2.Z, v3.X, v3.Y, v3.Z)
 		}
 
-		if !closeEquals(radToDeg(get_angle), c.angle, epsilon) ||
-			!closeEquals(get_x, v.X, epsilon) ||
-			!closeEquals(get_y, v.Y, epsilon) ||
-			!closeEquals(get_z, v.Z, epsilon) {
+		if !closeEq(Degrees(get_angle), c.angle, epsilon) ||
+			!closeEq(get_x, v.X, epsilon) ||
+			!closeEq(get_y, v.Y, epsilon) ||
+			!closeEq(get_z, v.Z, epsilon) {
 
-			if closeEquals(get_angle, math.Pi, epsilon) &&
-				closeEquals(math.Abs(get_x)-math.Abs(v.X), 0, epsilon) &&
-				closeEquals(math.Abs(get_y)-math.Abs(v.Y), 0, epsilon) &&
-				closeEquals(math.Abs(get_z)-math.Abs(v.Z), 0, epsilon) {
+			if closeEq(get_angle, math.Pi, epsilon) &&
+				closeEq(math.Abs(get_x)-math.Abs(v.X), 0, epsilon) &&
+				closeEq(math.Abs(get_y)-math.Abs(v.Y), 0, epsilon) &&
+				closeEq(math.Abs(get_z)-math.Abs(v.Z), 0, epsilon) {
 				continue
 			} else {
-				t.Errorf("TestMat4ToAxisAngle %d %v \n%f %f %f %f\n%f %f %f %f\n", testIndex, v, radToDeg(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
+				t.Errorf("TestMat4ToAxisAngle %d %v \n%f %f %f %f\n%f %f %f %f\n", testIndex, v, Degrees(get_angle), get_x, get_y, get_z, c.angle, v.X, v.Y, v.Z)
 			}
 		}
 	}
@@ -202,8 +97,8 @@ func TestMultMatVec(t *testing.T) {
 func TestEulerToMat4(t *testing.T) {
 	var m *Mat4
 	for testIndex, c := range common_cases {
-		// m = EulerToMat4(degToRad(c.yaw), degToRad(c.pitch), degToRad(c.roll))
-		m = EulerToMat4(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
+		// m = EulerToMat4(Radians(c.yaw), Radians(c.pitch), Radians(c.roll))
+		m = EulerToMat4(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		get := MultMat4Vec3(m, c.start_vec)
 		if get.Equals(c.want) == false {
 			t.Errorf("TestEulerToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
@@ -211,87 +106,19 @@ func TestEulerToMat4(t *testing.T) {
 	}
 }
 
-func TestMat4ToQuat(t *testing.T) {
-	var m *Mat4
-	var q *Quat
-	for testIndex, c := range common_cases {
-		m = EulerToMat4(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
-		q = Mat4ToQuat(m)
-
-		get := RotateVecQuat(q, c.start_vec)
-		if get.Equals(c.want) == false {
-			t.Errorf("TestMat4ToQuat %d \n %v\n%v\n\n", testIndex, q, get)
-		}
-	}
-}
-
 func TestMat4ToEuler(t *testing.T) {
 	var m *Mat4
 	for testIndex, c := range common_cases {
-		m = EulerToMat4(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
+		m = EulerToMat4(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		x, y, z := Mat4ToEuler(m)
 
-		if x != degToRad(c.pitch) || y != degToRad(c.yaw) || z != degToRad(c.roll) {
+		if x != Radians(c.pitch) || y != Radians(c.yaw) || z != Radians(c.roll) {
 			t.Errorf("TestMat4ToEuler %d %f %f %f", testIndex, x, y, z)
 		}
 	}
 }
 
-func TestQuatToMat4(t *testing.T) {
-	var m *Mat4
-	var q *Quat
-	for testIndex, c := range common_cases {
-		q = EulerToQuat(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
-		m = QuatToMat4(q)
 
-		get := MultMat4Vec3(m, c.start_vec)
-		if get.Equals(c.want) == false {
-			t.Errorf("TestQuatToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
-		}
-	}
-}
-
-func TestQuatToEuler(t *testing.T) {
-	var q *Quat
-
-	common_cases2 := []rotation_test_struct{
-		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//2
-		{180, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},//5
-		{180, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
-		{0, 0, 180, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //8
-
-		{180, 0, 0, &Vec3{-1, 0, 0}, &Vec3{-1, 0, 0}},
-		{0, 180, 0, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},//11
-		{180, 0, 0, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},
-		{0, 180, 0, &Vec3{0, -1, 0}, &Vec3{0, -1, 0}},
-		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},//14
-		{180, 0, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
-		{0, 180, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
-		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}},//17
-
-		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//2
-	 	{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
-	}
-	for testIndex, c := range common_cases2 {
-		q = EulerToQuat(degToRad(c.pitch), degToRad(c.yaw), degToRad(c.roll))
-		pitch, yaw, roll := QuatToEuler(q)
-		// pitch, yaw, roll := QuatToEuler(q)
-
-		if !closeEquals(yaw, degToRad(c.yaw), epsilon) ||
-			!closeEquals(pitch, degToRad(c.pitch), epsilon) ||
-			!closeEquals(roll, degToRad(c.roll), epsilon) {
-			t.Errorf("TestQuatToEuler %d %f %f %f ", testIndex, pitch, yaw, roll)
-		}
-	}
-}
 
 func TestAxisAngleToMat4(t *testing.T) {
 	cases := []struct {
@@ -340,14 +167,14 @@ func TestAxisAngleToMat4(t *testing.T) {
 	var m *Mat4
 	for testIndex, c := range cases {
 		c.axis.NormalizeIn()
-		m = AxisAngleToMat4_2(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
+		m = AxisAngleToMat4_2(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get := MultMat4Vec3(m, c.start_vec)
 		if get.Equals(c.want) == false {
 			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 
 		c.axis.NormalizeIn()
-		m = AxisAngleToMat4(degToRad(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
+		m = AxisAngleToMat4(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get = MultMat4Vec3(m, c.start_vec)
 		if get.Equals(c.want) == false {
 			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
