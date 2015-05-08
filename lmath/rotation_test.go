@@ -51,7 +51,7 @@ func TestMat4ToAxisAngle(t *testing.T) {
 		m2 := AxisAngleToMat4(get_angle, get_x, get_y, get_z)
 		v2 := MultMat4Vec3(m, &Vec3{1, 0, 0})
 		v3 := MultMat4Vec3(m2, &Vec3{1, 0, 0})
-		if v2.Equals(v3) == false {
+		if v2.Eq(v3) == false {
 			fmt.Printf("Not good %d %2.5f %2.5f %2.5f %2.5f %2.5f %2.5f\n", testIndex, v2.X, v2.Y, v2.Z, v3.X, v3.Y, v3.Z)
 		}
 
@@ -88,7 +88,7 @@ func TestMultMatVec(t *testing.T) {
 	for testIndex, c := range cases {
 		m.Load(c.mat)
 		get := MultMat4Vec3(m, c.orig_v)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestMultMat4Vec3 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 	}
@@ -100,7 +100,7 @@ func TestEulerToMat4(t *testing.T) {
 		// m = EulerToMat4(Radians(c.yaw), Radians(c.pitch), Radians(c.roll))
 		m = EulerToMat4(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		get := MultMat4Vec3(m, c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestEulerToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 	}
@@ -169,14 +169,14 @@ func TestAxisAngleToMat4(t *testing.T) {
 		c.axis.NormalizeIn()
 		m = AxisAngleToMat4_2(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get := MultMat4Vec3(m, c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 
 		c.axis.NormalizeIn()
 		m = AxisAngleToMat4(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get = MultMat4Vec3(m, c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestAxisAngleToMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 	}

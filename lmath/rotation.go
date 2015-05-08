@@ -104,9 +104,9 @@ func AxisAngleToMat4_3(angle float64, a, b, c float64) *Mat4 {
 	at := &Vec3{a, b, c}
 	up := &Vec3{0, 1, 0}
 
-	if at.Equals(&Vec3{0, 1, 0}) {
+	if at.Eq(&Vec3{0, 1, 0}) {
 		up = &Vec3{0, 0, -1}
-	} else if at.Equals(&Vec3{0, -1, 0}) {
+	} else if at.Eq(&Vec3{0, -1, 0}) {
 		up = &Vec3{0, 0, 1}
 	}
 
@@ -338,6 +338,7 @@ func IsRotationMatrix(m *Mat4) bool {
 	return closeEq(m.Determinant(), 1, epsilon) && m.Mult(m.Transpose()).IsIdentity()
 }
 
+
 // Apply the matrix against the Vector
 // Return a new vector with the result m*v
 func MultMat4Vec3(m *Mat4, v *Vec3) *Vec3 {
@@ -349,19 +350,5 @@ func MultMat4Vec3(m *Mat4, v *Vec3) *Vec3 {
 		m.mat[0]*v.X + m.mat[1]*v.Y + m.mat[2]*v.Z + m.mat[3],
 		m.mat[4]*v.X + m.mat[5]*v.Y + m.mat[6]*v.Z + m.mat[7],
 		m.mat[8]*v.X + m.mat[9]*v.Y + m.mat[10]*v.Z + m.mat[11],
-	}
-}
-
-// Apply the matrix against the Vector
-// Return a new vector with the result v*m
-func MultVec3Mat4(v *Vec3, m *Mat4) *Vec3 {
-	// 0   1   2   3
-	// 4   5   6   7
-	// 8   9   10  11
-	// 12  13  14  15
-	return &Vec3{
-		v.X*m.mat[0] + v.Y*m.mat[4] + v.Z*m.mat[8] + m.mat[12],
-		v.X*m.mat[1] + v.Y*m.mat[5] + v.Z*m.mat[9] + m.mat[13],
-		v.X*m.mat[2] + v.Y*m.mat[6] + v.Z*m.mat[10] + m.mat[14],
 	}
 }

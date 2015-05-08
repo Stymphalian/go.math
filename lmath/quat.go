@@ -231,6 +231,11 @@ func (this *Quat) InverseIn() *Quat{
     return this.DivInScalar(n)
 }
 
+func (this *Quat) Copy() *Quat {
+	out := *this
+	return &out
+}
+
 //==============================================================================
 
 // Return the axis component of the quaternion

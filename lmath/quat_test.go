@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestEquals(t *testing.T) {
+func TestEqualsQuat(t *testing.T) {
 	cases := []struct {
 		orig, other *Quat
 		want        bool
@@ -25,7 +25,7 @@ func TestEquals(t *testing.T) {
 	}
 }
 
-func TestSet(t *testing.T) {
+func TestSetQuat(t *testing.T) {
 	cases := []struct {
 		x, y, z, w float64
 		want       *Quat
@@ -45,7 +45,7 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestAdd(t *testing.T) {
+func TestAddQuat(t *testing.T) {
 	cases := []struct {
 		orig, other, want *Quat
 	}{
@@ -71,7 +71,7 @@ func TestAdd(t *testing.T) {
 	}
 }
 
-func TestSub(t *testing.T) {
+func TestSubQuat(t *testing.T) {
 	cases := []struct {
 		orig, other, want *Quat
 	}{
@@ -97,7 +97,7 @@ func TestSub(t *testing.T) {
 	}
 }
 
-func TestMult(t *testing.T) {
+func TestMultQuat(t *testing.T) {
 	cases := []struct {
 		orig, other, want *Quat
 	}{
@@ -122,7 +122,7 @@ func TestMult(t *testing.T) {
 	}
 }
 
-func TestAddScalar(t *testing.T) {
+func TestAddScalarQuat(t *testing.T) {
 	cases := []struct {
 		orig, want *Quat
 		scale      float64
@@ -147,7 +147,7 @@ func TestAddScalar(t *testing.T) {
 	}
 }
 
-func TestSubScalar(t *testing.T) {
+func TestSubScalarQuat(t *testing.T) {
 	cases := []struct {
 		orig, want *Quat
 		scale      float64
@@ -172,7 +172,7 @@ func TestSubScalar(t *testing.T) {
 	}
 }
 
-func TestMultScalar(t *testing.T) {
+func TestMultScalarQuat(t *testing.T) {
 	cases := []struct {
 		orig, want *Quat
 		scale      float64
@@ -197,7 +197,7 @@ func TestMultScalar(t *testing.T) {
 	}
 }
 
-func TestDivScalar(t *testing.T) {
+func TestDivScalarQuat(t *testing.T) {
 	cases := []struct {
 		orig, want *Quat
 		scale      float64
@@ -222,7 +222,7 @@ func TestDivScalar(t *testing.T) {
 }
 
 
-func TestToUnit(t *testing.T) {
+func TestToUnitQuat(t *testing.T) {
 	mag := math.Sqrt(30)
 	cases := []struct {
 		orig, want *Quat
@@ -244,7 +244,7 @@ func TestToUnit(t *testing.T) {
 	}
 }
 
-func TestNorm(t *testing.T) {
+func TestNormQuat(t *testing.T) {
 	mag := math.Sqrt(30)
 
 	cases := []struct {
@@ -273,7 +273,7 @@ func TestNorm(t *testing.T) {
 	}
 }
 
-func TestConjugate(t *testing.T) {
+func TestConjugateQuat(t *testing.T) {
 	mag := math.Sqrt(30)
 	cases := []struct {
 		orig, want *Quat
@@ -301,7 +301,7 @@ func TestConjugate(t *testing.T) {
 	}
 }
 
-func TestInverse(t *testing.T) {
+func TestInverseQuat(t *testing.T) {
 	cases := []struct {
 		orig *Quat
 	}{
@@ -330,7 +330,7 @@ func TestInverse(t *testing.T) {
 
 // =============================================================================
 
-func TestFromAxisAngle(t *testing.T) {
+func TestFromAxisAngleQuat(t *testing.T) {
 	cases := []struct {
 		angle     float64
 		axis      *Vec3
@@ -378,13 +378,13 @@ func TestFromAxisAngle(t *testing.T) {
 		c.axis.NormalizeIn()
 		q.FromAxisAngle(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 		get := q.RotateVec3(c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestFromAxisAngle %d \n %v\n%v\n\n", testIndex, q, get)
 		}
 	}
 }
 
-func TestFromEuler(t *testing.T) {
+func TestFromEulerQuat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
 		start_vec        *Vec3
@@ -425,13 +425,13 @@ func TestFromEuler(t *testing.T) {
 	for testIndex, c := range common_cases {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		get := q.RotateVec3(c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestFromEuler %d \n %v\n%v\n\n", testIndex, q, get)
 		}
 	}
 }
 
-func TestFromMat4(t *testing.T) {
+func TestFromMat4Quat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
 		start_vec        *Vec3
@@ -474,13 +474,13 @@ func TestFromMat4(t *testing.T) {
 		m = EulerToMat4(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		q.FromMat4(m)
 		get := q.RotateVec3(c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestFromMat4 %d \n %v\n%v\n\n", testIndex, q, get)
 		}
 	}
 }
 
-func TestAxisAngle(t *testing.T) {
+func TestAxisAngleQuat(t *testing.T) {
 	cases := []struct {
 		angle, x, y, z float64
 	}{
@@ -522,7 +522,7 @@ func TestAxisAngle(t *testing.T) {
 	}
 }
 
-func TestMat4(t *testing.T) {
+func TestMat4Quat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
 		start_vec        *Vec3
@@ -565,13 +565,13 @@ func TestMat4(t *testing.T) {
 		m = q.Mat4()
 
 		get := MultMat4Vec3(m, c.start_vec)
-		if get.Equals(c.want) == false {
+		if get.Eq(c.want) == false {
 			t.Errorf("TestMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
 	}
 }
 
-func TestQuatToEuler(t *testing.T) {
+func TestQuatToEulerQuat(t *testing.T) {
 	common_cases2 := []rotation_test_struct{
 		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
