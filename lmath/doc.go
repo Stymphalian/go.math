@@ -7,7 +7,6 @@ package lmath
 // Right-Hand coordinate system
 // All angles are specified in Radians
 // Rotations are applied in Yaw => Pitch => Roll order
-
 var (
-    Version = 0.0
+	Version = 0.0
 )

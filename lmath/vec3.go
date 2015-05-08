@@ -12,12 +12,11 @@ type Vec3 struct {
 }
 
 var (
-	Vec3Up = &Vec3{0,1,0}
-	Vec3Right = &Vec3{1,0,0}
-	Vec3Forward = &Vec3{0,0,1}
-	Vec3Zero = &Vec3{0,0,0}
+	Vec3Up      = &Vec3{0, 1, 0}
+	Vec3Right   = &Vec3{1, 0, 0}
+	Vec3Forward = &Vec3{0, 0, 1}
+	Vec3Zero    = &Vec3{0, 0, 0}
 )
-
 
 // Returns a new vector which is the result of adding 'this' with the
 // other vector
@@ -149,7 +148,6 @@ func (this *Vec3) LengthSq() float64 {
 	return this.X*this.X + this.Y*this.Y + this.Z*this.Z
 }
 
-
 // Checks for equality between the vectors.
 // Equal is all elemnets are equal within an epsilon ( < 0.0000001)
 func (this *Vec3) Eq(other *Vec3) bool {
@@ -179,17 +177,14 @@ func (this *Vec3) Set(x, y, z float64) *Vec3 {
 	return this
 }
 
-
 // Make a vector which is the projection of this onto other
-func (this *Vec3) Proj(other *Vec3) (*Vec3){
-	n := this.Length()*other.Length()
-	return other.Normalize().MultScalar(this.Dot(other)/n)
+func (this *Vec3) Proj(other *Vec3) *Vec3 {
+	n := this.Length() * other.Length()
+	return other.Normalize().MultScalar(this.Dot(other) / n)
 }
-
 
 //==============================================================================
 // Vector 3 specific methods
-
 
 // Returns a new vector which is the Cross product with 'this' X 'other'
 func (this *Vec3) Cross(other *Vec3) *Vec3 {
@@ -210,7 +205,7 @@ func (this *Vec3) CrossIn(other *Vec3) *Vec3 {
 
 // Apply the matrix against the Vector
 // Return a new vector with the result v*m
-func (this* Vec3) MultMat4(right *Mat4) *Vec3{
+func (this *Vec3) MultMat4(right *Mat4) *Vec3 {
 	// 0   1   2   3
 	// 4   5   6   7
 	// 8   9   10  11

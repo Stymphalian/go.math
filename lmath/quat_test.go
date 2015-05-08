@@ -79,9 +79,9 @@ func TestSubQuat(t *testing.T) {
 		{&Quat{0, 0, 0, 0}, &Quat{1, 2, 3, 4}, &Quat{-1, -2, -3, -4}},
 		{&Quat{1, 0, 0, 0}, &Quat{0, 1, 0, 0}, &Quat{1, -1, 0, 0}},
 		{&Quat{0, 1, 0, 0}, &Quat{1, 0, 0, 0}, &Quat{-1, 1, 0, 0}},
-		{&Quat{1, 2, 3, 4}, &Quat{5, 6, 7, 8}, &Quat{-4,-4,-4,-4}},
-		{&Quat{1, -2, 3, -4}, &Quat{1, -2, 3, -4}, &Quat{0,0,0,0}},
-		{&Quat{1, 2, 3, 4}, &Quat{1, -2, 3, -4}, &Quat{0,4,0,8}},
+		{&Quat{1, 2, 3, 4}, &Quat{5, 6, 7, 8}, &Quat{-4, -4, -4, -4}},
+		{&Quat{1, -2, 3, -4}, &Quat{1, -2, 3, -4}, &Quat{0, 0, 0, 0}},
+		{&Quat{1, 2, 3, 4}, &Quat{1, -2, 3, -4}, &Quat{0, 4, 0, 8}},
 	}
 
 	for testIndex, test := range cases {
@@ -128,10 +128,10 @@ func TestAddScalarQuat(t *testing.T) {
 		scale      float64
 	}{
 		{&Quat{0, 0, 0, 0}, &Quat{2, 2, 2, 2}, 2},
-		{&Quat{0, 0, 0, 0}, &Quat{-1,-1,-1,-1}, -1},
-		{&Quat{1, 2, 3, 4}, &Quat{0,1,2,3}, -1},
-		{&Quat{1, 2, 3, 4}, &Quat{3,4,5,6}, 2},
-		{&Quat{1, 2, 3, 4}, &Quat{1,2,3,4}, 0},
+		{&Quat{0, 0, 0, 0}, &Quat{-1, -1, -1, -1}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{0, 1, 2, 3}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{3, 4, 5, 6}, 2},
+		{&Quat{1, 2, 3, 4}, &Quat{1, 2, 3, 4}, 0},
 	}
 
 	for testIndex, test := range cases {
@@ -152,11 +152,11 @@ func TestSubScalarQuat(t *testing.T) {
 		orig, want *Quat
 		scale      float64
 	}{
-		{&Quat{0, 0, 0, 0}, &Quat{-2,-2,-2,-2}, 2},
-		{&Quat{0, 0, 0, 0}, &Quat{1,1,1,1}, -1},
-		{&Quat{1, 2, 3, 4}, &Quat{2,3,4,5}, -1},
-		{&Quat{1, 2, 3, 4}, &Quat{-1,0,1,2}, 2},
-		{&Quat{1, 2, 3, 4}, &Quat{1,2,3,4}, 0},
+		{&Quat{0, 0, 0, 0}, &Quat{-2, -2, -2, -2}, 2},
+		{&Quat{0, 0, 0, 0}, &Quat{1, 1, 1, 1}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{2, 3, 4, 5}, -1},
+		{&Quat{1, 2, 3, 4}, &Quat{-1, 0, 1, 2}, 2},
+		{&Quat{1, 2, 3, 4}, &Quat{1, 2, 3, 4}, 0},
 	}
 
 	for testIndex, test := range cases {
@@ -205,7 +205,7 @@ func TestDivScalarQuat(t *testing.T) {
 		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, 2},
 		{&Quat{0, 0, 0, 0}, &Quat{0, 0, 0, 0}, -1},
 		{&Quat{1, 2, 3, 4}, &Quat{-1, -2, -3, -4}, -1},
-		{&Quat{1, 2, 3, 4}, &Quat{0.5,1,1.5,2}, 2},
+		{&Quat{1, 2, 3, 4}, &Quat{0.5, 1, 1.5, 2}, 2},
 	}
 
 	for testIndex, test := range cases {
@@ -220,7 +220,6 @@ func TestDivScalarQuat(t *testing.T) {
 		}
 	}
 }
-
 
 func TestToUnitQuat(t *testing.T) {
 	mag := math.Sqrt(30)
@@ -325,8 +324,6 @@ func TestInverseQuat(t *testing.T) {
 		}
 	}
 }
-
-
 
 // =============================================================================
 
@@ -573,39 +570,39 @@ func TestMat4Quat(t *testing.T) {
 }
 
 func TestEulerQuat(t *testing.T) {
-	common_cases2 := []struct{
+	common_cases2 := []struct {
 		pitch, yaw, roll float64
 		start_vec        *Vec3
 		want             *Vec3
 	}{
 		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},//2
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //2
 		{180, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
 		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},//5
+		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}}, //5
 		{180, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
 		{0, 180, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
 		{0, 0, 180, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //8
 
 		{180, 0, 0, &Vec3{-1, 0, 0}, &Vec3{-1, 0, 0}},
 		{0, 180, 0, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},//11
+		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}}, //11
 		{180, 0, 0, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},
 		{0, 180, 0, &Vec3{0, -1, 0}, &Vec3{0, -1, 0}},
-		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},//14
+		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}}, //14
 		{180, 0, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
 		{0, 180, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
-		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}},//17
+		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}}, //17
 
 		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}},//20
-	 	{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
+		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //20
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
 
-	 	//test basic rotations using a [0,1,0] vector
+		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},//22
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}}, //22
 		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
 		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},

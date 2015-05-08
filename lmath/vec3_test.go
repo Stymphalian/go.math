@@ -75,53 +75,53 @@ func TestSubVec3(t *testing.T) {
 }
 
 func TestAddScalarVec3(t *testing.T) {
-	cases := []struct{
-		orig,want *Vec3
-		scale float64
+	cases := []struct {
+		orig, want *Vec3
+		scale      float64
 	}{
-		{&Vec3{0,0,0},&Vec3{0,0,0},0},
-		{&Vec3{0,0,0},&Vec3{1,1,1},1},
-		{&Vec3{0,0,0},&Vec3{-1,-1,-1},-1},
-		{&Vec3{1,2,3},&Vec3{5,6,7},4},
-		{&Vec3{1,2,3},&Vec3{-3,-2,-1},-4},
-		{&Vec3{1,-2,3},&Vec3{5,2,7},4},
+		{&Vec3{0, 0, 0}, &Vec3{0, 0, 0}, 0},
+		{&Vec3{0, 0, 0}, &Vec3{1, 1, 1}, 1},
+		{&Vec3{0, 0, 0}, &Vec3{-1, -1, -1}, -1},
+		{&Vec3{1, 2, 3}, &Vec3{5, 6, 7}, 4},
+		{&Vec3{1, 2, 3}, &Vec3{-3, -2, -1}, -4},
+		{&Vec3{1, -2, 3}, &Vec3{5, 2, 7}, 4},
 	}
 
-	for testIndex, test := range cases{
+	for testIndex, test := range cases {
 		get := test.orig.AddScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestAddScalarVec3 %d",testIndex)
+			t.Errorf("TestAddScalarVec3 %d", testIndex)
 		}
 
 		get = test.orig.AddInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestAddInScalarVec3 %d",testIndex)
+			t.Errorf("TestAddInScalarVec3 %d", testIndex)
 		}
 	}
 }
 
 func TestSubScalarVec3(t *testing.T) {
-	cases := []struct{
-		orig,want *Vec3
-		scale float64
+	cases := []struct {
+		orig, want *Vec3
+		scale      float64
 	}{
-		{&Vec3{0,0,0},&Vec3{0,0,0},0},
-		{&Vec3{0,0,0},&Vec3{-1,-1,-1},1},
-		{&Vec3{0,0,0},&Vec3{1,1,1},-1},
-		{&Vec3{1,2,3},&Vec3{-3,-2,-1},4},
-		{&Vec3{1,2,3},&Vec3{5,6,7},-4},
-		{&Vec3{1,-2,3},&Vec3{-3,-6,-1},4},
+		{&Vec3{0, 0, 0}, &Vec3{0, 0, 0}, 0},
+		{&Vec3{0, 0, 0}, &Vec3{-1, -1, -1}, 1},
+		{&Vec3{0, 0, 0}, &Vec3{1, 1, 1}, -1},
+		{&Vec3{1, 2, 3}, &Vec3{-3, -2, -1}, 4},
+		{&Vec3{1, 2, 3}, &Vec3{5, 6, 7}, -4},
+		{&Vec3{1, -2, 3}, &Vec3{-3, -6, -1}, 4},
 	}
 
-	for testIndex, test := range cases{
+	for testIndex, test := range cases {
 		get := test.orig.SubScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestSubScalarVec3 %d",testIndex)
+			t.Errorf("TestSubScalarVec3 %d", testIndex)
 		}
 
 		get = test.orig.SubInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestSubInScalarVec3 %d",testIndex)
+			t.Errorf("TestSubInScalarVec3 %d", testIndex)
 		}
 	}
 }
@@ -245,7 +245,7 @@ func TestCrossVec3(t *testing.T) {
 		}
 
 		get = test.orig.CrossIn(test.other)
-		if get!= test.orig || get.Eq(test.want) == false {
+		if get != test.orig || get.Eq(test.want) == false {
 			t.Errorf("TestCrossVec3 %d", testIndex)
 		}
 	}
@@ -286,7 +286,7 @@ func TestNormalizeVec3(t *testing.T) {
 		}
 
 		get = test.orig.NormalizeIn()
-		if get != test.orig  || get.Eq(test.want) == false {
+		if get != test.orig || get.Eq(test.want) == false {
 			t.Errorf("TestNormalizeInVec3 %d", testIndex)
 		}
 	}

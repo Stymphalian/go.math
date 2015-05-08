@@ -19,24 +19,22 @@ type Quat struct {
 }
 
 var (
-	QuatIdentity = &Quat{1,0,0,0}
-	QuatZero = &Quat{0,0,0,0}
+	QuatIdentity = &Quat{1, 0, 0, 0}
+	QuatZero     = &Quat{0, 0, 0, 0}
 )
-
 
 // Return true if all elements are equal between both quaternions
 // comparisons are done using an epsilon (< 0.0000001)
 func (this *Quat) Eq(other *Quat) bool {
-    return closeEq(this.X, other.X, epsilon) &&
-    closeEq(this.Y, other.Y, epsilon) &&
-    closeEq(this.Z, other.Z, epsilon) &&
-    closeEq(this.W, other.W, epsilon)
+	return closeEq(this.X, other.X, epsilon) &&
+		closeEq(this.Y, other.Y, epsilon) &&
+		closeEq(this.Z, other.Z, epsilon) &&
+		closeEq(this.W, other.W, epsilon)
 }
-
 
 // Set the component of the quaternion
 // Return this
-func (this* Quat) Set(w,x,y,z float64) (*Quat){
+func (this *Quat) Set(w, x, y, z float64) *Quat {
 	this.W = w
 	this.X = x
 	this.Y = y
@@ -46,7 +44,7 @@ func (this* Quat) Set(w,x,y,z float64) (*Quat){
 
 // Add the two quaternions (q + other)
 // Returns a new quaternion with the result
-func (this *Quat) Add(other *Quat) *Quat{
+func (this *Quat) Add(other *Quat) *Quat {
 	out := *this
 	out.W += other.W
 	out.X += other.X
@@ -57,7 +55,7 @@ func (this *Quat) Add(other *Quat) *Quat{
 
 // Add two quaternionns (q + other). Result is stored in this
 // Return this
-func (this *Quat) AddIn(other *Quat) *Quat{
+func (this *Quat) AddIn(other *Quat) *Quat {
 	this.W += other.W
 	this.X += other.X
 	this.Y += other.Y
@@ -67,14 +65,14 @@ func (this *Quat) AddIn(other *Quat) *Quat{
 
 // Subtract the two quaternions (q - other)
 // Returns a new quaternion with the result
-func (this *Quat) Sub(other *Quat) *Quat{
+func (this *Quat) Sub(other *Quat) *Quat {
 	out := *this
 	return out.SubIn(other)
 }
 
 // Sub two quaternionns (q - other). Result is stored in this
 // Return this
-func (this *Quat) SubIn(other *Quat) *Quat{
+func (this *Quat) SubIn(other *Quat) *Quat {
 	this.W -= other.W
 	this.X -= other.X
 	this.Y -= other.Y
@@ -86,8 +84,8 @@ func (this *Quat) SubIn(other *Quat) *Quat{
 // Return a new quaterion with the result.
 // Multiplying quaternions is NOT commutative (order matters!)
 func (this *Quat) Mult(q *Quat) *Quat {
-    out := *this
-    return out.MultIn(q)
+	out := *this
+	return out.MultIn(q)
 }
 
 // Multiply 'this' with the other quaternion.
@@ -95,28 +93,28 @@ func (this *Quat) Mult(q *Quat) *Quat {
 // Return a pointer to 'this'
 // Multiplying quaternions is NOT commutative (order matters!)
 func (this *Quat) MultIn(other *Quat) *Quat {
-    w := this.W*other.W - this.X*other.X - this.Y*other.Y - this.Z*other.Z
-    x := this.W*other.X + this.X*other.W + this.Y*other.Z - this.Z*other.Y
-    y := this.W*other.Y + this.Y*other.W - this.X*other.Z + this.Z*other.X
-    z := this.W*other.Z + this.Z*other.W + this.X*other.Y - this.Y*other.X
+	w := this.W*other.W - this.X*other.X - this.Y*other.Y - this.Z*other.Z
+	x := this.W*other.X + this.X*other.W + this.Y*other.Z - this.Z*other.Y
+	y := this.W*other.Y + this.Y*other.W - this.X*other.Z + this.Z*other.X
+	z := this.W*other.Z + this.Z*other.W + this.X*other.Y - this.Y*other.X
 
-    this.X = x
-    this.Y = y
-    this.Z = z
-    this.W = w
-    return this
+	this.X = x
+	this.Y = y
+	this.Z = z
+	this.W = w
+	return this
 }
 
 // Add a scalar quantity to the quaternion
 // Returns a new quaternion with the result
-func (this *Quat) AddScalar(val float64) *Quat{
-	out:= *this
+func (this *Quat) AddScalar(val float64) *Quat {
+	out := *this
 	return out.AddInScalar(val)
 }
 
 // Add a scalar quantity to the quaternion
 // Returns this
-func (this *Quat) AddInScalar(val float64) *Quat{
+func (this *Quat) AddInScalar(val float64) *Quat {
 	this.W += val
 	this.X += val
 	this.Y += val
@@ -126,13 +124,14 @@ func (this *Quat) AddInScalar(val float64) *Quat{
 
 // Subtract a scalar quantity to the quaternion
 // Returns a new quaternion with the result
-func (this *Quat) SubScalar(val float64) *Quat{
-	out:= *this
+func (this *Quat) SubScalar(val float64) *Quat {
+	out := *this
 	return out.SubInScalar(val)
 }
+
 // Add a scalar quantity to the quaternion
 // Returns this
-func (this *Quat) SubInScalar(val float64) *Quat{
+func (this *Quat) SubInScalar(val float64) *Quat {
 	this.W -= val
 	this.X -= val
 	this.Y -= val
@@ -142,13 +141,14 @@ func (this *Quat) SubInScalar(val float64) *Quat{
 
 // Multiply a scalar quantity to the quaternion
 // Returns a new quaternion with the result
-func (this *Quat) MultScalar(val float64) *Quat{
-	out:= *this
+func (this *Quat) MultScalar(val float64) *Quat {
+	out := *this
 	return out.MultInScalar(val)
 }
+
 // Add a scalar quantity to the quaternion
 // Returns this
-func (this *Quat) MultInScalar(val float64) *Quat{
+func (this *Quat) MultInScalar(val float64) *Quat {
 	this.W *= val
 	this.X *= val
 	this.Y *= val
@@ -158,13 +158,14 @@ func (this *Quat) MultInScalar(val float64) *Quat{
 
 // Divide a scalar quantity to the quaternion
 // Returns a new quaternion with the result
-func (this *Quat) DivScalar(val float64) *Quat{
-	out:= *this
+func (this *Quat) DivScalar(val float64) *Quat {
+	out := *this
 	return out.DivInScalar(val)
 }
+
 // Add a scalar quantity to the quaternion
 // Returns this
-func (this *Quat) DivInScalar(val float64) *Quat{
+func (this *Quat) DivInScalar(val float64) *Quat {
 	this.W /= val
 	this.X /= val
 	this.Y /= val
@@ -172,43 +173,42 @@ func (this *Quat) DivInScalar(val float64) *Quat{
 	return this
 }
 
-
 // Make this quaterion into a unit length quaternion
 // Returns a pointer to 'this'
-func (this *Quat) ToUnit() (*Quat){
+func (this *Quat) ToUnit() *Quat {
 	n := this.Norm()
-    if closeEq(n, 0, epsilon) {
-        return this
-    }
-    return this.DivInScalar(n)
+	if closeEq(n, 0, epsilon) {
+		return this
+	}
+	return this.DivInScalar(n)
 }
 
 // Returns the norm of this quaternion
 // sqrt(x^2 + y^2 + z^2 + w^2)
-func (this *Quat) Norm() float64{
+func (this *Quat) Norm() float64 {
 	return math.Sqrt(this.NormSq())
 }
 
 // Returns the squared norm of this quaternion
 // So that we can save a math.Sqrt
 // x^2 + y^2 + z^2 + w^2
-func (this *Quat) NormSq() float64{
+func (this *Quat) NormSq() float64 {
 	return this.X*this.X +
-        this.Y*this.Y +
-        this.Z*this.Z +
-        this.W*this.W
+		this.Y*this.Y +
+		this.Z*this.Z +
+		this.W*this.W
 }
 
 // Return a new quaternion which is the conjugate of this
 // Conjugate is defined as [w,-x,-y,-z]
-func (this *Quat) Conjugate() *Quat{
+func (this *Quat) Conjugate() *Quat {
 	out := *this
 	return out.ConjugateIn()
 }
 
 // Set the quaternion to the conjugate
 // Conjugate is defined as [w,-x,-y,-z]
-func (this *Quat) ConjugateIn() *Quat{
+func (this *Quat) ConjugateIn() *Quat {
 	this.X = -this.X
 	this.Y = -this.Y
 	this.Z = -this.Z
@@ -216,19 +216,19 @@ func (this *Quat) ConjugateIn() *Quat{
 }
 
 // Return a new quaternion which is the inverse of this
-func (this *Quat) Inverse() *Quat{
+func (this *Quat) Inverse() *Quat {
 	out := *this
 	return out.InverseIn()
 }
 
 // Set this quaternion as the inverse
-func (this *Quat) InverseIn() *Quat{
+func (this *Quat) InverseIn() *Quat {
 	this.ConjugateIn()
-    n := this.NormSq()
-    if closeEq(n, 0, epsilon) {
-        return this
-    }
-    return this.DivInScalar(n)
+	n := this.NormSq()
+	if closeEq(n, 0, epsilon) {
+		return this
+	}
+	return this.DivInScalar(n)
 }
 
 func (this *Quat) Copy() *Quat {
@@ -242,14 +242,13 @@ func (this *Quat) Copy() *Quat {
 func (this *Quat) Axis() *Vec3 {
 	angle := 2 * math.Acos(this.W)
 	s := math.Sin(angle / 2)
-	return &Vec3{this.X/s,this.Y/s,this.Z/s}
+	return &Vec3{this.X / s, this.Y / s, this.Z / s}
 }
 
 // return the angle component of the quaternion
-func (this *Quat) Angle() float64{
+func (this *Quat) Angle() float64 {
 	return 2 * math.Acos(this.W)
 }
-
 
 //==============================================================================
 
@@ -266,7 +265,7 @@ func (this *Quat) RotateVec3(v *Vec3) *Vec3 {
 // Perform the operation in the order
 // pitch(x) => yaw(y) => row(z)
 // Return this
-func (this *Quat) FromEuler(pitch,yaw, roll float64) (*Quat){
+func (this *Quat) FromEuler(pitch, yaw, roll float64) *Quat {
 	yawQ := &Quat{math.Cos(yaw / 2), 0, math.Sin(yaw / 2), 0}
 	pitchQ := &Quat{math.Cos(pitch / 2), math.Sin(pitch / 2), 0, 0}
 	rollQ := &Quat{math.Cos(roll / 2), 0, 0, math.Sin(roll / 2)}
@@ -280,11 +279,11 @@ func (this *Quat) FromEuler(pitch,yaw, roll float64) (*Quat){
 // Set the quaternion as a rotation with with specified angle (radians) and axis
 // The axis should be normalized!
 // Return this
-func (this *Quat) FromAxisAngle(angle float64, x,y,z float64) *Quat{
-	return this.Set(math.Cos(angle / 2),
-		math.Sin(angle/2) * x,
-		math.Sin(angle/2) * y,
-		math.Sin(angle/2) * z)
+func (this *Quat) FromAxisAngle(angle float64, x, y, z float64) *Quat {
+	return this.Set(math.Cos(angle/2),
+		math.Sin(angle/2)*x,
+		math.Sin(angle/2)*y,
+		math.Sin(angle/2)*z)
 }
 
 // Set the quaternion from the specified rotation matrix.
@@ -292,7 +291,7 @@ func (this *Quat) FromAxisAngle(angle float64, x,y,z float64) *Quat{
 // Matrix should be in right-hand coordinate system
 // Pitch-Yaw-Roll euler angle formation
 // Return this
-func (this *Quat) FromMat4(mat* Mat4) (*Quat){
+func (this *Quat) FromMat4(mat *Mat4) *Quat {
 	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
 	// 0  1  2  3
 	// 4  5  6  7
@@ -303,10 +302,10 @@ func (this *Quat) FromMat4(mat* Mat4) (*Quat){
 	if trace > 0 {
 		s := 0.5 / math.Sqrt(trace)
 		return this.Set(
-			0.25 / s,
-			(mat.At(9) - mat.At(6)) * s,
-			(mat.At(2) - mat.At(8)) * s,
-			(mat.At(4) - mat.At(1)) * s,
+			0.25/s,
+			(mat.At(9)-mat.At(6))*s,
+			(mat.At(2)-mat.At(8))*s,
+			(mat.At(4)-mat.At(1))*s,
 		)
 	}
 
@@ -344,13 +343,13 @@ func (this *Quat) FromMat4(mat* Mat4) (*Quat){
 		w = (mat.At(4) + mat.At(1)) / s
 	}
 
-	return this.Set(w,x,y,z)
+	return this.Set(w, x, y, z)
 }
 
 // Extract out the euler angles from the quaternion
 // Extract out the angles assuming the quaterion is encoded
 // as pitch -> yaw -> roll
-func (this *Quat) Euler() (pitch,yaw,roll float64) {
+func (this *Quat) Euler() (pitch, yaw, roll float64) {
 	// Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
 	test := this.X*this.Y + this.Z*this.W
@@ -377,13 +376,13 @@ func (this *Quat) Euler() (pitch,yaw,roll float64) {
 }
 
 // Return the axis and angle of this rotation quaternion
-func (this *Quat) AxisAngle() (angle,x,y,z float64){
+func (this *Quat) AxisAngle() (angle, x, y, z float64) {
 	axis := this.Axis()
-	return this.Angle(),axis.X,axis.Y,axis.Z
+	return this.Angle(), axis.X, axis.Y, axis.Z
 }
 
 // Return a mat4 from the provided quaternion
-func (this *Quat) Mat4() *Mat4{
+func (this *Quat) Mat4() *Mat4 {
 	// Reference
 	// Derivation of the below matrix can be found here
 	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm

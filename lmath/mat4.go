@@ -10,9 +10,12 @@ const (
 )
 
 var (
-	Mat4Identity = &Mat4{[16]float64{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1}}
+	Mat4Identity = &Mat4{[16]float64{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1}}
 )
-
 
 type Mat4 struct {
 	mat [16]float64
@@ -86,7 +89,6 @@ func (this *Mat4) Eq(other *Mat4) bool {
 	}
 	return true
 }
-
 
 // Retrieve the element at column/x and row/y
 // 0 indexed
@@ -227,7 +229,6 @@ func (this *Mat4) DivInScalar(val float64) *Mat4 {
 	return this
 }
 
-
 // Add the 'other' matrix to 'this' and store the result in 'this'
 // Returns a pointer to 'this'
 func (this *Mat4) Add(other *Mat4) *Mat4 {
@@ -299,7 +300,6 @@ func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 
 	return this
 }
-
 
 // Returns a new matrix which is transpose to 'this'
 func (this *Mat4) Transpose() *Mat4 {
@@ -431,7 +431,6 @@ func (this *Mat4) ToIdentity() *Mat4 {
 	return this
 }
 
-
 //==============================================================================
 
 func (this *Mat4) IsIdentity() bool {
@@ -466,7 +465,6 @@ func (this *Mat4) String() string {
 		this.mat[8], this.mat[9], this.mat[10], this.mat[11],
 		this.mat[12], this.mat[13], this.mat[14], this.mat[15])
 }
-
 
 //==============================================================================
 
@@ -537,25 +535,24 @@ func (this *Mat4) ToRotateZ(z float64) *Mat4 {
 	return this
 }
 
-
 // =============================================================================
 
 // Return a rotation matrix which rotates a vector about the axis [x,y,z] with
 // the given angle (radians).
 // Set this matrix as a rotation matrix from the give angle(radians) and axis
-func (this* Mat4) FromAxisAngle(angle, x, y, z float64) *Mat4 {
+func (this *Mat4) FromAxisAngle(angle, x, y, z float64) *Mat4 {
 	//Reference http://en.wikipedia.org/wiki/Rotation_matrix
 	c := math.Cos(angle)
 	s := math.Sin(angle)
 	t := (1 - c)
 
-	return this.Load([16]float64{c+x*x*t, x*y*t-z*s, x*z*t+y*s, 0,
-		y*x*t+z*s, c+y*y*t, y*z*t-x*s, 0,
-		z*x*t-y*s, z*y*t+x*s, c+z*z*t, 0,
+	return this.Load([16]float64{c + x*x*t, x*y*t - z*s, x*z*t + y*s, 0,
+		y*x*t + z*s, c + y*y*t, y*z*t - x*s, 0,
+		z*x*t - y*s, z*y*t + x*s, c + z*z*t, 0,
 		0, 0, 0, 1})
 }
 
-func (this* Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
+func (this *Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
 	cx := math.Cos(pitch)
 	sx := math.Sin(pitch)
 	cy := math.Cos(yaw)
@@ -595,7 +592,7 @@ func (this* Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
 	return this
 }
 
-func (this* Mat4) AxisAngle() (angle, x, y, z float64) {
+func (this *Mat4) AxisAngle() (angle, x, y, z float64) {
 	// Reference
 	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/
 	m00, m01, m02 := this.Get(0, 0), this.Get(0, 1), this.Get(0, 2)
@@ -744,8 +741,7 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 	return
 }
 
-
-func (this* Mat4) MultVec3(v *Vec3) *Vec3 {
+func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
 	// 0   1   2   3
 	// 4   5   6   7
 	// 8   9   10  11
@@ -756,4 +752,3 @@ func (this* Mat4) MultVec3(v *Vec3) *Vec3 {
 		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11],
 	}
 }
-

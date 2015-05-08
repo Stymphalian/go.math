@@ -44,6 +44,6 @@ func Clamp(a, lower, upper float64) float64 {
 // 0  --> start
 // x -->  somewhere between start and end
 // 1 --> end
-func Lerp(start, end, inc float64)(float64){
-	return (1 - inc)*start + inc*end
+func Lerp(start, end, inc float64) float64 {
+	return (1-inc)*start + inc*end
 }
