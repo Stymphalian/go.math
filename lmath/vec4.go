@@ -5,7 +5,7 @@ import (
     "math"
 )
 
-// A Vector 3 containing the three components
+// A Vector 4 containing the three components
 // X, Y, Z,W
 type Vec4 struct {
     X, Y, Z,W float64
@@ -201,7 +201,7 @@ func (this *Vec4) Copy() *Vec4 {
 }
 
 //==============================================================================
-// Vector 3 specific methods
+// Vector 4 specific methods
 
 
 // Apply the matrix against the Vector

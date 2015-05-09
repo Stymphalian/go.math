@@ -1,6 +1,6 @@
 /*
 lmath is a small 3D linear algebra library which provides support for
-Vec3, Mat4 and Quaternions. Supports rotations using euler angle,axis-angle,
+Vec3/4, Mat3/4 and Quaternions. Supports rotations using euler angle,axis-angle,
 rotation matrices, quaternions as well as conversions between the representations.
 */
 package lmath
@@ -15,6 +15,4 @@ var (
 )
 
 // TODO:
-// Create Vec4 struct
-// Create Mat3 struct
 // Test glmath functions
