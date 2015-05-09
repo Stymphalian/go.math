@@ -280,66 +280,6 @@ func (this *Quat) FromAxisAngle(angle float64, x, y, z float64) *Quat {
 		math.Sin(angle/2)*z)
 }
 
-// Set the quaternion from the specified rotation matrix.
-// Assumption is that the matrix is a valid rotation matrix.
-// Matrix should be in right-hand coordinate system
-// Pitch-Yaw-Roll euler angle formation
-// Return this
-func (this *Quat) FromMat4(m *Mat4) *Quat {
-	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
-	// 0  1  2  3
-	// 4  5  6  7
-	// 8  9  10 11
-	// 12 13 14 15
-	trace := m.Get(0, 0) + m.Get(1, 1) + m.Get(2, 2) + 1
-
-	if trace > 0 {
-		s := 0.5 / math.Sqrt(trace)
-		return this.Set(
-			0.25/s,
-			(m.At(9)-m.At(6))*s,
-			(m.At(2)-m.At(8))*s,
-			(m.At(4)-m.At(1))*s,
-		)
-	}
-
-	// Find the column which has the maximum diagonal value
-	max_col := 0
-	champ := m.Get(0, 0)
-	for col := 1; col < 3; col += 1 {
-		cand := m.Get(col, col)
-		if cand > champ {
-			champ = cand
-			max_col = col
-		}
-	}
-
-	// TODO : UNTESTED!!!
-	var w, x, y, z, s float64
-	switch max_col {
-	case 0:
-		s = 2 * math.Sqrt(1.0+m.At(0)-m.At(5)-m.At(10))
-		x = 0.5 / 2
-		y = (m.At(4) + m.At(1)) / s
-		z = (m.At(8) + m.At(2)) / s
-		w = (m.At(9) + m.At(6)) / s
-	case 1:
-		s = 2 * math.Sqrt(1.0+m.At(5)-m.At(0)-m.At(10))
-		x = (m.At(4) + m.At(1)) / s
-		y = 0.5 / 2
-		z = (m.At(9) + m.At(6)) / s
-		w = (m.At(8) + m.At(2)) / s
-	case 2:
-		s = 2 * math.Sqrt(1.0+m.At(10)-m.At(0)-m.At(5))
-		x = (m.At(8) + m.At(2)) / s
-		y = (m.At(9) + m.At(6)) / s
-		z = 0.5 / 2
-		w = (m.At(4) + m.At(1)) / s
-	}
-
-	return this.Set(w, x, y, z)
-}
-
 // Extract out the euler angles from the quaternion
 // Extract out the angles assuming the quaterion is encoded
 // as pitch -> yaw -> roll
@@ -377,8 +317,71 @@ func (this *Quat) AxisAngle() (angle, x, y, z float64) {
 	return this.Angle(), axis.X, axis.Y, axis.Z
 }
 
+// Set the quaternion from the specified rotation matrix.
+// Assumption is that the matrix is a valid rotation matrix.
+// Matrix should be in right-hand coordinate system
+// Pitch-Yaw-Roll euler angle formation
+// Return this
+func (this *Quat) fromMat(m [16]float64) *Quat {
+	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
+	// 0  1  2  3
+	// 4  5  6  7
+	// 8  9  10 11
+	// 12 13 14 15
+	// trace := m.Get(0, 0) + m.Get(1, 1) + m.Get(2, 2) + 1
+	trace := m[0] + m[5] + m[10] + 1
+
+	if trace > 0 {
+		s := 0.5 / math.Sqrt(trace)
+		return this.Set(
+			0.25/s,
+			(m[9]-m[6])*s,
+			(m[2]-m[8])*s,
+			(m[4]-m[1])*s,
+		)
+	}
+
+	// Find the column which has the maximum diagonal value
+	test_cols := [3]int{0, 5, 10}
+	max_col := 0
+	champ := m[test_cols[0]]
+	for col := 1; col < 3; col += 1 {
+		cand := m[test_cols[col]]
+		//cand := m.Get(col, col)
+		if cand > champ {
+			champ = cand
+			max_col = col
+		}
+	}
+
+	// TODO : UNTESTED!!!
+	var w, x, y, z, s float64
+	switch max_col {
+	case 0:
+		s = 2 * math.Sqrt(1.0+m[0]-m[5]-m[10])
+		x = 0.5 / 2
+		y = (m[4] + m[1]) / s
+		z = (m[8] + m[2]) / s
+		w = (m[9] + m[6]) / s
+	case 1:
+		s = 2 * math.Sqrt(1.0+m[5]-m[0]-m[10])
+		x = (m[4] + m[1]) / s
+		y = 0.5 / 2
+		z = (m[9] + m[6]) / s
+		w = (m[8] + m[2]) / s
+	case 2:
+		s = 2 * math.Sqrt(1.0+m[10]-m[0]-m[5])
+		x = (m[8] + m[2]) / s
+		y = (m[9] + m[6]) / s
+		z = 0.5 / 2
+		w = (m[4] + m[1]) / s
+	}
+
+	return this.Set(w, x, y, z)
+}
+
 // Return a mat4 from the provided quaternion
-func (this *Quat) Mat4() *Mat4 {
+func (this *Quat) mat() (m [16]float64) {
 	// Reference
 	// Derivation of the below matrix can be found here
 	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
@@ -388,29 +391,64 @@ func (this *Quat) Mat4() *Mat4 {
 
 	w, x, y, z := this.W, this.X, this.Y, this.Z
 
-	m := &Mat4{}
 	// 0 1 2 3
 	// 4 5 6 7
 	// 8 9 10 11
 	// 12 13 14 15
-	m.SetAt(0,1 - 2*y*y - 2*z*z)
-	m.SetAt(1,2*y*z - 2*w*z)
-	m.SetAt(2,2*x*z + 2*w*y)
-	m.SetAt(3,0)
+	m[0] = 1 - 2*y*y - 2*z*z
+	m[1] = 2*y*z - 2*w*z
+	m[2] = 2*x*z + 2*w*y
+	m[3] = 0
 
-	m.SetAt(4, 2*x*y + 2*w*z)
-	m.SetAt(5, 1 - 2*x*x - 2*z*z)
-	m.SetAt(6, 2*y*z - 2*w*x)
-	m.SetAt(7, 0)
+	m[4] = 2*x*y + 2*w*z
+	m[5] = 1 - 2*x*x - 2*z*z
+	m[6] = 2*y*z - 2*w*x
+	m[7] = 0
 
-	m.SetAt(8,2*x*z - 2*w*y)
-	m.SetAt(9,2*y*z + 2*w*x)
-	m.SetAt(10,1 - 2*x*x - 2*y*y)
-	m.SetAt(11,0)
+	m[8] = 2*x*z - 2*w*y
+	m[9] = 2*y*z + 2*w*x
+	m[10] = 1 - 2*x*x - 2*y*y
+	m[11] = 0
 
-	m.SetAt(12,0)
-	m.SetAt(13,0)
-	m.SetAt(14,0)
-	m.SetAt(15,1)
+	m[12] = 0
+	m[13] = 0
+	m[14] = 0
+	m[15] = 1
 	return m
+}
+
+func (this *Quat) FromMat4(m *Mat4) *Quat {
+	values := m.Dump()
+	return this.fromMat(values)
+}
+
+func (this *Quat) FromMat3(m *Mat3) *Quat {
+	values := [16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+	mxs := m.Dump()
+	values[0] = mxs[0]
+	values[1] = mxs[1]
+	values[2] = mxs[2]
+	values[4] = mxs[3]
+	values[5] = mxs[4]
+	values[6] = mxs[5]
+	values[8] = mxs[6]
+	values[9] = mxs[7]
+	values[10] = mxs[8]
+
+	return this.fromMat(values)
+}
+
+func (this *Quat) Mat4() *Mat4 {
+	values := this.mat()
+	m := &Mat4{}
+	return m.Load(values)
+}
+func (this *Quat) Mat3() *Mat3 {
+	v := this.mat()
+	m := &Mat3{}
+	return m.Load([9]float64{
+		v[0], v[1], v[2],
+		v[4], v[5], v[6],
+		v[8], v[9], v[10],
+	})
 }

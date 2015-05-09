@@ -460,77 +460,108 @@ func (this *Mat4) String() string {
 		this.mat[12], this.mat[13], this.mat[14], this.mat[15])
 }
 
-//==============================================================================
+// =============================================================================
 
-// Create a translation matrix. Overwrites all values in the matrix.
+// Create a translation matrix for Mat4. Overwrites all values in the matrix.
 func (this *Mat4) ToTranslate(x, y, z float64) *Mat4 {
 	this.ToIdentity()
-	this.mat[3] = x
-	this.mat[7] = y
-	this.mat[11] = z
+	this.Set(0, 3, x)
+	this.Set(1, 3, y)
+	this.Set(2, 3, z)
 	return this
 }
 
-// Create a scaling matrix. Overwrites all values in the matrix.
+// Create a scaling matrix for Mat4. Overwrites all values in the matrix.
 func (this *Mat4) ToScale(x, y, z float64) *Mat4 {
 	this.ToIdentity()
-	this.mat[0] = x
-	this.mat[5] = y
-	this.mat[10] = z
+	this.Set(0, 0, x)
+	this.Set(1, 1, y)
+	this.Set(2, 2, z)
 	return this
 }
 
-// Create a skew matrix. Overwrites all values in the matrix.
-func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
+// Create a shearing matrix for Mat4. Overwrites all values in the matrix.
+func (this *Mat4) ToShear(x, y, z float64) *Mat4 {
 	// 0   -z     y    0
 	// z    0    -x    0
 	// -y   x     0    0
 	// 0    0     0    1
 
 	this.ToIdentity()
-	this.mat[0], this.mat[5], this.mat[10] = 0, 0, 0
+	this.Set(0, 0, 0)
+	this.Set(1, 1, 0)
+	this.Set(2, 2, 0)
 
-	this.mat[6] = -x
-	this.mat[9] = x
+	this.Set(1, 2, -x)
+	this.Set(2, 1, x)
 
-	this.mat[2] = y
-	this.mat[8] = -y
+	this.Set(0, 2, y)
+	this.Set(2, 0, -y)
 
-	this.mat[1] = -z
-	this.mat[4] = z
+	this.Set(0, 1, -z)
+	this.Set(1, 0, z)
 
 	return this
 }
 
-// Make this matrix into a rotation matrix about the x-axis.
-func (this *Mat4) ToRotateX(x float64) *Mat4 {
+
+func (this *Mat4) ToRotateX(angle float64) *Mat4 {
 	this.ToIdentity()
-	this.mat[5] = math.Cos(x)
-	this.mat[6] = -math.Sin(x)
-	this.mat[9] = math.Sin(x)
-	this.mat[10] = math.Cos(x)
+	this.Set(1, 1, math.Cos(angle))
+	this.Set(1, 2, -math.Sin(angle))
+	this.Set(2, 1, math.Sin(angle))
+	this.Set(2, 2, math.Cos(angle))
 	return this
 }
 
-// Make this matrix into a rotation matrix about the y-axis.
-func (this *Mat4) ToRotateY(y float64) *Mat4 {
+func (this *Mat4) ToRotateY(angle float64) *Mat4 {
 	this.ToIdentity()
-	this.mat[0] = math.Cos(y)
-	this.mat[2] = math.Sin(y)
-	this.mat[8] = -math.Sin(y)
-	this.mat[10] = math.Cos(y)
+	this.Set(0, 0, math.Cos(angle))
+	this.Set(0, 2, math.Sin(angle))
+	this.Set(2, 0, -math.Sin(angle))
+	this.Set(2, 2, math.Cos(angle))
 	return this
 }
 
-// Make this matrix into a rotation matrix about the z-axis.
-func (this *Mat4) ToRotateZ(z float64) *Mat4 {
+func (this *Mat4) ToRotateZ(angle float64) *Mat4 {
 	this.ToIdentity()
-	this.mat[0] = math.Cos(z)
-	this.mat[1] = -math.Sin(z)
-	this.mat[4] = math.Sin(z)
-	this.mat[5] = math.Cos(z)
+	this.Set(0, 0, math.Cos(angle))
+	this.Set(0, 1, -math.Sin(angle))
+	this.Set(1, 0, math.Sin(angle))
+	this.Set(1, 1, math.Cos(angle))
 	return this
 }
+
+
+//==============================================================================
+
+// Return the upper 3x3 matrix as a Mat3
+func (this *Mat4) UpperMat3() *Mat3 {
+	m := &Mat3{}
+	return m.Load([9]float64 {
+		this.Get(0,0),this.Get(0,1),this.Get(0,2),
+		this.Get(1,0),this.Get(1,1),this.Get(1,2),
+		this.Get(2,0),this.Get(2,1),this.Get(2,2),
+	})
+}
+
+// Return the upper 3x3 matrix to the provide Mat3
+func (this *Mat4) SetUpperMat3(m *Mat3) (*Mat4) {
+	this.Set(0,0, m.Get(0,0))
+	this.Set(0,1, m.Get(0,1))
+	this.Set(0,2, m.Get(0,2))
+
+	this.Set(1,0, m.Get(1,0))
+	this.Set(1,1, m.Get(1,1))
+	this.Set(1,2, m.Get(1,2))
+
+	this.Set(2,0, m.Get(2,0))
+	this.Set(2,1, m.Get(2,1))
+	this.Set(2,2, m.Get(2,2))
+
+	return this
+}
+
 
 // Multiplies the Vec3 against the matrix ( ie. result = Matrix * Vec).
 // Returns a new vector with the result.

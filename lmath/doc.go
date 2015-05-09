@@ -15,8 +15,6 @@ var (
 )
 
 // TODO:
-// Create Vec2 struct
 // Create Vec4 struct
 // Create Mat3 struct
-// Create Mat2 struct
 // Test glmath functions
