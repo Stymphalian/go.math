@@ -414,6 +414,51 @@ func (this *Mat3) String() string {
 		this.mat[6], this.mat[7], this.mat[8])
 }
 
+// =============================================================================
+// Create a translation matrix for Mat3. Overwrites all values in the matrix.
+func (this *Mat3) ToTranslate(x, y  float64) *Mat3 {
+	this.ToIdentity()
+	this.Set(0, 2, x)
+	this.Set(1, 2, y)
+	return this
+}
+
+// Create a 2D scaling matrix for Mat3. Overwrites all values in the matrix.
+func (this *Mat3) ToScale(x, y float64) *Mat3 {
+	this.ToIdentity()
+	this.Set(0, 0, x)
+	this.Set(1, 1, y)
+	return this
+}
+
+// Create a 2D shearing matrix for Mat3. Overwrites all values in the matrix.
+// 	0 x 0
+// 	y 0 0
+// 	0 0 1
+func (this *Mat3) ToShear(x, y float64) *Mat3 {
+	this.ToIdentity()
+	this.Set(0, 0, 0)
+	this.Set(1, 1, 0)
+
+	this.Set(0,1,x)
+	this.Set(1,0,y)
+	return this
+}
+
+// Create a 2D rotation matrix about the Z axis
+// cos  -sin   0
+// sin   cos     0
+// 0     0     1
+func (this *Mat3) ToRotateZ(angle float64) *Mat3 {
+	this.ToIdentity()
+	this.Set(0,0, math.Cos(angle))
+	this.Set(0,1, -math.Sin(angle))
+	this.Set(1,0, math.Sin(angle))
+	this.Set(1,1, math.Cos(angle))
+	return this
+}
+
+
 //==============================================================================
 
 // Multiplies the Vec3 against the matrix ( ie. result = Matrix * Vec).

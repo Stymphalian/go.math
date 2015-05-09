@@ -505,6 +505,7 @@ func (this *Mat4) ToShear(x, y, z float64) *Mat4 {
 }
 
 
+// Create a 3D rotation matrix about the x-axis with angles (radians)
 func (this *Mat4) ToRotateX(angle float64) *Mat4 {
 	this.ToIdentity()
 	this.Set(1, 1, math.Cos(angle))
@@ -514,6 +515,7 @@ func (this *Mat4) ToRotateX(angle float64) *Mat4 {
 	return this
 }
 
+// Create a 3D rotation matrix about the y-axis with angles (radians)
 func (this *Mat4) ToRotateY(angle float64) *Mat4 {
 	this.ToIdentity()
 	this.Set(0, 0, math.Cos(angle))
@@ -523,6 +525,7 @@ func (this *Mat4) ToRotateY(angle float64) *Mat4 {
 	return this
 }
 
+// Create a 3D rotation matrix about the z-axis with angles (radians)
 func (this *Mat4) ToRotateZ(angle float64) *Mat4 {
 	this.ToIdentity()
 	this.Set(0, 0, math.Cos(angle))
