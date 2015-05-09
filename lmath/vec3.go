@@ -170,6 +170,7 @@ func (this *Vec3) Normalize() *Vec3 {
 	return &out
 }
 
+// Set X,Y,Z parameters of the vector.
 func (this *Vec3) Set(x, y, z float64) *Vec3 {
 	this.X = x
 	this.Y = y

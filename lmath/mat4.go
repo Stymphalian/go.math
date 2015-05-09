@@ -56,25 +56,25 @@ func NewMat4(
 
 // Load the matrix with 16 floats.
 // Specified in Row-Major order.
-func (this *Mat4) Load(mat [16]float64) *Mat4 {
-	this.mat = mat
+func (this *Mat4) Load(m [16]float64) *Mat4 {
+	this.mat = m
 	return this
 }
 
 // Retrieve a 16 float array of all the values of the matrix.
 // Returned in Row-Major order.
-func (this *Mat4) Dump() (mat [16]float64) {
-	mat = this.mat
+func (this *Mat4) Dump() (m [16]float64) {
+	m = this.mat
 	return
 }
 
 // Retrieve a 16 float array of all the values of the matrix.
 // Returned in Col-Major order.
-func (this *Mat4) DumpOpenGL() (mat [16]float64) {
-	mat[0], mat[1], mat[2], mat[3] = this.Col(0)
-	mat[4], mat[5], mat[6], mat[7] = this.Col(1)
-	mat[8], mat[9], mat[10], mat[11] = this.Col(2)
-	mat[12], mat[13], mat[14], mat[15] = this.Col(3)
+func (this *Mat4) DumpOpenGL() (m [16]float64) {
+	m[0], m[1], m[2], m[3] = this.Col(0)
+	m[4], m[5], m[6], m[7] = this.Col(1)
+	m[8], m[9], m[10], m[11] = this.Col(2)
+	m[12], m[13], m[14], m[15] = this.Col(3)
 	return
 }
 
@@ -446,8 +446,8 @@ func (this *Mat4) IsIdentity() bool {
 // 	The two properties it checks are
 // 	1) Determinant() == 1
 // 	2) m*m.Transpose  == Identity
-func IsRotationMatrix(m *Mat4) bool {
-	return closeEq(m.Determinant(), 1, epsilon) && m.Mult(m.Transpose()).IsIdentity()
+func (this *Mat4) IsRotation() bool {
+	return closeEq(this.Determinant(), 1, epsilon) && this.Mult(this.Transpose()).IsIdentity()
 }
 
 // Implement the Stringer interface

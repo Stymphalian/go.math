@@ -10,7 +10,7 @@ import (
 //http://www.gamasutra.com/view/feature/131686/rotating_objects_using_quaternions.php?page=1
 
 // Strutcure to hold the quaternion
-// When used as a rotation quaternion ensure that the quaternion is unit length.
+// When using as a rotation quaternion, you must ensure that the quaternion is unit length.
 // W is the angle in radians.
 // X,Y,Z is the axis of rotation.
 type Quat struct {
@@ -232,7 +232,7 @@ func (this *Quat) Copy() *Quat {
 
 //==============================================================================
 
-// Return the axis component of the quaternion
+// Return a new vector holding the axis component of the quaternion
 func (this *Quat) Axis() *Vec3 {
 	angle := 2 * math.Acos(this.W)
 	s := math.Sin(angle / 2)
@@ -285,29 +285,29 @@ func (this *Quat) FromAxisAngle(angle float64, x, y, z float64) *Quat {
 // Matrix should be in right-hand coordinate system
 // Pitch-Yaw-Roll euler angle formation
 // Return this
-func (this *Quat) FromMat4(mat *Mat4) *Quat {
+func (this *Quat) FromMat4(m *Mat4) *Quat {
 	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
 	// 0  1  2  3
 	// 4  5  6  7
 	// 8  9  10 11
 	// 12 13 14 15
-	trace := mat.Get(0, 0) + mat.Get(1, 1) + mat.Get(2, 2) + 1
+	trace := m.Get(0, 0) + m.Get(1, 1) + m.Get(2, 2) + 1
 
 	if trace > 0 {
 		s := 0.5 / math.Sqrt(trace)
 		return this.Set(
 			0.25/s,
-			(mat.At(9)-mat.At(6))*s,
-			(mat.At(2)-mat.At(8))*s,
-			(mat.At(4)-mat.At(1))*s,
+			(m.At(9)-m.At(6))*s,
+			(m.At(2)-m.At(8))*s,
+			(m.At(4)-m.At(1))*s,
 		)
 	}
 
 	// Find the column which has the maximum diagonal value
 	max_col := 0
-	champ := mat.Get(0, 0)
+	champ := m.Get(0, 0)
 	for col := 1; col < 3; col += 1 {
-		cand := mat.Get(col, col)
+		cand := m.Get(col, col)
 		if cand > champ {
 			champ = cand
 			max_col = col
@@ -318,23 +318,23 @@ func (this *Quat) FromMat4(mat *Mat4) *Quat {
 	var w, x, y, z, s float64
 	switch max_col {
 	case 0:
-		s = 2 * math.Sqrt(1.0+mat.At(0)-mat.At(5)-mat.At(10))
+		s = 2 * math.Sqrt(1.0+m.At(0)-m.At(5)-m.At(10))
 		x = 0.5 / 2
-		y = (mat.At(4) + mat.At(1)) / s
-		z = (mat.At(8) + mat.At(2)) / s
-		w = (mat.At(9) + mat.At(6)) / s
+		y = (m.At(4) + m.At(1)) / s
+		z = (m.At(8) + m.At(2)) / s
+		w = (m.At(9) + m.At(6)) / s
 	case 1:
-		s = 2 * math.Sqrt(1.0+mat.At(5)-mat.At(0)-mat.At(10))
-		x = (mat.At(4) + mat.At(1)) / s
+		s = 2 * math.Sqrt(1.0+m.At(5)-m.At(0)-m.At(10))
+		x = (m.At(4) + m.At(1)) / s
 		y = 0.5 / 2
-		z = (mat.At(9) + mat.At(6)) / s
-		w = (mat.At(8) + mat.At(2)) / s
+		z = (m.At(9) + m.At(6)) / s
+		w = (m.At(8) + m.At(2)) / s
 	case 2:
-		s = 2 * math.Sqrt(1.0+mat.At(10)-mat.At(0)-mat.At(5))
-		x = (mat.At(8) + mat.At(2)) / s
-		y = (mat.At(9) + mat.At(6)) / s
+		s = 2 * math.Sqrt(1.0+m.At(10)-m.At(0)-m.At(5))
+		x = (m.At(8) + m.At(2)) / s
+		y = (m.At(9) + m.At(6)) / s
 		z = 0.5 / 2
-		w = (mat.At(4) + mat.At(1)) / s
+		w = (m.At(4) + m.At(1)) / s
 	}
 
 	return this.Set(w, x, y, z)
@@ -343,8 +343,8 @@ func (this *Quat) FromMat4(mat *Mat4) *Quat {
 // Extract out the euler angles from the quaternion
 // Extract out the angles assuming the quaterion is encoded
 // as pitch -> yaw -> roll
-// The returned euler angle may not match the same angle passed in using the
-// FromEuler(),but it is guaranteed to be form an equivlent rotation quaternion
+// The returned euler angle may not match the same angles passed in using the
+// FromEuler(),but the angles are guaranteed to form an equivalent rotation quaternion.
 func (this *Quat) Euler() (pitch, yaw, roll float64) {
 	// Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
@@ -388,29 +388,29 @@ func (this *Quat) Mat4() *Mat4 {
 
 	w, x, y, z := this.W, this.X, this.Y, this.Z
 
-	mat := &Mat4{}
+	m := &Mat4{}
 	// 0 1 2 3
 	// 4 5 6 7
 	// 8 9 10 11
 	// 12 13 14 15
-	mat.mat[0] = 1 - 2*y*y - 2*z*z
-	mat.mat[1] = 2*y*z - 2*w*z
-	mat.mat[2] = 2*x*z + 2*w*y
-	mat.mat[3] = 0
+	m.SetAt(0,1 - 2*y*y - 2*z*z)
+	m.SetAt(1,2*y*z - 2*w*z)
+	m.SetAt(2,2*x*z + 2*w*y)
+	m.SetAt(3,0)
 
-	mat.mat[4] = 2*x*y + 2*w*z
-	mat.mat[5] = 1 - 2*x*x - 2*z*z
-	mat.mat[6] = 2*y*z - 2*w*x
-	mat.mat[7] = 0
+	m.SetAt(4, 2*x*y + 2*w*z)
+	m.SetAt(5, 1 - 2*x*x - 2*z*z)
+	m.SetAt(6, 2*y*z - 2*w*x)
+	m.SetAt(7, 0)
 
-	mat.mat[8] = 2*x*z - 2*w*y
-	mat.mat[9] = 2*y*z + 2*w*x
-	mat.mat[10] = 1 - 2*x*x - 2*y*y
-	mat.mat[11] = 0
+	m.SetAt(8,2*x*z - 2*w*y)
+	m.SetAt(9,2*y*z + 2*w*x)
+	m.SetAt(10,1 - 2*x*x - 2*y*y)
+	m.SetAt(11,0)
 
-	mat.mat[12] = 0
-	mat.mat[13] = 0
-	mat.mat[14] = 0
-	mat.mat[15] = 1
-	return mat
+	m.SetAt(12,0)
+	m.SetAt(13,0)
+	m.SetAt(14,0)
+	m.SetAt(15,1)
+	return m
 }

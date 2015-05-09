@@ -62,9 +62,9 @@ func LookAtMat4(eye, at, up *Vec3) *Mat4 {
 
 	translate := &Mat4{}
 	translate.ToTranslate(-eye.X, -eye.Y, -eye.Z)
-	mat := NewMat4(right.X, right.Y, right.Z, 0,
+	m := NewMat4(right.X, right.Y, right.Z, 0,
 		up.X, up.Y, up.Z, 0,
 		forward.X, forward.Y, forward.Z, 0,
 		0, 0, 0, 1)
-	return translate.MultIn(mat)
+	return translate.MultIn(m)
 }

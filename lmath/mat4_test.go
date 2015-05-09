@@ -613,8 +613,8 @@ func TestAdjointMat4(t *testing.T) {
 
 		0, 0, 0, 1})
 
-	mat := m.Adjoint()
-	get := mat.Dump()
+	m2 := m.Adjoint()
+	get := m2.Dump()
 	want := [16]float64{
 		-0.249989, 0.591459, 0.158445, 0,
 		0.455852, -0.524473, 0.670684, 0,
@@ -686,8 +686,8 @@ func TestInverseMat4(t *testing.T) {
 			continue
 		}
 
-		mat := m.Inverse()
-		get := mat.Dump()
+		m2 := m.Inverse()
+		get := m2.Dump()
 		for k, _ := range c.want {
 			if closeEq(get[k], c.want[k], 0.0001) == false {
 				t.Errorf("TestInverseMat4 %d %d %v %v", testIndex, k, get[k], c.want[k])
@@ -781,7 +781,7 @@ func TestToSkewMat4(t *testing.T) {
 
 func TestMultVec3Mat4(t *testing.T) {
 	cases := []struct {
-		mat          [16]float64
+		orig_mat          [16]float64
 		orig_v, want *Vec3
 	}{
 		{[16]float64{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
@@ -793,7 +793,7 @@ func TestMultVec3Mat4(t *testing.T) {
 
 	m := &Mat4{}
 	for testIndex, c := range cases {
-		m.Load(c.mat)
+		m.Load(c.orig_mat)
 		get := m.MultVec3(c.orig_v)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMultVec3Mat4 %d \n%v\n%v\n\n", testIndex, m, get)
