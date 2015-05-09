@@ -932,7 +932,7 @@ func TestEulerMat4(t *testing.T) {
 
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},//22
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}}, //22
 		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
 		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
@@ -941,7 +941,7 @@ func TestEulerMat4(t *testing.T) {
 		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //28
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},//29
+		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}}, //29
 		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
 		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
@@ -955,7 +955,7 @@ func TestEulerMat4(t *testing.T) {
 		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //38
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},//39
+		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}}, //39
 		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
 		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
 		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
@@ -966,7 +966,7 @@ func TestEulerMat4(t *testing.T) {
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		x, y, z := m.Euler()
 
-		if closeEq( Degrees(x),c.pitch,epsilon) && closeEq(Degrees(y),c.yaw,epsilon) && closeEq(Degrees(z),c.roll,epsilon) {
+		if closeEq(Degrees(x), c.pitch, epsilon) && closeEq(Degrees(y), c.yaw, epsilon) && closeEq(Degrees(z), c.roll, epsilon) {
 			continue
 		}
 
@@ -974,7 +974,7 @@ func TestEulerMat4(t *testing.T) {
 		// matrix it makes is still equivalent
 		m.FromEuler(x, y, z)
 		get := m.MultVec3(c.start_vec)
-		if get.Eq(c.want){
+		if get.Eq(c.want) {
 			continue
 		}
 

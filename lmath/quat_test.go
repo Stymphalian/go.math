@@ -636,10 +636,25 @@ func TestEulerQuat(t *testing.T) {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		pitch, yaw, roll := q.Euler()
 
-		if !closeEq(yaw, Radians(c.yaw), epsilon) ||
-			!closeEq(pitch, Radians(c.pitch), epsilon) ||
-			!closeEq(roll, Radians(c.roll), epsilon) {
-			t.Errorf("TestEuler %d %f %f %f ", testIndex, pitch, yaw, roll)
+		if closeEq(yaw, Radians(c.yaw), epsilon) &&
+			closeEq(pitch, Radians(c.pitch), epsilon) &&
+			closeEq(roll, Radians(c.roll), epsilon) {
+			continue
 		}
+
+		// The euler angles don't match, but lets see if it forms a equivalent
+		// quaternion rotation
+		q.FromEuler(pitch, yaw, roll)
+		get := q.RotateVec3(c.start_vec)
+		if get.Eq(c.want) {
+			continue
+		}
+
+		t.Errorf("TestEuler %d %f %f %f ", testIndex, pitch, yaw, roll)
+		// if !closeEq(yaw, Radians(c.yaw), epsilon) ||
+		// 	!closeEq(pitch, Radians(c.pitch), epsilon) ||
+		// 	!closeEq(roll, Radians(c.roll), epsilon) {
+		// 	t.Errorf("TestEuler %d %f %f %f ", testIndex, pitch, yaw, roll)
+		// }
 	}
 }

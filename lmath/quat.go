@@ -349,6 +349,8 @@ func (this *Quat) FromMat4(mat *Mat4) *Quat {
 // Extract out the euler angles from the quaternion
 // Extract out the angles assuming the quaterion is encoded
 // as pitch -> yaw -> roll
+// The returned euler angle may not match the same angle passed in using the
+// FromEuler(),but it is guaranteed to be form an equivlent rotation quaternion
 func (this *Quat) Euler() (pitch, yaw, roll float64) {
 	// Reference http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 
