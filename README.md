@@ -1,13 +1,13 @@
 **Author:** Jordan Yu  
-**Last Updated:** May 4th, 2015  
+**Last Updated:** May 9th, 2015  
 
 # Introduction
-A package for matrix math stuff.
-I plan on using it when I do computer graphics stuff with Go,
-so many of the choices I make will be so that it can work with OpenGL
+lmath is a small 3D linear algebra library which provides support for
+Vec3, Mat4 and Quaternions. The library also supports rotations using euler angle,axis-angle,
+rotation matrices, quaternions as well as conversions between the representations.
 
 # Goals
- * I really wanted to play around with go-lang.I thought it would be a 'good'
+ * I really wanted to play around with go-lang. I thought it would be a 'good'
  idea to create some small math package to get better use to the language.  
  Specific things I want to learn about go
     1. How the package structure works
@@ -20,12 +20,11 @@ so many of the choices I make will be so that it can work with OpenGL
  rotations/quaternions work internally.
 
 # Get
-go get http://github.com/Stymphalian/go.math/matrix
-
+go get http://github.com/Stymphalian/go.math/lmath
 
 # TODO
-Functions for  
-1. Perspective matrix
-2. Projection matrx
-3. Orthographic matrix
-4. Frustum,FieldOfView matrix
+    1. Implement Vec2
+    2. Implement Vec4
+    3. Implement Mat2
+    4. Implement Mat3
+    5. Even more touch up on the documentation.
