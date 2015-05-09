@@ -580,6 +580,22 @@ func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
 	}
 }
 
+
+// Multiplies the Vec4 against the matrix ( ie. result = Matrix * Vec).
+// Returns a new vector with the result.
+func (this *Mat4) MultVec4(v *Vec4) *Vec4 {
+	// 0   1   2   3
+	// 4   5   6   7
+	// 8   9   10  11
+	// 12  13  14  15
+	return &Vec4{
+		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z  + this.mat[3]*v.W,
+		this.mat[4]*v.X + this.mat[5]*v.Y + this.mat[6]*v.Z  + this.mat[7]*v.W,
+		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11]*v.W,
+		this.mat[12]*v.X + this.mat[13]*v.Y + this.mat[14]*v.Z + this.mat[15]*v.W,
+	}
+}
+
 // =============================================================================
 
 // Return a rotation matrix which rotates a vector about the axis [x,y,z] with
