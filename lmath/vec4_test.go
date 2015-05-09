@@ -287,3 +287,23 @@ func TestSetVec4(t *testing.T) {
         }
     }
 }
+
+
+func TestProjVec4(t *testing.T) {
+    v := 0.808359542/2
+    var cases = []struct {
+        from,on, want*Vec4
+    }{
+        {&Vec4{1,1,0,0},&Vec4{1,0,0,0},&Vec4{math.Sqrt(2)/2,0,0,0}},
+        {&Vec4{1,0,0,0},&Vec4{1,0,0,0},&Vec4{1,0,0,0}},
+        // should probably be checkig [0,0,0] projected [1,0,0] => {NaN,NaN,NaN}
+        {&Vec4{20,50,3,20},&Vec4{1,1,1,1},&Vec4{v,v,v,v}},
+    }
+
+    for testIndex, test := range cases {
+        get := test.from.Proj(test.on)
+        if get.Eq(test.want) == false {
+            t.Errorf("TestProjVec4 %d", testIndex,get)
+        }
+    }
+}
