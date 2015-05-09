@@ -927,46 +927,57 @@ func TestEulerMat4(t *testing.T) {
 
 		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //2
+		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //20
 		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
 
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
+		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},//22
 		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
 		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
 		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
 		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //28
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
+		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},//29
 		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
 		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
 		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
 		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
 		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //35
 
 		// basic rotation using a non major axis vector
 		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
 		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //38
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},//39
 		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
 		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
 	}
 
 	m := &Mat4{}
 	for testIndex, c := range common_cases {
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		x, y, z := m.Euler()
-		if x != Radians(c.pitch) || y != Radians(c.yaw) || z != Radians(c.roll) {
-			t.Errorf("TestEulerMat4 %d %f %f %f", testIndex, x, y, z)
+
+		if closeEq( Degrees(x),c.pitch,epsilon) && closeEq(Degrees(y),c.yaw,epsilon) && closeEq(Degrees(z),c.roll,epsilon) {
+			continue
 		}
+
+		// The euler angles we got back didn't match, but lets see if the rotation
+		// matrix it makes is still equivalent
+		m.FromEuler(x, y, z)
+		get := m.MultVec3(c.start_vec)
+		if get.Eq(c.want){
+			continue
+		}
+
+		t.Errorf("TestEulerMat4 %d %f %f %f", testIndex, x, y, z)
 	}
 }

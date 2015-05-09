@@ -19,3 +19,4 @@ var (
 // Test glmath functions
 // Touch-up all the documentation
 // Add a license (MIT)
+// Clean-up testing, and remove copy-pasted test cases...

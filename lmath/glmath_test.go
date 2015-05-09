@@ -1,10 +1,10 @@
 package lmath
 
 import (
-	"fmt"
+	// "fmt"
 	"testing"
 )
 
 func TestEmptyGlmath(t *testing.T) {
-	fmt.Println("hello")
+	//fmt.Println("hello")
 }

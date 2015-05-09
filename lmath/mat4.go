@@ -573,18 +573,18 @@ func (this *Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
 	this.mat[0] = cz * cy
 	this.mat[1] = cz*sy*sx - sz*cx
 	this.mat[2] = sz*sx + cz*cx*sy
+	this.mat[3] = 0
 	// second row
 	this.mat[4] = sz * cy
 	this.mat[5] = cz*cx + sx*sy*sz
 	this.mat[6] = sz*sy*cx - cz*sx
+	this.mat[7] = 0
 	// third row
 	this.mat[8] = -sy
 	this.mat[9] = sx * cy
 	this.mat[10] = cy * cx
-
-	this.mat[3] = 0
-	this.mat[7] = 0
 	this.mat[11] = 0
+
 	this.mat[12] = 0
 	this.mat[13] = 0
 	this.mat[14] = 0
@@ -672,6 +672,8 @@ func (this *Mat4) AxisAngle() (angle, x, y, z float64) {
 // Assumption is that mat is a valid rotation matrix
 // following the conventions of this package
 // (x-y-z rotation order,row-major order, right-handed)
+// The returned euler angle may not be the exact angle in which you supplied
+// but they can be used to make an equilvalent rotation matrix.
 func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 	// The method for calculating the euler angles from a rotation matrix
 	// uses the method described in this document
@@ -693,8 +695,9 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 	//      r32/r33 = tan(x)
 	//      (sin(x)cos(y)) / (cos(x)cos(y))
 	//      (sin(x)/cos(x)) == tan(x) by defn.
-	// 4) Therefore we can calculate x by.
-	//      x = atan2(r32,r33)
+	// 4) We can also calculate x and z by.
+	//      x = atan2(r32,r33) == atan2( (sin(x)cos(y)) / (cos(x)cos(y)) )
+	// 		z = atan2(r21,r11) == atan2( (sin(z)cos(y)) / (cos(z)cos(y)) )
 
 	var x, y, z float64
 	r31 := this.Get(2, 0)
@@ -714,25 +717,11 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 		x = math.Atan2(this.Get(2, 1)/cos_y, this.Get(2, 2)/cos_y)
 		z = math.Atan2(this.Get(1, 0)/cos_y, this.Get(0, 0)/cos_y)
 
-		m01, m10 := this.Get(0, 1), this.Get(1, 0)
-		m02, m20 := this.Get(0, 2), this.Get(2, 0)
-		m12, m21 := this.Get(1, 2), this.Get(2, 1)
-		if closeEq(math.Abs(m01-m10), 0, epsilon) &&
-			closeEq(math.Abs(m02-m20), 0, epsilon) &&
-			closeEq(math.Abs(m12-m21), 0, epsilon) {
-			// singularity check
-			// Checking for cases in which the angle is either 0 or 180
-
-			if !this.IsIdentity() {
-				// If the angle is 0, then the rotation matrix will be the identity matrix
-				// A 0 angle means that there is an arbitrary axis.
-
-				y = math.Pi - y
-				cos_y := math.Cos(y)
-				x = math.Atan2(this.Get(2, 1)/cos_y, this.Get(2, 2)/cos_y)
-				z = math.Atan2(this.Get(1, 0)/cos_y, this.Get(0, 0)/cos_y)
-			}
-		}
+		// There are two alternative values for y,here is the second option
+		// y2 := math.Pi - y
+		// cos_y2 := math.Cos(y2)
+		// x2 := math.Atan2(this.Get(2, 1)/cos_y2, this.Get(2, 2)/cos_y2)
+		// z2 := math.Atan2(this.Get(1, 0)/cos_y2, this.Get(0, 0)/cos_y2)
 	}
 
 	pitch = x

@@ -4,6 +4,8 @@ import (
 	"math"
 )
 
+// This file holds common functions which are used through-out the package
+
 const (
 	epsilon = 0.000000001
 )
