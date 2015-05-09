@@ -20,6 +20,23 @@ func closeEq(a, b, eps float64) bool {
 	}
 }
 
+// Calculate the determinant of a 2x2 matrix
+// Values are givein in Row-Major order
+func det2x2(x, y, z, w float64) float64 {
+	return x*w - y*z
+}
+
+// Calculate the determinant of a 3x3 matrix
+// Values are given in Row-Major order
+func det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3 float64) float64 {
+	// a1 a2 a3
+	// b1 b2 b3
+	// c1 c2 c3
+	return (a1*det2x2(b2, b3, c2, c3) -
+		b1*det2x2(a2, a3, c2, c3) +
+		c1*det2x2(a2, a3, b2, b3))
+}
+
 // Convert from a degree to a radian
 func Radians(a float64) float64 {
 	return a * math.Pi / 180.0

@@ -24,32 +24,32 @@ type Mat4 struct {
 // New Mat4 with the given values
 // Row-Order
 func NewMat4(
-	v11, v12, v13, v14,
-	v21, v22, v23, v24,
-	v31, v32, v33, v34,
-	v41, v42, v43, v44 float64) *Mat4 {
+	m11, m12, m13, m14,
+	m21, m22, m23, m24,
+	m31, m32, m33, m34,
+	m41, m42, m43, m44 float64) *Mat4 {
 
 	// 0   1   2   3
 	// 4   5   6   7
 	// 8   9   10  11
 	// 12  13  14  15
 	out := Mat4{}
-	out.mat[0] = v11
-	out.mat[1] = v12
-	out.mat[2] = v13
-	out.mat[3] = v14
-	out.mat[4] = v21
-	out.mat[5] = v22
-	out.mat[6] = v23
-	out.mat[7] = v24
-	out.mat[8] = v31
-	out.mat[9] = v32
-	out.mat[10] = v33
-	out.mat[11] = v34
-	out.mat[12] = v41
-	out.mat[13] = v42
-	out.mat[14] = v43
-	out.mat[15] = v44
+	out.mat[0] = m11
+	out.mat[1] = m12
+	out.mat[2] = m13
+	out.mat[3] = m14
+	out.mat[4] = m21
+	out.mat[5] = m22
+	out.mat[6] = m23
+	out.mat[7] = m24
+	out.mat[8] = m31
+	out.mat[9] = m32
+	out.mat[10] = m33
+	out.mat[11] = m34
+	out.mat[12] = m41
+	out.mat[13] = m42
+	out.mat[14] = m43
+	out.mat[15] = m44
 
 	return &out
 }
@@ -105,7 +105,8 @@ func (this *Mat4) Set(row, col int, value float64) *Mat4 {
 	return this
 }
 
-// Retrieve the element at the given index
+// Retrieve the element at the given index assuming a linear array
+// i.e matrix[0], matrix[5]
 // 0 indexed
 func (this *Mat4) At(index int) float64 {
 	return this.mat[index]
@@ -212,7 +213,7 @@ func (this *Mat4) MultInScalar(val float64) *Mat4 {
 }
 
 // Divides in a constant value to all the terms fo the matrix
-// Does not check of a division by 0
+// precondition : val > 0
 // Return a new matrix with the result
 func (this *Mat4) DivScalar(val float64) *Mat4 {
 	out := *this
@@ -220,7 +221,7 @@ func (this *Mat4) DivScalar(val float64) *Mat4 {
 }
 
 // Divides in a constant value to all the terms fo the matrix
-// Does not check of a division by 0
+// precondition : val > 0
 // Returns a pointer to 'this'
 func (this *Mat4) DivInScalar(val float64) *Mat4 {
 	for k, _ := range this.mat {
@@ -229,15 +230,16 @@ func (this *Mat4) DivInScalar(val float64) *Mat4 {
 	return this
 }
 
-// Add the 'other' matrix to 'this' and store the result in 'this'
-// Returns a pointer to 'this'
+// Adds the two matrices together ( ie.  this + other)
+// Return a new matrix with the result
 func (this *Mat4) Add(other *Mat4) *Mat4 {
 	out := *this
 	return out.AddIn(other)
 }
 
-// Add the 'other' matrix to 'this' and store the result in 'this'
-// Returns a pointer to 'this'
+// Adds the two matrices together ( ie.  this + other).
+// Stores the result in this.
+// Returns 'this'
 func (this *Mat4) AddIn(other *Mat4) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] += other.mat[k]
@@ -245,15 +247,16 @@ func (this *Mat4) AddIn(other *Mat4) *Mat4 {
 	return this
 }
 
-// Subtract the 'other' matrix to 'this' and store the result in 'this'
-// Returns a pointer to 'this'
+// Subtract the two matrices together ( ie.  this - other)
+// Return a new matrix with the result
 func (this *Mat4) Sub(other *Mat4) *Mat4 {
 	out := *this
 	return out.SubIn(other)
 }
 
-// Subtract the 'other' matrix to 'this' and store the result in 'this'
-// Returns a pointer to 'this'
+// Subtract the two matrices together ( ie.  this - other).
+// Stores the result in this.
+// Returns 'this'
 func (this *Mat4) SubIn(other *Mat4) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] -= other.mat[k]
@@ -261,7 +264,7 @@ func (this *Mat4) SubIn(other *Mat4) *Mat4 {
 	return this
 }
 
-// Multiply 'this' matrix with the other matrix.
+// Multiply the two matrices together ( ie.  this * other)
 // Return a new matrix with the result
 func (this *Mat4) Mult(other *Mat4) *Mat4 {
 	out := *this
@@ -269,9 +272,9 @@ func (this *Mat4) Mult(other *Mat4) *Mat4 {
 	return &out
 }
 
-// Multiply 'this' matrix with the other matrix.
-// Store the result into 'this'
-// Returns a pointer to 'this'
+// Multiplies the two matrices together ( ie.  this * other).
+// Stores the result in this.
+// Returns 'this'
 func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 	// 0   1   2   3
 	// 4   5   6   7
@@ -309,8 +312,9 @@ func (this *Mat4) Transpose() *Mat4 {
 }
 
 // Take the transpose of this matrix.
-// can definitely be way more efficient
 func (this *Mat4) TransposeIn() *Mat4 {
+	// TODO: can definitely be way more efficient
+	// by only exchanging the column entries.
 	m00, m01, m02, m03 := this.Row(0)
 	m10, m11, m12, m13 := this.Row(1)
 	m20, m21, m22, m23 := this.Row(2)
@@ -322,23 +326,6 @@ func (this *Mat4) TransposeIn() *Mat4 {
 	this.SetCol(3, m30, m31, m32, m33)
 
 	return this
-}
-
-// Calculate the determinant of a 2x2 matrix
-// Values are givein in Row-Major order
-func det2x2(x, y, z, w float64) float64 {
-	return x*w - y*z
-}
-
-// Calculate the determinant of a 3x3 matrix
-// Values are given in Row-Major order
-func det3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3 float64) float64 {
-	// a1 a2 a3
-	// b1 b2 b3
-	// c1 c2 c3
-	return (a1*det2x2(b2, b3, c2, c3) -
-		b1*det2x2(a2, a3, c2, c3) +
-		c1*det2x2(a2, a3, b2, b3))
 }
 
 // Get the determinant of the matrix
@@ -404,10 +391,10 @@ func (this *Mat4) Adjoint() *Mat4 {
 
 // Returns a new matrix which is the inverse matrix of this
 // The bool flag is false if an inverse does not exist
-// TODO: Needs further testing
-// Try out with rotation matrices.
-// The inverse of a valid rotation matrix should just be the transpose
 func (this *Mat4) Inverse() *Mat4 {
+	// TODO: Needs further testing
+	// Try out with rotation matrices.
+	// The inverse of a valid rotation matrix should just be the transpose
 	out := *this
 	det := out.Determinant()
 	return out.Adjoint().DivInScalar(det)
@@ -533,6 +520,18 @@ func (this *Mat4) ToRotateZ(z float64) *Mat4 {
 	this.mat[4] = math.Sin(z)
 	this.mat[5] = math.Cos(z)
 	return this
+}
+
+func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
+	// 0   1   2   3
+	// 4   5   6   7
+	// 8   9   10  11
+	// 12  13  14  15
+	return &Vec3{
+		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z + this.mat[3],
+		this.mat[4]*v.X + this.mat[5]*v.Y + this.mat[6]*v.Z + this.mat[7],
+		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11],
+	}
 }
 
 // =============================================================================
@@ -741,16 +740,4 @@ func (this *Mat4) FromQuat(q *Quat) *Mat4 {
 func (this *Mat4) Quat() *Quat {
 	q := &Quat{}
 	return q.FromMat4(this)
-}
-
-func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
-	// 0   1   2   3
-	// 4   5   6   7
-	// 8   9   10  11
-	// 12  13  14  15
-	return &Vec3{
-		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z + this.mat[3],
-		this.mat[4]*v.X + this.mat[5]*v.Y + this.mat[6]*v.Z + this.mat[7],
-		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11],
-	}
 }

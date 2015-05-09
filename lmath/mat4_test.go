@@ -20,13 +20,13 @@ func TestNewMat4(t *testing.T) {
 		9, 10, 11, 12,
 		13, 14, 15, 16)
 	if m.Eq(m2) == false {
-		t.Errorf("TestNewMat ")
+		t.Errorf("TestNewMat4 ")
 	}
 }
 
 // Test Get
 // Test Set
-func TestMatGettersSetter(t *testing.T) {
+func TestGetterSetterMat4(t *testing.T) {
 	cases := []struct {
 		orig          *Mat4
 		x, y          int
@@ -57,12 +57,12 @@ func TestMatGettersSetter(t *testing.T) {
 	for testIndex, c := range cases {
 		get := c.orig.Get(c.y, c.x)
 		if get != c.wantBeforeSet {
-			t.Errorf("TestMatGetttersSetter wantBeforeSet %d %v", testIndex, get)
+			t.Errorf("TestGetterSetterMat4 wantBeforeSet %d %v", testIndex, get)
 		}
 
 		get = c.orig.Set(c.y, c.x, c.wantAfterSet).Get(c.y, c.x)
 		if get != c.wantAfterSet {
-			t.Errorf("TestMatGetttersSetter wantAfterSet %d %v", testIndex, get)
+			t.Errorf("TestGetterSetterMat4 wantAfterSet %d %v", testIndex, get)
 		}
 	}
 
@@ -70,13 +70,13 @@ func TestMatGettersSetter(t *testing.T) {
 	for k, _ := range orig.Dump() {
 		get := orig.At(k)
 		if get != float64(k+1) {
-			t.Errorf("TestMatGetterSetter GetAt %d %v", k, get)
+			t.Errorf("TestGetterSetterMat4 At %d %v", k, get)
 		}
 
 		orig.SetAt(k, float64((k+1)*10))
 		get = orig.At(k)
 		if get != float64((k+1)*10) {
-			t.Errorf("TestMatGetterSetter SetAt %d", k)
+			t.Errorf("TestGetterSetterMat4 SetAt %d", k)
 		}
 	}
 }
@@ -84,7 +84,7 @@ func TestMatGettersSetter(t *testing.T) {
 // Test Load Array
 // Test Dump
 // Test Dump
-func TestLoadDump(t *testing.T) {
+func TestLoadDumpMat4(t *testing.T) {
 	cases := []struct {
 		loadArray [16]float64
 	}{
@@ -100,7 +100,7 @@ func TestLoadDump(t *testing.T) {
 
 		for k, _ := range get {
 			if get[k] != c.loadArray[k] {
-				t.Errorf("TestLoadDump %d", testIndex)
+				t.Errorf("TestLoadDumpMat4 %d", testIndex)
 				break
 			}
 		}
@@ -110,13 +110,13 @@ func TestLoadDump(t *testing.T) {
 	get := m.DumpOpenGL()
 	for k, _ := range get {
 		if get[k] != cases[0].loadArray[k] {
-			t.Errorf("TestDumpOpenGL")
+			t.Errorf("TestDumpOpenGLMat4")
 			break
 		}
 	}
 }
 
-func TestGetRow(t *testing.T) {
+func TestRowMat4(t *testing.T) {
 	cases := []struct {
 		orig     [16]float64
 		rowIndex int
@@ -134,12 +134,12 @@ func TestGetRow(t *testing.T) {
 		m.Load(c.orig)
 		x, y, z, w = m.Row(c.rowIndex)
 		if x != c.want[0] || y != c.want[1] || z != c.want[2] || w != c.want[3] {
-			t.Errorf("TestGetRow %d", testIndex)
+			t.Errorf("TestRowMat4 %d", testIndex)
 		}
 	}
 }
 
-func TestSetRow(t *testing.T) {
+func TestSetRowMat4(t *testing.T) {
 	cases := []struct {
 		orig       [16]float64
 		rowIndex   int
@@ -158,12 +158,12 @@ func TestSetRow(t *testing.T) {
 		m.SetRow(c.rowIndex, c.x, c.y, c.z, c.w)
 		x, y, z, w = m.Row(c.rowIndex)
 		if x != c.x || y != c.y || z != c.z || w != c.w {
-			t.Errorf("TestSetRow %d", testIndex)
+			t.Errorf("TestSetRowMat4 %d", testIndex)
 		}
 	}
 }
 
-func TestGetCol(t *testing.T) {
+func TestColMat4(t *testing.T) {
 	cases := []struct {
 		orig     [16]float64
 		colIndex int
@@ -181,12 +181,12 @@ func TestGetCol(t *testing.T) {
 		m.Load(c.orig)
 		x, y, z, w = m.Col(c.colIndex)
 		if x != c.want[0] || y != c.want[1] || z != c.want[2] || w != c.want[3] {
-			t.Errorf("TestGetRow %d", testIndex)
+			t.Errorf("TestColMat4 %d", testIndex)
 		}
 	}
 }
 
-func TestSetCol(t *testing.T) {
+func TestSetColMat4(t *testing.T) {
 	cases := []struct {
 		orig       [16]float64
 		colIndex   int
@@ -205,12 +205,12 @@ func TestSetCol(t *testing.T) {
 		m.SetCol(c.colIndex, c.x, c.y, c.z, c.w)
 		x, y, z, w = m.Col(c.colIndex)
 		if x != c.x || y != c.y || z != c.z || w != c.w {
-			t.Errorf("TestSetRow %d", testIndex)
+			t.Errorf("TestSetColMat4 %d", testIndex)
 		}
 	}
 }
 
-func TestAddInScalar(t *testing.T) {
+func TestAddScalarMat4(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -226,19 +226,32 @@ func TestAddInScalar(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.AddInScalar(c.value)
+		ret_mat := m.AddScalar(c.value)
 
-		get := m.Dump()
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]+c.value {
-				t.Errorf("TestAddInScalar %d %d", testIndex, k)
+				t.Errorf("TestAddScalarMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.AddInScalar(c.value)
+		if ret_mat != m {
+			t.Errorf("TestAddInScalarMat4 %d", testIndex)
+		}
+
+		get = ret_mat.Dump()
+		for k, _ := range c.orig {
+			if get[k] != c.orig[k]+c.value {
+				t.Errorf("TestAddInScalarMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestSubInScalar(t *testing.T) {
+func TestSubScalarMat4(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -254,19 +267,32 @@ func TestSubInScalar(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.SubInScalar(c.value)
+		ret_mat := m.SubScalar(c.value)
 
-		get := m.Dump()
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]-c.value {
-				t.Errorf("TestSubInScalar %d %d", testIndex, k)
+				t.Errorf("TestSubScalarMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.SubInScalar(c.value)
+		if ret_mat != m {
+			t.Errorf("TestSubInScalarMat4 %d", testIndex)
+		}
+
+		get = ret_mat.Dump()
+		for k, _ := range c.orig {
+			if get[k] != c.orig[k]-c.value {
+				t.Errorf("TestSubInScalarMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestMultInScalar(t *testing.T) {
+func TestMultScalarMat4(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -282,19 +308,32 @@ func TestMultInScalar(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.MultInScalar(c.value)
+		ret_mat := m.MultScalar(c.value)
 
-		get := m.Dump()
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]*c.value {
-				t.Errorf("TestMultInScalar %d %d", testIndex, k)
+				t.Errorf("TestMultScalarMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.MultInScalar(c.value)
+		if ret_mat != m {
+			t.Errorf("TestMultInScalarMat4 %d", testIndex)
+		}
+
+		get = ret_mat.Dump()
+		for k, _ := range c.orig {
+			if get[k] != c.orig[k]*c.value {
+				t.Errorf("TestMultInScalarMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestDivInScalar(t *testing.T) {
+func TestDivScalarMat4(t *testing.T) {
 	cases := []struct {
 		orig  [16]float64
 		value float64
@@ -310,19 +349,32 @@ func TestDivInScalar(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
-		m.DivInScalar(c.value)
+		ret_mat := m.DivScalar(c.value)
 
-		get := m.Dump()
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
-			if closeEq(get[k], c.orig[k]/c.value, epsilon) == false {
-				t.Errorf("TestDivInScalar %d %d", testIndex, k)
+			if get[k] != c.orig[k]/c.value {
+				t.Errorf("TestDivScalarMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.DivInScalar(c.value)
+		if ret_mat != m {
+			t.Errorf("TestDivInScalarMat4 %d", testIndex)
+		}
+
+		get = ret_mat.Dump()
+		for k, _ := range c.orig {
+			if get[k] != c.orig[k]/c.value {
+				t.Errorf("TestDivInScalarMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestAddIn(t *testing.T) {
+func TestAddMat4(t *testing.T) {
 	cases := []struct {
 		orig, other [16]float64
 	}{
@@ -341,19 +393,32 @@ func TestAddIn(t *testing.T) {
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
-		m.AddIn(m2)
 
-		get := m.Dump()
+		ret_mat := m.Add(m2)
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]+c.other[k], epsilon) == false {
-				t.Errorf("TestAddIn %d %d", testIndex, k)
+				t.Errorf("TestAddMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.AddIn(m2)
+		if ret_mat != m {
+			t.Errorf("TestAddInMat4 %d", testIndex)
+		}
+
+		get = m.Dump()
+		for k, _ := range c.orig {
+			if closeEq(get[k], c.orig[k]+c.other[k], epsilon) == false {
+				t.Errorf("TestAddInMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestSubIn(t *testing.T) {
+func TestSubMat4(t *testing.T) {
 	cases := []struct {
 		orig, other [16]float64
 	}{
@@ -372,19 +437,32 @@ func TestSubIn(t *testing.T) {
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
-		m.SubIn(m2)
 
-		get := m.Dump()
+		ret_mat := m.Sub(m2)
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]-c.other[k], epsilon) == false {
-				t.Errorf("TestSubIn %d %d", testIndex, k)
+				t.Errorf("TestSubMat4 %d %d", testIndex, k)
+				break
+			}
+		}
+
+		ret_mat = m.SubIn(m2)
+		if ret_mat != m {
+			t.Errorf("TestSubInMat4 %d", testIndex)
+		}
+
+		get = m.Dump()
+		for k, _ := range c.orig {
+			if closeEq(get[k], c.orig[k]-c.other[k], epsilon) == false {
+				t.Errorf("TestSubInMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestMultIn(t *testing.T) {
+func TestMultMat4(t *testing.T) {
 	cases := []struct {
 		orig, other, want [16]float64
 	}{
@@ -419,20 +497,24 @@ func TestMultIn(t *testing.T) {
 	for testIndex, c := range cases {
 		orig.Load(c.orig)
 		other.Load(c.other)
-		orig.MultIn(other)
 
-		get := orig.Dump()
+		ret_mat := orig.Mult(other)
+		get := ret_mat.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.want[k], epsilon) == false {
-				t.Errorf("TestMultIn %d %d", testIndex, k)
-				// fmt.Println(orig, "\n")
+				t.Errorf("TestMultMat4 %d %d", testIndex, k)
 				break
 			}
+		}
+
+		ret_mat = orig.MultIn(other)
+		if ret_mat != orig {
+			t.Errorf("TestMultInMat4 %d", testIndex)
 		}
 	}
 }
 
-func TestIdentity(t *testing.T) {
+func TestIdentityMat4(t *testing.T) {
 	m := &Mat4{}
 	m.Load([16]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
 	m.ToIdentity()
@@ -447,7 +529,7 @@ func TestIdentity(t *testing.T) {
 	}
 }
 
-func TestTranspose(t *testing.T) {
+func TestTransposeMat4(t *testing.T) {
 	cases := []struct {
 		orig, want [16]float64
 	}{
@@ -468,7 +550,7 @@ func TestTranspose(t *testing.T) {
 
 		for k, _ := range c.want {
 			if closeEq(get[k], c.want[k], epsilon) == false {
-				t.Errorf("TestTranspose %d %d", testIndex, k)
+				t.Errorf("TestTransposeMat4 %d %d", testIndex, k)
 				break
 			}
 		}
@@ -477,14 +559,14 @@ func TestTranspose(t *testing.T) {
 		get = orig.TransposeIn().Dump()
 		for k, _ := range c.want {
 			if closeEq(get[k], c.want[k], epsilon) == false {
-				t.Errorf("TestTransposeIn %d %d", testIndex, k)
+				t.Errorf("TestTransposeInMat4 %d %d", testIndex, k)
 				break
 			}
 		}
 	}
 }
 
-func TestDeterminant(t *testing.T) {
+func TestDeterminantMat4(t *testing.T) {
 	want := 0.554020973727016224
 	m := &Mat4{}
 	m.Load([16]float64{
@@ -507,11 +589,11 @@ func TestDeterminant(t *testing.T) {
 
 	get := m.Determinant()
 	if closeEq(get, want, epsilon) == false {
-		t.Errorf("TestDeterminant %v", get)
+		t.Errorf("TestDeterminantMat4 %v", get)
 	}
 }
 
-func TestAdjoint(t *testing.T) {
+func TestAdjointMat4(t *testing.T) {
 	m := &Mat4{}
 	m.Load([16]float64{
 		0.5 * 0.5,
@@ -544,13 +626,13 @@ func TestAdjoint(t *testing.T) {
 		// the adjoint values I got from wolframalpha
 		// only went up to 6 places
 		if closeEq(get[k], want[k], 0.0001) == false {
-			t.Errorf("TestAdjoint %d %v %v", k, get[k], want[k])
+			t.Errorf("TestAdjointMat4 %d %v %v", k, get[k], want[k])
 			break
 		}
 	}
 }
 
-func TestInverseMatrix(t *testing.T) {
+func TestInverseMat4(t *testing.T) {
 	m := &Mat4{}
 	cases := []struct {
 		orig, want        [16]float64
@@ -597,7 +679,7 @@ func TestInverseMatrix(t *testing.T) {
 		m.Load(c.orig)
 		get_inverse_flag := m.HasInverse()
 		if get_inverse_flag != c.want_inverse_flag {
-			t.Errorf("TestInverse %d %v", testIndex, get_inverse_flag)
+			t.Errorf("TestInverseMat4 %d %v", testIndex, get_inverse_flag)
 			continue
 		}
 		if get_inverse_flag == false {
@@ -608,14 +690,14 @@ func TestInverseMatrix(t *testing.T) {
 		get := mat.Dump()
 		for k, _ := range c.want {
 			if closeEq(get[k], c.want[k], 0.0001) == false {
-				t.Errorf("TestInverse %d %d %v %v", testIndex, k, get[k], c.want[k])
+				t.Errorf("TestInverseMat4 %d %d %v %v", testIndex, k, get[k], c.want[k])
 				break
 			}
 		}
 	}
 }
 
-func TestToTranslate(t *testing.T) {
+func TestToTranslateMat4(t *testing.T) {
 	cases := []struct {
 		x, y, z float64
 		want    [16]float64
@@ -632,14 +714,14 @@ func TestToTranslate(t *testing.T) {
 		get := orig.Dump()
 		for k, _ := range c.want {
 			if c.want[k] != get[k] {
-				t.Errorf("TestToTranslate %d", testIndex)
+				t.Errorf("TestToTranslateMat4 %d", testIndex)
 				break
 			}
 		}
 	}
 }
 
-func TestToScale(t *testing.T) {
+func TestToScaleMat4(t *testing.T) {
 	cases := []struct {
 		x, y, z float64
 		want    [16]float64
@@ -656,14 +738,14 @@ func TestToScale(t *testing.T) {
 		get := orig.Dump()
 		for k, _ := range c.want {
 			if c.want[k] != get[k] {
-				t.Errorf("TestToScale %d", testIndex)
+				t.Errorf("TestToScaleMat4 %d", testIndex)
 				break
 			}
 		}
 	}
 }
 
-func TestToSkew(t *testing.T) {
+func TestToSkewMat4(t *testing.T) {
 	cases := []struct {
 		x, y, z float64
 		want    [16]float64
@@ -690,7 +772,7 @@ func TestToSkew(t *testing.T) {
 		get := orig.Dump()
 		for k, _ := range c.want {
 			if c.want[k] != get[k] {
-				t.Errorf("TestToScale %d", testIndex)
+				t.Errorf("TestToScaleMat4 %d", testIndex)
 				break
 			}
 		}

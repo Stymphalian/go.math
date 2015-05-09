@@ -1,11 +1,12 @@
 package lmath
 
 import (
+	// "fmt"
 	"math"
 	"testing"
 )
 
-func TestEqualsQuat(t *testing.T) {
+func TestEqQuat(t *testing.T) {
 	cases := []struct {
 		orig, other *Quat
 		want        bool
@@ -20,7 +21,7 @@ func TestEqualsQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Eq(test.other)
 		if get != test.want {
-			t.Errorf("TestEq %d", testIndex)
+			t.Errorf("TestEqQuat %d", testIndex)
 		}
 	}
 }
@@ -40,7 +41,7 @@ func TestSetQuat(t *testing.T) {
 		orig := &Quat{-1, -1, -1, -1}
 		get := orig.Set(test.x, test.y, test.z, test.w)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestSet %d", testIndex)
+			t.Errorf("TestSetQuat %d", testIndex)
 		}
 	}
 }
@@ -61,12 +62,12 @@ func TestAddQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Add(test.other)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestAdd %d", testIndex)
+			t.Errorf("TestAddQuat %d", testIndex)
 		}
 
 		get = test.orig.AddIn(test.other)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestAddIn %d", testIndex)
+			t.Errorf("TestAddInQuat %d", testIndex)
 		}
 	}
 }
@@ -87,12 +88,12 @@ func TestSubQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Sub(test.other)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestSub %d", testIndex)
+			t.Errorf("TestSubQuat %d", testIndex)
 		}
 
 		get = test.orig.SubIn(test.other)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestSubIn %d", testIndex)
+			t.Errorf("TestSubInQuat %d", testIndex)
 		}
 	}
 }
@@ -112,12 +113,12 @@ func TestMultQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Mult(test.other)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestMult %d %v", testIndex, get)
+			t.Errorf("TestMultQuat %d %v", testIndex, get)
 		}
 
 		get = test.orig.MultIn(test.other)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestMultIn %d %v", testIndex, get)
+			t.Errorf("TestMultInQuat %d %v", testIndex, get)
 		}
 	}
 }
@@ -137,12 +138,12 @@ func TestAddScalarQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.AddScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestAddScalar %d", testIndex)
+			t.Errorf("TestAddScalarQuat %d", testIndex)
 		}
 
 		get = test.orig.AddInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestAddInScalar %d", testIndex)
+			t.Errorf("TestAddInScalarQuat %d", testIndex)
 		}
 	}
 }
@@ -162,12 +163,12 @@ func TestSubScalarQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.SubScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestSubScalar %d", testIndex)
+			t.Errorf("TestSubScalarQuat %d", testIndex)
 		}
 
 		get = test.orig.SubInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestSubInScalar %d", testIndex)
+			t.Errorf("TestSubInScalarQuat %d", testIndex)
 		}
 	}
 }
@@ -187,12 +188,12 @@ func TestMultScalarQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.MultScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestMultScalar %d", testIndex)
+			t.Errorf("TestMultScalarQuat %d", testIndex)
 		}
 
 		get = test.orig.MultInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestMultInScalar %d", testIndex)
+			t.Errorf("TestMultInScalarQuat %d", testIndex)
 		}
 	}
 }
@@ -211,12 +212,12 @@ func TestDivScalarQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.DivScalar(test.scale)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestDivScalar %d", testIndex)
+			t.Errorf("TestDivScalarQuat %d", testIndex)
 		}
 
 		get = test.orig.DivInScalar(test.scale)
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestDivInScalar %d", testIndex)
+			t.Errorf("TestDivInScalarQuat %d", testIndex)
 		}
 	}
 }
@@ -238,7 +239,7 @@ func TestToUnitQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.ToUnit()
 		if get.Eq(test.want) == false {
-			t.Errorf("TestToUnit %d", testIndex)
+			t.Errorf("TestToUnitQuat %d", testIndex)
 		}
 	}
 }
@@ -262,12 +263,12 @@ func TestNormQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Norm()
 		if closeEq(get, test.want, epsilon) == false {
-			t.Errorf("TestNorm %d", testIndex)
+			t.Errorf("TestNormQuat %d", testIndex)
 		}
 
 		get = test.orig.NormSq()
 		if closeEq(get, test.want*test.want, epsilon) == false {
-			t.Errorf("TestNormSq %d", testIndex)
+			t.Errorf("TestNormSqQuat %d", testIndex)
 		}
 	}
 }
@@ -289,12 +290,12 @@ func TestConjugateQuat(t *testing.T) {
 	for testIndex, test := range cases {
 		get := test.orig.Conjugate()
 		if get.Eq(test.want) == false {
-			t.Errorf("TestConjugate %d", testIndex)
+			t.Errorf("TestConjugateQuat %d", testIndex)
 		}
 
 		get = test.orig.ConjugateIn()
 		if get != test.orig || get.Eq(test.want) == false {
-			t.Errorf("TestConjugateIn %d", testIndex)
+			t.Errorf("TestConjugateInQuat %d", testIndex)
 		}
 
 	}
