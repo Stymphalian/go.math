@@ -21,8 +21,8 @@ type Mat4 struct {
 	mat [16]float64
 }
 
-// New Mat4 with the given values
-// Row-Order
+// New Mat4 with the given values.
+// Row-Order.
 func NewMat4(
 	m11, m12, m13, m14,
 	m21, m22, m23, m24,
@@ -54,22 +54,22 @@ func NewMat4(
 	return &out
 }
 
-// Load the matrix with 16 floats
-// Specified in Row-Major order
+// Load the matrix with 16 floats.
+// Specified in Row-Major order.
 func (this *Mat4) Load(mat [16]float64) *Mat4 {
 	this.mat = mat
 	return this
 }
 
-// Retrieve a 16 float array of all the values of the matrix
-// Given in Row-Major order
+// Retrieve a 16 float array of all the values of the matrix.
+// Returned in Row-Major order.
 func (this *Mat4) Dump() (mat [16]float64) {
 	mat = this.mat
 	return
 }
 
-// Retrieve a 16 float array of all the values of the matrix
-// Given in Col-Major order
+// Retrieve a 16 float array of all the values of the matrix.
+// Returned in Col-Major order.
 func (this *Mat4) DumpOpenGL() (mat [16]float64) {
 	mat[0], mat[1], mat[2], mat[3] = this.Col(0)
 	mat[4], mat[5], mat[6], mat[7] = this.Col(1)
@@ -78,9 +78,16 @@ func (this *Mat4) DumpOpenGL() (mat [16]float64) {
 	return
 }
 
+// Return a copy of this matrix.
+// Carbon-copy of all elements
+func (this *Mat4) Copy() *Mat4 {
+	out := *this
+	return &out
+}
+
 // Compare this matrix to the other.
 // Return true if all elements between them are the same.
-// Equality is measured using an epsilon (< 0.0000001)
+// Equality is measured using an epsilon (< 0.0000001).
 func (this *Mat4) Eq(other *Mat4) bool {
 	for k, _ := range this.mat {
 		if closeEq(this.mat[k], other.mat[k], epsilon) == false {
@@ -90,39 +97,39 @@ func (this *Mat4) Eq(other *Mat4) bool {
 	return true
 }
 
-// Retrieve the element at column/x and row/y
-// 0 indexed
-// Does not do any bounds checking
+// Retrieve the element at row and column.
+// 0 indexed.
+// Does not do any bounds checking.
 func (this *Mat4) Get(row, col int) float64 {
 	return this.mat[row*mat4Dim+col]
 }
 
-// Set the value at the specified columnd and row.
-// 0 indexed
-// Does not do any bounds checking
+// Set the value at the specified column and row.
+// 0 indexed.
+// Does not do any bounds checking.
 func (this *Mat4) Set(row, col int, value float64) *Mat4 {
 	this.mat[row*mat4Dim+col] = value
 	return this
 }
 
-// Retrieve the element at the given index assuming a linear array
-// i.e matrix[0], matrix[5]
-// 0 indexed
+// Retrieve the element at the given index assuming a linear array.
+// (i.e matrix[0], matrix[5]).
+// 0 indexed.
 func (this *Mat4) At(index int) float64 {
 	return this.mat[index]
 }
 
-// Set the element of the matrix specified at the index to the given value
-// 0 indexed
+// Set the element of the matrix specified at the index to the given value.
+// 0 indexed.
 // Return a pointer to the 'this'
 func (this *Mat4) SetAt(index int, value float64) *Mat4 {
 	this.mat[index] = value
 	return this
 }
 
-// Set the specified row of the matrix to the given x,y,z,w values
-// 0 indexed
-// Does not do bounds checking of the row
+// Set the specified row of the matrix to the given x,y,z,w values.
+// 0 indexed.
+// Does not do bounds checking of the row.
 func (this *Mat4) SetRow(row int, x, y, z, w float64) *Mat4 {
 	this.mat[row*mat4Dim] = x
 	this.mat[row*mat4Dim+1] = y
@@ -131,9 +138,9 @@ func (this *Mat4) SetRow(row int, x, y, z, w float64) *Mat4 {
 	return this
 }
 
-// Set the specified column of the matrix to the given x,y,z,w values
-// 0 indexed
-// Does not do bounds checking on the col
+// Set the specified column of the matrix to the given x,y,z,w values.
+// 0 indexed.
+// Does not do bounds checking on the col.
 func (this *Mat4) SetCol(col int, x, y, z, w float64) *Mat4 {
 	this.mat[mat4Dim*0+col] = x
 	this.mat[mat4Dim*1+col] = y
@@ -142,9 +149,9 @@ func (this *Mat4) SetCol(col int, x, y, z, w float64) *Mat4 {
 	return this
 }
 
-// Retrieve the x,y,z,w elements from the specivied row
-// 0 indexed
-// Does not bounds check the row
+// Retrieve the x,y,z,w elements from the specified row.
+// 0 indexed.
+// Does not bounds check the row.
 func (this *Mat4) Row(row int) (x, y, z, w float64) {
 	x = this.mat[row*mat4Dim]
 	y = this.mat[row*mat4Dim+1]
@@ -153,9 +160,9 @@ func (this *Mat4) Row(row int) (x, y, z, w float64) {
 	return
 }
 
-// Retrieve the x,y,z,w elements from the specified column
-// 0 indexed
-// Does not bounds check the column
+// Retrieve the x,y,z,w elements from the specified column.
+// 0 indexed.
+// Does not bounds check the column.
 func (this *Mat4) Col(col int) (x, y, z, w float64) {
 	x = this.mat[mat4Dim*0+col]
 	y = this.mat[mat4Dim*1+col]
@@ -164,15 +171,15 @@ func (this *Mat4) Col(col int) (x, y, z, w float64) {
 	return
 }
 
-// Add in a constant value to all the terms fo the matrix
-// Return a new matrix with the result
+// Add in a constant value to all the terms fo the matrix.
+// Return a new matrix with the result.
 func (this *Mat4) AddScalar(val float64) *Mat4 {
 	out := *this
 	return out.AddInScalar(val)
 }
 
-// Add in a constant value to all the terms fo the matrix
-// Returns a pointer to 'this'
+// Add in a constant value to all the terms fo the matrix.
+// Returns a pointer to 'this'.
 func (this *Mat4) AddInScalar(val float64) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] += val
@@ -180,15 +187,15 @@ func (this *Mat4) AddInScalar(val float64) *Mat4 {
 	return this
 }
 
-// Subtract in a constant value to all the terms fo the matrix
-// Return a new matrix with the result
+// Subtract in a constant value to all the terms fo the matrix.
+// Return a new matrix with the result.
 func (this *Mat4) SubScalar(val float64) *Mat4 {
 	out := *this
 	return out.SubInScalar(val)
 }
 
-// Subtract in a constant value to all the terms fo the matrix
-// Returns a pointer to 'this'
+// Subtract in a constant value to all the terms fo the matrix.
+// Returns a pointer to 'this'.
 func (this *Mat4) SubInScalar(val float64) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] -= val
@@ -196,15 +203,15 @@ func (this *Mat4) SubInScalar(val float64) *Mat4 {
 	return this
 }
 
-// Multiplies in a constant value to all the terms fo the matrix
-// Return a new matrix with the result
+// Multiplies in a constant value to all the terms fo the matrix.
+// Return a new matrix with the result.
 func (this *Mat4) MultScalar(val float64) *Mat4 {
 	out := *this
 	return out.MultInScalar(val)
 }
 
-// Multiplies in a constant value to all the terms fo the matrix
-// Returns a pointer to 'this'
+// Multiplies in a constant value to all the terms fo the matrix.
+// Returns a pointer to 'this'.
 func (this *Mat4) MultInScalar(val float64) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] *= val
@@ -212,17 +219,17 @@ func (this *Mat4) MultInScalar(val float64) *Mat4 {
 	return this
 }
 
-// Divides in a constant value to all the terms fo the matrix
-// precondition : val > 0
-// Return a new matrix with the result
+// Divides in a constant value to all the terms fo the matrix.
+// Return a new matrix with the result.
+// 	precondition: val > 0
 func (this *Mat4) DivScalar(val float64) *Mat4 {
 	out := *this
 	return out.DivInScalar(val)
 }
 
-// Divides in a constant value to all the terms fo the matrix
-// precondition : val > 0
-// Returns a pointer to 'this'
+// Divides in a constant value to all the terms fo the matrix.
+// Returns a pointer to 'this'.
+//	precondition: val > 0
 func (this *Mat4) DivInScalar(val float64) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] /= val
@@ -230,8 +237,8 @@ func (this *Mat4) DivInScalar(val float64) *Mat4 {
 	return this
 }
 
-// Adds the two matrices together ( ie.  this + other)
-// Return a new matrix with the result
+// Adds the two matrices together ( ie.  this + other).
+// Return a new matrix with the result.
 func (this *Mat4) Add(other *Mat4) *Mat4 {
 	out := *this
 	return out.AddIn(other)
@@ -239,7 +246,7 @@ func (this *Mat4) Add(other *Mat4) *Mat4 {
 
 // Adds the two matrices together ( ie.  this + other).
 // Stores the result in this.
-// Returns 'this'
+// Returns this.
 func (this *Mat4) AddIn(other *Mat4) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] += other.mat[k]
@@ -247,8 +254,8 @@ func (this *Mat4) AddIn(other *Mat4) *Mat4 {
 	return this
 }
 
-// Subtract the two matrices together ( ie.  this - other)
-// Return a new matrix with the result
+// Subtract the two matrices together ( ie.  this - other).
+// Return a new matrix with the result.
 func (this *Mat4) Sub(other *Mat4) *Mat4 {
 	out := *this
 	return out.SubIn(other)
@@ -256,7 +263,7 @@ func (this *Mat4) Sub(other *Mat4) *Mat4 {
 
 // Subtract the two matrices together ( ie.  this - other).
 // Stores the result in this.
-// Returns 'this'
+// Returns this.
 func (this *Mat4) SubIn(other *Mat4) *Mat4 {
 	for k, _ := range this.mat {
 		this.mat[k] -= other.mat[k]
@@ -264,8 +271,8 @@ func (this *Mat4) SubIn(other *Mat4) *Mat4 {
 	return this
 }
 
-// Multiply the two matrices together ( ie.  this * other)
-// Return a new matrix with the result
+// Multiply the two matrices together ( ie.  this * other).
+// Return a new matrix with the result.
 func (this *Mat4) Mult(other *Mat4) *Mat4 {
 	out := *this
 	out.MultIn(other)
@@ -274,7 +281,7 @@ func (this *Mat4) Mult(other *Mat4) *Mat4 {
 
 // Multiplies the two matrices together ( ie.  this * other).
 // Stores the result in this.
-// Returns 'this'
+// Returns this.
 func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 	// 0   1   2   3
 	// 4   5   6   7
@@ -304,7 +311,7 @@ func (this *Mat4) MultIn(o *Mat4) *Mat4 {
 	return this
 }
 
-// Returns a new matrix which is transpose to 'this'
+// Returns a new matrix which is transpose to this.
 func (this *Mat4) Transpose() *Mat4 {
 	out := *this
 	out.TransposeIn()
@@ -328,7 +335,7 @@ func (this *Mat4) TransposeIn() *Mat4 {
 	return this
 }
 
-// Get the determinant of the matrix
+// Get the determinant of the matrix.
 // Uses a straight-up Cramers-Rule implementation.
 func (this *Mat4) Determinant() float64 {
 	// 0   1   2   3
@@ -354,7 +361,7 @@ func (this *Mat4) Determinant() float64 {
 			this.mat[9], this.mat[10], this.mat[11]))
 }
 
-// Returns a new matrix which is the Adjoint matrix of this
+// Returns a new matrix which is the Adjoint matrix of this.
 func (this *Mat4) Adjoint() *Mat4 {
 	a1, a2, a3, a4 := this.mat[0], this.mat[1], this.mat[2], this.mat[3]
 	b1, b2, b3, b4 := this.mat[4], this.mat[5], this.mat[6], this.mat[7]
@@ -389,8 +396,8 @@ func (this *Mat4) Adjoint() *Mat4 {
 	return m.Transpose()
 }
 
-// Returns a new matrix which is the inverse matrix of this
-// The bool flag is false if an inverse does not exist
+// Returns a new matrix which is the inverse matrix of this.
+// The bool flag is false if an inverse does not exist.
 func (this *Mat4) Inverse() *Mat4 {
 	// TODO: Needs further testing
 	// Try out with rotation matrices.
@@ -400,14 +407,13 @@ func (this *Mat4) Inverse() *Mat4 {
 	return out.Adjoint().DivInScalar(det)
 }
 
-// Returns true if the inverse of this matrix exists
-// False otherwise
+// Returns true if the inverse of this matrix exists false otherwise.
 // Internally it checks to see if the determinant is zero.
 func (this *Mat4) HasInverse() bool {
 	return !closeEq(this.Determinant(), 0, epsilon)
 }
 
-// Sets the matrix to the identity matrix
+// Sets the matrix to the identity matrix.
 func (this *Mat4) ToIdentity() *Mat4 {
 	this.mat = [16]float64{
 		1, 0, 0, 0,
@@ -420,6 +426,7 @@ func (this *Mat4) ToIdentity() *Mat4 {
 
 //==============================================================================
 
+// Return true if the matrix is the identity matrix.
 func (this *Mat4) IsIdentity() bool {
 	iden := [16]float64{
 		1, 0, 0, 0,
@@ -435,10 +442,10 @@ func (this *Mat4) IsIdentity() bool {
 	return true
 }
 
-// Check to see if the matrix is a valid rotation matrix
-// The two properties it checks are
-// 1) Determinant() == 1
-// 2) m*m.Transpose  == Identity
+// Check to see if the matrix is a valid rotation matrix.
+// 	The two properties it checks are
+// 	1) Determinant() == 1
+// 	2) m*m.Transpose  == Identity
 func IsRotationMatrix(m *Mat4) bool {
 	return closeEq(m.Determinant(), 1, epsilon) && m.Mult(m.Transpose()).IsIdentity()
 }
@@ -455,6 +462,7 @@ func (this *Mat4) String() string {
 
 //==============================================================================
 
+// Create a translation matrix. Overwrites all values in the matrix.
 func (this *Mat4) ToTranslate(x, y, z float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[3] = x
@@ -463,6 +471,7 @@ func (this *Mat4) ToTranslate(x, y, z float64) *Mat4 {
 	return this
 }
 
+// Create a scaling matrix. Overwrites all values in the matrix.
 func (this *Mat4) ToScale(x, y, z float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[0] = x
@@ -471,6 +480,7 @@ func (this *Mat4) ToScale(x, y, z float64) *Mat4 {
 	return this
 }
 
+// Create a skew matrix. Overwrites all values in the matrix.
 func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
 	// 0   -z     y    0
 	// z    0    -x    0
@@ -492,7 +502,7 @@ func (this *Mat4) ToSkew(x, y, z float64) *Mat4 {
 	return this
 }
 
-// Make this matrix into a rotation matrix about the x-axis
+// Make this matrix into a rotation matrix about the x-axis.
 func (this *Mat4) ToRotateX(x float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[5] = math.Cos(x)
@@ -502,7 +512,7 @@ func (this *Mat4) ToRotateX(x float64) *Mat4 {
 	return this
 }
 
-// Make this matrix into a rotation matrix about the y-axis
+// Make this matrix into a rotation matrix about the y-axis.
 func (this *Mat4) ToRotateY(y float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[0] = math.Cos(y)
@@ -512,7 +522,7 @@ func (this *Mat4) ToRotateY(y float64) *Mat4 {
 	return this
 }
 
-// Make this matrix into a rotation matrix about the z-axis
+// Make this matrix into a rotation matrix about the z-axis.
 func (this *Mat4) ToRotateZ(z float64) *Mat4 {
 	this.ToIdentity()
 	this.mat[0] = math.Cos(z)
@@ -522,6 +532,8 @@ func (this *Mat4) ToRotateZ(z float64) *Mat4 {
 	return this
 }
 
+// Multiplies the Vec3 against the matrix ( ie. result = Matrix * Vec).
+// Returns a new vector with the result.
 func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
 	// 0   1   2   3
 	// 4   5   6   7
@@ -538,7 +550,7 @@ func (this *Mat4) MultVec3(v *Vec3) *Vec3 {
 
 // Return a rotation matrix which rotates a vector about the axis [x,y,z] with
 // the given angle (radians).
-// Set this matrix as a rotation matrix from the give angle(radians) and axis
+// Set this matrix as a rotation matrix from the give angle(radians) and axis.
 func (this *Mat4) FromAxisAngle(angle, x, y, z float64) *Mat4 {
 	//Reference http://en.wikipedia.org/wiki/Rotation_matrix
 	c := math.Cos(angle)
@@ -551,6 +563,8 @@ func (this *Mat4) FromAxisAngle(angle, x, y, z float64) *Mat4 {
 		0, 0, 0, 1})
 }
 
+// Set this as a rotation matrix using the specified pitch,yaw, and roll paramters.
+// Angles are in radians.
 func (this *Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
 	cx := math.Cos(pitch)
 	sx := math.Sin(pitch)
@@ -591,6 +605,8 @@ func (this *Mat4) FromEuler(pitch, yaw, roll float64) *Mat4 {
 	return this
 }
 
+// Return the axis (radians) and axis of this rotation matrix.
+// Assumes the matrix is a valid rotation matrix.
 func (this *Mat4) AxisAngle() (angle, x, y, z float64) {
 	// Reference
 	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/
@@ -667,10 +683,7 @@ func (this *Mat4) AxisAngle() (angle, x, y, z float64) {
 	return
 }
 
-// Return the pitch,yaw and roll values for the given rotation matrix
-// Assumption is that mat is a valid rotation matrix
-// following the conventions of this package
-// (x-y-z rotation order,row-major order, right-handed)
+// Return the pitch,yaw and roll values for the given rotation matrix.
 // The returned euler angle may not be the exact angle in which you supplied
 // but they can be used to make an equilvalent rotation matrix.
 func (this *Mat4) Euler() (pitch, yaw, roll float64) {
@@ -729,8 +742,7 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 	return
 }
 
-// Creates a rotation matrix from the given quaternion
-// returns this
+// Creates a rotation matrix from the given quaternion. Return this
 func (this *Mat4) FromQuat(q *Quat) *Mat4 {
 	*this = *q.Mat4()
 	return this

@@ -10,9 +10,8 @@ import (
 //http://www.gamasutra.com/view/feature/131686/rotating_objects_using_quaternions.php?page=1
 
 // Strutcure to hold the quaternion
-// W, X, Y, Z components
 // When used as a rotation quaternion ensure that the quaternion is unit length.
-// W is the angle in radians
+// W is the angle in radians.
 // X,Y,Z is the axis of rotation.
 type Quat struct {
 	W, X, Y, Z float64
@@ -23,8 +22,8 @@ var (
 	QuatZero     = &Quat{0, 0, 0, 0}
 )
 
-// Return true if all elements are equal between both quaternions
-// comparisons are done using an epsilon (< 0.0000001)
+// Return true if all elements are equal between both quaternions.
+// Comparisons are done using an epsilon (< 0.0000001)
 func (this *Quat) Eq(other *Quat) bool {
 	return closeEq(this.X, other.X, epsilon) &&
 		closeEq(this.Y, other.Y, epsilon) &&
@@ -32,8 +31,7 @@ func (this *Quat) Eq(other *Quat) bool {
 		closeEq(this.W, other.W, epsilon)
 }
 
-// Set the component of the quaternion
-// Return this
+// Set the component of the quaternion. Return this
 func (this *Quat) Set(w, x, y, z float64) *Quat {
 	this.W = w
 	this.X = x
@@ -42,8 +40,8 @@ func (this *Quat) Set(w, x, y, z float64) *Quat {
 	return this
 }
 
-// Add the two quaternions (q + other)
-// Returns a new quaternion with the result
+// Add the two quaternions (q + other).
+// Returns a new quaternion with the result.
 func (this *Quat) Add(other *Quat) *Quat {
 	out := *this
 	out.W += other.W
@@ -53,8 +51,7 @@ func (this *Quat) Add(other *Quat) *Quat {
 	return &out
 }
 
-// Add two quaternionns (q + other). Result is stored in this
-// Return this
+// Add two quaternionns (q + other) storing the result in this. Returns this.
 func (this *Quat) AddIn(other *Quat) *Quat {
 	this.W += other.W
 	this.X += other.X
@@ -63,15 +60,14 @@ func (this *Quat) AddIn(other *Quat) *Quat {
 	return this
 }
 
-// Subtract the two quaternions (q - other)
-// Returns a new quaternion with the result
+// Subtract the two quaternions (q - other).
+// Returns a new quaternion with the result.
 func (this *Quat) Sub(other *Quat) *Quat {
 	out := *this
 	return out.SubIn(other)
 }
 
-// Sub two quaternionns (q - other). Result is stored in this
-// Return this
+// Sub two quaternionns (q - other). Result is stored in this. Return this.
 func (this *Quat) SubIn(other *Quat) *Quat {
 	this.W -= other.W
 	this.X -= other.X
@@ -82,16 +78,16 @@ func (this *Quat) SubIn(other *Quat) *Quat {
 
 // Multiply the two quaterions.
 // Return a new quaterion with the result.
-// Multiplying quaternions is NOT commutative (order matters!)
+// Multiplying quaternions is NOT commutative (order matters!).
 func (this *Quat) Mult(q *Quat) *Quat {
 	out := *this
 	return out.MultIn(q)
 }
 
 // Multiply 'this' with the other quaternion.
-// Store the result into 'this'
-// Return a pointer to 'this'
-// Multiplying quaternions is NOT commutative (order matters!)
+// Store the result into 'this'.
+// Return a pointer to 'this'.
+// Multiplying quaternions is NOT commutative (order matters!).
 func (this *Quat) MultIn(other *Quat) *Quat {
 	w := this.W*other.W - this.X*other.X - this.Y*other.Y - this.Z*other.Z
 	x := this.W*other.X + this.X*other.W + this.Y*other.Z - this.Z*other.Y
@@ -105,15 +101,14 @@ func (this *Quat) MultIn(other *Quat) *Quat {
 	return this
 }
 
-// Add a scalar quantity to the quaternion
-// Returns a new quaternion with the result
+// Add a scalar quantity to the quaternion.
+// Returns a new quaternion with the result.
 func (this *Quat) AddScalar(val float64) *Quat {
 	out := *this
 	return out.AddInScalar(val)
 }
 
-// Add a scalar quantity to the quaternion
-// Returns this
+// Add a scalar quantity to the quaternion. Returns this.
 func (this *Quat) AddInScalar(val float64) *Quat {
 	this.W += val
 	this.X += val
@@ -122,15 +117,14 @@ func (this *Quat) AddInScalar(val float64) *Quat {
 	return this
 }
 
-// Subtract a scalar quantity to the quaternion
-// Returns a new quaternion with the result
+// Subtract a scalar quantity to the quaternion.
+// Returns a new quaternion with the result.
 func (this *Quat) SubScalar(val float64) *Quat {
 	out := *this
 	return out.SubInScalar(val)
 }
 
-// Add a scalar quantity to the quaternion
-// Returns this
+// Add a scalar quantity to the quaternion. Returns this.
 func (this *Quat) SubInScalar(val float64) *Quat {
 	this.W -= val
 	this.X -= val
@@ -139,15 +133,14 @@ func (this *Quat) SubInScalar(val float64) *Quat {
 	return this
 }
 
-// Multiply a scalar quantity to the quaternion
-// Returns a new quaternion with the result
+// Multiply a scalar quantity to the quaternion.
+// Returns a new quaternion with the result.
 func (this *Quat) MultScalar(val float64) *Quat {
 	out := *this
 	return out.MultInScalar(val)
 }
 
-// Add a scalar quantity to the quaternion
-// Returns this
+// Add a scalar quantity to the quaternion. Returns this.
 func (this *Quat) MultInScalar(val float64) *Quat {
 	this.W *= val
 	this.X *= val
@@ -156,15 +149,15 @@ func (this *Quat) MultInScalar(val float64) *Quat {
 	return this
 }
 
-// Divide a scalar quantity to the quaternion
-// Returns a new quaternion with the result
+// Divide a scalar quantity to the quaternion.
+// Returns a new quaternion with the result.
 func (this *Quat) DivScalar(val float64) *Quat {
 	out := *this
 	return out.DivInScalar(val)
 }
 
-// Add a scalar quantity to the quaternion
-// Returns this
+// Add a scalar quantity to the quaternion.
+// Returns this.
 func (this *Quat) DivInScalar(val float64) *Quat {
 	this.W /= val
 	this.X /= val
@@ -173,8 +166,8 @@ func (this *Quat) DivInScalar(val float64) *Quat {
 	return this
 }
 
-// Make this quaterion into a unit length quaternion
-// Returns a pointer to 'this'
+// Make this quaterion into a unit length quaternion.
+// Returns a pointer to this.
 func (this *Quat) ToUnit() *Quat {
 	n := this.Norm()
 	if closeEq(n, 0, epsilon) {
@@ -183,14 +176,14 @@ func (this *Quat) ToUnit() *Quat {
 	return this.DivInScalar(n)
 }
 
-// Returns the norm of this quaternion
+// Returns the norm of this quaternion.
 // sqrt(x^2 + y^2 + z^2 + w^2)
 func (this *Quat) Norm() float64 {
 	return math.Sqrt(this.NormSq())
 }
 
-// Returns the squared norm of this quaternion
-// So that we can save a math.Sqrt
+// Returns the squared norm of this quaternion.
+// So that we can save a math.Sqrt.
 // x^2 + y^2 + z^2 + w^2
 func (this *Quat) NormSq() float64 {
 	return this.X*this.X +
@@ -231,6 +224,7 @@ func (this *Quat) InverseIn() *Quat {
 	return this.DivInScalar(n)
 }
 
+// Create a copy of this Quaternion and return the result.
 func (this *Quat) Copy() *Quat {
 	out := *this
 	return &out
@@ -261,10 +255,10 @@ func (this *Quat) RotateVec3(v *Vec3) *Vec3 {
 	return &Vec3{rs.X, rs.Y, rs.Z}
 }
 
-// Create a quaternion from the specified euler angles
-// Perform the operation in the order
-// pitch(x) => yaw(y) => row(z)
+// Create a quaternion from the specified euler angles.
 // Return this
+// 	Perform the operation in the order.
+// 	pitch(x) => yaw(y) => row(z)
 func (this *Quat) FromEuler(pitch, yaw, roll float64) *Quat {
 	yawQ := &Quat{math.Cos(yaw / 2), 0, math.Sin(yaw / 2), 0}
 	pitchQ := &Quat{math.Cos(pitch / 2), math.Sin(pitch / 2), 0, 0}
@@ -276,7 +270,7 @@ func (this *Quat) FromEuler(pitch, yaw, roll float64) *Quat {
 	return this
 }
 
-// Set the quaternion as a rotation with with specified angle (radians) and axis
+// Set the quaternion as a rotation with with specified angle (radians) and axis.
 // The axis should be normalized!
 // Return this
 func (this *Quat) FromAxisAngle(angle float64, x, y, z float64) *Quat {

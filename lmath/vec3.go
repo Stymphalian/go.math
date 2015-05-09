@@ -12,8 +12,8 @@ type Vec3 struct {
 }
 
 var (
-	Vec3Up      = &Vec3{0, 1, 0}
 	Vec3Right   = &Vec3{1, 0, 0}
+	Vec3Up      = &Vec3{0, 1, 0}
 	Vec3Forward = &Vec3{0, 0, 1}
 	Vec3Zero    = &Vec3{0, 0, 0}
 )
@@ -181,6 +181,12 @@ func (this *Vec3) Set(x, y, z float64) *Vec3 {
 func (this *Vec3) Proj(other *Vec3) *Vec3 {
 	n := this.Length() * other.Length()
 	return other.Normalize().MultScalar(this.Dot(other) / n)
+}
+
+// Return a copy of this vector
+func (this *Vec3) Copy() *Vec3 {
+	out := *this
+	return &out
 }
 
 //==============================================================================
