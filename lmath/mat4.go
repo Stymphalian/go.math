@@ -794,12 +794,12 @@ func (this *Mat4) Euler() (pitch, yaw, roll float64) {
 
 // Creates a rotation matrix from the given quaternion. Return this
 func (this *Mat4) FromQuat(q *Quat) *Mat4 {
-	*this = *q.Mat4()
+	*this = q.Mat4()
 	return this
 }
 
 // Returns the quaternion represented by this rotation matrix.
 func (this *Mat4) Quat() *Quat {
 	q := &Quat{}
-	return q.FromMat4(this)
+	return q.FromMat4(*this)
 }
