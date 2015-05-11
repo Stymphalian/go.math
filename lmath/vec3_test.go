@@ -311,22 +311,21 @@ func TestSetVec3(t *testing.T) {
 	}
 }
 
-
 func TestProjVec3(t *testing.T) {
-	v := 0.781430525/math.Sqrt(3)
+	v := 0.781430525 / math.Sqrt(3)
 	var cases = []struct {
-		from,on, want Vec3
+		from, on, want Vec3
 	}{
-		{Vec3{1,1,0},Vec3{1,0,0},Vec3{math.Sqrt(2)/2,0,0}},
-		{Vec3{1,0,0},Vec3{1,0,0},Vec3{1,0,0}},
+		{Vec3{1, 1, 0}, Vec3{1, 0, 0}, Vec3{math.Sqrt(2) / 2, 0, 0}},
+		{Vec3{1, 0, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
 		// should probably be checkig [0,0,0] projected [1,0,0] => {NaN,NaN,NaN}
-		{Vec3{20,50,3},Vec3{1,1,1},Vec3{v,v,v}},
+		{Vec3{20, 50, 3}, Vec3{1, 1, 1}, Vec3{v, v, v}},
 	}
 
 	for testIndex, test := range cases {
 		get := test.from.Proj(test.on)
 		if get.Eq(test.want) == false {
-			t.Errorf("TestProjVec3 %d", testIndex,get)
+			t.Errorf("TestProjVec3 %d", testIndex, get)
 		}
 	}
 }

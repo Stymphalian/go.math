@@ -250,7 +250,7 @@ func (this Quat) Angle() float64 {
 func (this Quat) RotateVec3(v Vec3) (out Vec3) {
 	vq := Quat{0.0, v.X, v.Y, v.Z}
 	rs := this.Mult(vq).Mult(this.Inverse())
-	out.Set(rs.X,rs.Y,rs.Z)
+	out.Set(rs.X, rs.Y, rs.Z)
 	return
 }
 
@@ -322,7 +322,7 @@ func (this Quat) AxisAngle() (angle, x, y, z float64) {
 // Matrix should be in right-hand coordinate system
 // Pitch-Yaw-Roll euler angle formation
 // Return this
-func (this* Quat) fromMat(m [16]float64) *Quat {
+func (this *Quat) fromMat(m [16]float64) *Quat {
 	// Reference : http://www.flipcode.com/documents/matrfaq.html#Q55
 	// 0  1  2  3
 	// 4  5  6  7

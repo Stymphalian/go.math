@@ -697,7 +697,6 @@ func TestInverseMat4(t *testing.T) {
 	}
 }
 
-
 func TestToTranslateMat4(t *testing.T) {
 	cases := []struct {
 		x, y, z float64
@@ -780,16 +779,14 @@ func TestToShearMat4(t *testing.T) {
 	}
 }
 
-
-
 func TestUpperMat3Mat4(t *testing.T) {
 	common_cases := []struct {
 		mat4_vals [16]float64
 		mat3_vals [9]float64
 	}{
-		{[16]float64{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},[9]float64{0,0,0,0,0,0,0,0,0}},
-		{[16]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},[9]float64{1,1,1,1,1,1,1,1,1}},
-		{[16]float64{-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15},[9]float64{1,2,3,4,5,6,7,8,9}},
+		{[16]float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, [9]float64{0, 0, 0, 0, 0, 0, 0, 0, 0}},
+		{[16]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, [9]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}},
+		{[16]float64{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15}, [9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}},
 	}
 
 	m3 := &Mat3{}
@@ -800,14 +797,14 @@ func TestUpperMat3Mat4(t *testing.T) {
 
 		get_m4 := m4.SetUpperMat3(*m3)
 		if get_m4 != &m4 {
-			t.Errorf("TestUpperMat3Mat4 %d",testIndex)
+			t.Errorf("TestUpperMat3Mat4 %d", testIndex)
 		}
 
 		mm := m4.UpperMat3()
 		get_m3 := mm.Dump()
-		for k,_ := range(c.mat3_vals){
-			if !closeEq(c.mat3_vals[k],get_m3[k],epsilon) {
-				t.Errorf("TestUpperMat3Mat4 %d %d",testIndex,k)
+		for k, _ := range c.mat3_vals {
+			if !closeEq(c.mat3_vals[k], get_m3[k], epsilon) {
+				t.Errorf("TestUpperMat3Mat4 %d %d", testIndex, k)
 				break
 			}
 		}

@@ -13,10 +13,10 @@ import (
 //	precondition : far > near > 0.
 func OrthoMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 	out.Load([16]float64{
-		2/(right-left), 0, 0, -(right+left)/(right-left),
-		0, 2/(top-bottom), 0, -(top+bottom)/(top-bottom),
+		2 / (right - left), 0, 0, -(right + left) / (right - left),
+		0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
 		//0,0,2/(n-f), -(n+f)/(n-f)
-		0, 0, -2/(far-near), -(far+near)/(far-near),
+		0, 0, -2 / (far - near), -(far + near) / (far - near),
 		0, 0, 0, 1})
 	return
 }
@@ -27,11 +27,11 @@ func OrthoMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 //	precondition : far > near > 0
 func FrustumMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 	out.Load([16]float64{
-		2*near/(right-left), 0, (right+left)/(right-left), 0,
-		0, 2*near/(top-bottom), (top+bottom)/(top-bottom), 0,
+		2 * near / (right - left), 0, (right + left) / (right - left), 0,
+		0, 2 * near / (top - bottom), (top + bottom) / (top - bottom), 0,
 		// TODO: I dont' use negative hear in my glwidget impl...
 		// I also take the transpose
-		0, 0, -(far+near)/(far-near), -2*far*near/(far-near),
+		0, 0, -(far + near) / (far - near), -2 * far * near / (far - near),
 		0, 0, -1, 0})
 	return
 }

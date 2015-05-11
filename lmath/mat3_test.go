@@ -97,12 +97,12 @@ func TestLoadDumpMat3(t *testing.T) {
 	}
 
 	// 1 2 3
-    // 4 5 6
-    // 7 8 9
-	m.Load([9]float64{1,4,7,2,5,8,3,6,9})
+	// 4 5 6
+	// 7 8 9
+	m.Load([9]float64{1, 4, 7, 2, 5, 8, 3, 6, 9})
 	get := m.DumpOpenGL()
 	for k, _ := range get {
-		if !closeEq(get[k],cases[0].loadArray[k],epsilon) {
+		if !closeEq(get[k], cases[0].loadArray[k], epsilon) {
 			t.Errorf("TestDumpOpenGLMat3")
 			break
 		}
@@ -674,8 +674,8 @@ func TestMultVec3Mat3(t *testing.T) {
 		{[9]float64{1, 0, 0, 0, 1, 0, 0, 0, 1}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
 		{[9]float64{2, 0, 0, 0, 2, 0, 0, 0, 2}, Vec3{1, 0, 0}, Vec3{2, 0, 0}},
 		{[9]float64{2, 0, 0, 0, 2, 0, 0, 0, 2}, Vec3{1, 1, 1}, Vec3{2, 2, 2}},
-		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, Vec3{1, 0, 0}, Vec3{1,4,7}},
-		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, Vec3{1, 2, 3}, Vec3{14,32,50}},
+		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, Vec3{1, 0, 0}, Vec3{1, 4, 7}},
+		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, Vec3{1, 2, 3}, Vec3{14, 32, 50}},
 	}
 
 	m := Mat3{}

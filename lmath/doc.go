@@ -16,3 +16,5 @@ var (
 
 // TODO:
 // Test glmath functions
+// Add additional tests
+//  multiply Vec4 tests

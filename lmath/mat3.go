@@ -412,7 +412,7 @@ func (this Mat3) String() string {
 
 // =============================================================================
 // Create a 2D translation matrix for Mat3. Overwrites all values in the matrix.
-func (this *Mat3) ToTranslate(x, y  float64) *Mat3 {
+func (this *Mat3) ToTranslate(x, y float64) *Mat3 {
 	this.ToIdentity()
 	this.Set(0, 2, x)
 	this.Set(1, 2, y)
@@ -436,8 +436,8 @@ func (this *Mat3) ToShear(x, y float64) *Mat3 {
 	this.Set(0, 0, 0)
 	this.Set(1, 1, 0)
 
-	this.Set(0,1,x)
-	this.Set(1,0,y)
+	this.Set(0, 1, x)
+	this.Set(1, 0, y)
 	return this
 }
 
@@ -447,13 +447,12 @@ func (this *Mat3) ToShear(x, y float64) *Mat3 {
 // 0     0     1
 func (this *Mat3) ToRotateZ(angle float64) *Mat3 {
 	this.ToIdentity()
-	this.Set(0,0, math.Cos(angle))
-	this.Set(0,1, -math.Sin(angle))
-	this.Set(1,0, math.Sin(angle))
-	this.Set(1,1, math.Cos(angle))
+	this.Set(0, 0, math.Cos(angle))
+	this.Set(0, 1, -math.Sin(angle))
+	this.Set(1, 0, math.Sin(angle))
+	this.Set(1, 1, math.Cos(angle))
 	return this
 }
-
 
 //==============================================================================
 
@@ -464,9 +463,9 @@ func (this Mat3) MultVec3(v Vec3) (out Vec3) {
 	// 3   4   5
 	// 6   7   8
 	out.Set(
-		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z,
-		this.mat[3]*v.X + this.mat[4]*v.Y + this.mat[5]*v.Z,
-		this.mat[6]*v.X + this.mat[7]*v.Y + this.mat[8]*v.Z,
+		this.mat[0]*v.X+this.mat[1]*v.Y+this.mat[2]*v.Z,
+		this.mat[3]*v.X+this.mat[4]*v.Y+this.mat[5]*v.Z,
+		this.mat[6]*v.X+this.mat[7]*v.Y+this.mat[8]*v.Z,
 	)
 	return
 }

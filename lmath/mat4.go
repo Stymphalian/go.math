@@ -449,7 +449,7 @@ func (this Mat4) IsRotation() bool {
 
 // Implement the Stringer interface
 // Prints out each row of the matrix on its own line
-func (this*Mat4) String() string {
+func (this *Mat4) String() string {
 	return fmt.Sprintf("%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f",
 		this.mat[0], this.mat[1], this.mat[2], this.mat[3],
 		this.mat[4], this.mat[5], this.mat[6], this.mat[7],
@@ -501,7 +501,6 @@ func (this *Mat4) ToShear(x, y, z float64) *Mat4 {
 	return this
 }
 
-
 // Create a 3D rotation matrix about the x-axis with angles (radians)
 func (this *Mat4) ToRotateX(angle float64) *Mat4 {
 	this.ToIdentity()
@@ -532,36 +531,34 @@ func (this *Mat4) ToRotateZ(angle float64) *Mat4 {
 	return this
 }
 
-
 //==============================================================================
 
 // Return the upper 3x3 matrix as a Mat3
 func (this Mat4) UpperMat3() (out Mat3) {
-	out.Load([9]float64 {
-		this.Get(0,0),this.Get(0,1),this.Get(0,2),
-		this.Get(1,0),this.Get(1,1),this.Get(1,2),
-		this.Get(2,0),this.Get(2,1),this.Get(2,2),
+	out.Load([9]float64{
+		this.Get(0, 0), this.Get(0, 1), this.Get(0, 2),
+		this.Get(1, 0), this.Get(1, 1), this.Get(1, 2),
+		this.Get(2, 0), this.Get(2, 1), this.Get(2, 2),
 	})
 	return out
 }
 
 // Return the upper 3x3 matrix to the provide Mat3
-func (this *Mat4) SetUpperMat3(m Mat3) (*Mat4) {
-	this.Set(0,0, m.Get(0,0))
-	this.Set(0,1, m.Get(0,1))
-	this.Set(0,2, m.Get(0,2))
+func (this *Mat4) SetUpperMat3(m Mat3) *Mat4 {
+	this.Set(0, 0, m.Get(0, 0))
+	this.Set(0, 1, m.Get(0, 1))
+	this.Set(0, 2, m.Get(0, 2))
 
-	this.Set(1,0, m.Get(1,0))
-	this.Set(1,1, m.Get(1,1))
-	this.Set(1,2, m.Get(1,2))
+	this.Set(1, 0, m.Get(1, 0))
+	this.Set(1, 1, m.Get(1, 1))
+	this.Set(1, 2, m.Get(1, 2))
 
-	this.Set(2,0, m.Get(2,0))
-	this.Set(2,1, m.Get(2,1))
-	this.Set(2,2, m.Get(2,2))
+	this.Set(2, 0, m.Get(2, 0))
+	this.Set(2, 1, m.Get(2, 1))
+	this.Set(2, 2, m.Get(2, 2))
 
 	return this
 }
-
 
 // Multiplies the Vec3 against the matrix ( ie. result = Matrix * Vec).
 // Returns a new vector with the result.
@@ -571,13 +568,12 @@ func (this Mat4) MultVec3(v Vec3) (out Vec3) {
 	// 8   9   10  11
 	// 12  13  14  15
 	out.Set(
-		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z + this.mat[3],
-		this.mat[4]*v.X + this.mat[5]*v.Y + this.mat[6]*v.Z + this.mat[7],
-		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11],
+		this.mat[0]*v.X+this.mat[1]*v.Y+this.mat[2]*v.Z+this.mat[3],
+		this.mat[4]*v.X+this.mat[5]*v.Y+this.mat[6]*v.Z+this.mat[7],
+		this.mat[8]*v.X+this.mat[9]*v.Y+this.mat[10]*v.Z+this.mat[11],
 	)
 	return
 }
-
 
 // Multiplies the Vec4 against the matrix ( ie. result = Matrix * Vec).
 // Returns a new vector with the result.
@@ -587,10 +583,10 @@ func (this Mat4) MultVec4(v Vec4) (out Vec4) {
 	// 8   9   10  11
 	// 12  13  14  15
 	out.Set(
-		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z  + this.mat[3]*v.W,
-		this.mat[4]*v.X + this.mat[5]*v.Y + this.mat[6]*v.Z  + this.mat[7]*v.W,
-		this.mat[8]*v.X + this.mat[9]*v.Y + this.mat[10]*v.Z + this.mat[11]*v.W,
-		this.mat[12]*v.X + this.mat[13]*v.Y + this.mat[14]*v.Z + this.mat[15]*v.W,
+		this.mat[0]*v.X+this.mat[1]*v.Y+this.mat[2]*v.Z+this.mat[3]*v.W,
+		this.mat[4]*v.X+this.mat[5]*v.Y+this.mat[6]*v.Z+this.mat[7]*v.W,
+		this.mat[8]*v.X+this.mat[9]*v.Y+this.mat[10]*v.Z+this.mat[11]*v.W,
+		this.mat[12]*v.X+this.mat[13]*v.Y+this.mat[14]*v.Z+this.mat[15]*v.W,
 	)
 	return
 }
