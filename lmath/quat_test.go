@@ -562,8 +562,7 @@ func TestMat4Quat(t *testing.T) {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		m = q.Mat4()
 
-		get := m.MultVec3(&c.start_vec)
-		//get := MultMat4Vec3(m, c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}

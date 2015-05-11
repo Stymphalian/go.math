@@ -19,7 +19,7 @@ func TestNewMat4(t *testing.T) {
 		5, 6, 7, 8,
 		9, 10, 11, 12,
 		13, 14, 15, 16)
-	if m.Eq(m2) == false {
+	if m.Eq(*m2) == false {
 		t.Errorf("TestNewMat4 ")
 	}
 }
@@ -236,12 +236,12 @@ func TestAddScalarMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.AddInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.AddInScalar(c.value)
+		if ret_mat2 != m {
 			t.Errorf("TestAddInScalarMat4 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]+c.value {
 				t.Errorf("TestAddInScalarMat4 %d %d", testIndex, k)
@@ -277,12 +277,12 @@ func TestSubScalarMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.SubInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.SubInScalar(c.value)
+		if ret_mat2 != m {
 			t.Errorf("TestSubInScalarMat4 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]-c.value {
 				t.Errorf("TestSubInScalarMat4 %d %d", testIndex, k)
@@ -318,12 +318,12 @@ func TestMultScalarMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.MultInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.MultInScalar(c.value)
+		if ret_mat2 != m {
 			t.Errorf("TestMultInScalarMat4 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]*c.value {
 				t.Errorf("TestMultInScalarMat4 %d %d", testIndex, k)
@@ -359,12 +359,12 @@ func TestDivScalarMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.DivInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.DivInScalar(c.value)
+		if ret_mat2 != m {
 			t.Errorf("TestDivInScalarMat4 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]/c.value {
 				t.Errorf("TestDivInScalarMat4 %d %d", testIndex, k)
@@ -388,8 +388,8 @@ func TestAddMat4(t *testing.T) {
 			[16]float64{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16}},
 	}
 
-	m := &Mat4{}
-	m2 := &Mat4{}
+	m := Mat4{}
+	m2 := Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
@@ -403,12 +403,12 @@ func TestAddMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.AddIn(m2)
-		if ret_mat != m {
+		ret_mat2 := m.AddIn(m2)
+		if ret_mat2 != &m {
 			t.Errorf("TestAddInMat4 %d", testIndex)
 		}
 
-		get = m.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]+c.other[k], epsilon) == false {
 				t.Errorf("TestAddInMat4 %d %d", testIndex, k)
@@ -432,8 +432,8 @@ func TestSubMat4(t *testing.T) {
 			[16]float64{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16}},
 	}
 
-	m := &Mat4{}
-	m2 := &Mat4{}
+	m := Mat4{}
+	m2 := Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
@@ -447,12 +447,12 @@ func TestSubMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.SubIn(m2)
-		if ret_mat != m {
+		ret_mat2 := m.SubIn(m2)
+		if ret_mat2 != &m {
 			t.Errorf("TestSubInMat4 %d", testIndex)
 		}
 
-		get = m.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]-c.other[k], epsilon) == false {
 				t.Errorf("TestSubInMat4 %d %d", testIndex, k)
@@ -492,8 +492,8 @@ func TestMultMat4(t *testing.T) {
 			[16]float64{82, 92, 102, 112, 194, 220, 246, 272, 306, 348, 390, 432, 418, 476, 534, 592}},
 	}
 
-	orig := &Mat4{}
-	other := &Mat4{}
+	orig := Mat4{}
+	other := Mat4{}
 	for testIndex, c := range cases {
 		orig.Load(c.orig)
 		other.Load(c.other)
@@ -507,8 +507,8 @@ func TestMultMat4(t *testing.T) {
 			}
 		}
 
-		ret_mat = orig.MultIn(other)
-		if ret_mat != orig {
+		ret_mat2 := orig.MultIn(other)
+		if ret_mat2 != &orig {
 			t.Errorf("TestMultInMat4 %d", testIndex)
 		}
 	}
@@ -793,17 +793,18 @@ func TestUpperMat3Mat4(t *testing.T) {
 	}
 
 	m3 := &Mat3{}
-	m4 := &Mat4{}
+	m4 := Mat4{}
 	for testIndex, c := range common_cases {
 		m4.Load(c.mat4_vals)
 		m3.Load(c.mat3_vals)
 
-		get_m4 := m4.SetUpperMat3(m3)
-		if get_m4 != m4 {
+		get_m4 := m4.SetUpperMat3(*m3)
+		if get_m4 != &m4 {
 			t.Errorf("TestUpperMat3Mat4 %d",testIndex)
 		}
 
-		get_m3 := m4.UpperMat3().Dump()
+		mm := m4.UpperMat3()
+		get_m3 := mm.Dump()
 		for k,_ := range(c.mat3_vals){
 			if !closeEq(c.mat3_vals[k],get_m3[k],epsilon) {
 				t.Errorf("TestUpperMat3Mat4 %d %d",testIndex,k)
@@ -828,7 +829,7 @@ func TestMultVec3Mat4(t *testing.T) {
 	m := &Mat4{}
 	for testIndex, c := range cases {
 		m.Load(c.orig_mat)
-		get := m.MultVec3(&c.orig_v)
+		get := m.MultVec3(c.orig_v)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMultVec3Mat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -884,7 +885,7 @@ func TestFromAxisAngleMat4(t *testing.T) {
 		c.axis.NormalizeIn()
 		m.FromAxisAngle(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromAxisAngleMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -1008,7 +1009,7 @@ func TestFromEulerMat4(t *testing.T) {
 	for testIndex, c := range common_cases {
 		// m = EulerToMat4(Radians(c.yaw), Radians(c.pitch), Radians(c.roll))
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromEulerMat4 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -1089,7 +1090,7 @@ func TestEulerMat4(t *testing.T) {
 		// The euler angles we got back didn't match, but lets see if the rotation
 		// matrix it makes is still equivalent
 		m.FromEuler(x, y, z)
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) {
 			continue
 		}
