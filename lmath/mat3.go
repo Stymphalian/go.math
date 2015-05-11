@@ -10,7 +10,7 @@ const (
 )
 
 var (
-	Mat3Identity = &Mat3{[9]float64{
+	Mat3Identity = Mat3{[9]float64{
 		1, 0, 0,
 		0, 1, 0,
 		0, 0, 1}}
@@ -53,14 +53,14 @@ func (this *Mat3) Load(m [9]float64) *Mat3 {
 
 // Retrieve a 9 float array of all the values of the matrix.
 // Returned in Row-Major order.
-func (this *Mat3) Dump() (m [9]float64) {
+func (this Mat3) Dump() (m [9]float64) {
 	m = this.mat
 	return
 }
 
 // Retrieve a 9 float array of all the values of the matrix.
 // Returned in Col-Major order.
-func (this *Mat3) DumpOpenGL() (m [9]float64) {
+func (this Mat3) DumpOpenGL() (m [9]float64) {
 	m[0], m[1], m[2] = this.Col(0)
 	m[3], m[4], m[5] = this.Col(1)
 	m[6], m[7], m[8] = this.Col(2)
@@ -69,15 +69,14 @@ func (this *Mat3) DumpOpenGL() (m [9]float64) {
 
 // Return a copy of this matrix.
 // Carbon-copy of all elements
-func (this *Mat3) Copy() *Mat3 {
-	out := *this
-	return &out
+func (this Mat3) Copy() Mat3 {
+	return this
 }
 
 // Compare this matrix to the other.
 // Return true if all elements between them are the same.
 // Equality is measured using an epsilon (< 0.0000001).
-func (this *Mat3) Eq(other *Mat3) bool {
+func (this Mat3) Eq(other Mat3) bool {
 	for k, _ := range this.mat {
 		if closeEq(this.mat[k], other.mat[k], epsilon) == false {
 			return false
@@ -89,7 +88,7 @@ func (this *Mat3) Eq(other *Mat3) bool {
 // Retrieve the element at row and column.
 // 0 indexed.
 // Does not do any bounds checking.
-func (this *Mat3) Get(row, col int) float64 {
+func (this Mat3) Get(row, col int) float64 {
 	return this.mat[row*mat3Dim+col]
 }
 
@@ -104,7 +103,7 @@ func (this *Mat3) Set(row, col int, value float64) *Mat3 {
 // Retrieve the element at the given index assuming a linear array.
 // (i.e matrix[0], matrix[5]).
 // 0 indexed.
-func (this *Mat3) At(index int) float64 {
+func (this Mat3) At(index int) float64 {
 	return this.mat[index]
 }
 
@@ -139,7 +138,7 @@ func (this *Mat3) SetCol(col int, x, y, z float64) *Mat3 {
 // Retrieve the x,y,z elements from the specified row.
 // 0 indexed.
 // Does not bounds check the row.
-func (this *Mat3) Row(row int) (x, y, z float64) {
+func (this Mat3) Row(row int) (x, y, z float64) {
 	x = this.mat[row*mat3Dim]
 	y = this.mat[row*mat3Dim+1]
 	z = this.mat[row*mat3Dim+2]
@@ -149,7 +148,7 @@ func (this *Mat3) Row(row int) (x, y, z float64) {
 // Retrieve the x,y,z elements from the specified column.
 // 0 indexed.
 // Does not bounds check the column.
-func (this *Mat3) Col(col int) (x, y, z float64) {
+func (this Mat3) Col(col int) (x, y, z float64) {
 	x = this.mat[mat3Dim*0+col]
 	y = this.mat[mat3Dim*1+col]
 	z = this.mat[mat3Dim*2+col]
@@ -158,9 +157,9 @@ func (this *Mat3) Col(col int) (x, y, z float64) {
 
 // Add in a constant value to all the terms fo the matrix.
 // Return a new matrix with the result.
-func (this *Mat3) AddScalar(val float64) *Mat3 {
-	out := *this
-	return out.AddInScalar(val)
+func (this Mat3) AddScalar(val float64) Mat3 {
+	this.AddInScalar(val)
+	return this
 }
 
 // Add in a constant value to all the terms fo the matrix.
@@ -174,9 +173,9 @@ func (this *Mat3) AddInScalar(val float64) *Mat3 {
 
 // Subtract in a constant value to all the terms fo the matrix.
 // Return a new matrix with the result.
-func (this *Mat3) SubScalar(val float64) *Mat3 {
-	out := *this
-	return out.SubInScalar(val)
+func (this Mat3) SubScalar(val float64) Mat3 {
+	this.SubInScalar(val)
+	return this
 }
 
 // Subtract in a constant value to all the terms fo the matrix.
@@ -190,9 +189,9 @@ func (this *Mat3) SubInScalar(val float64) *Mat3 {
 
 // Multiplies in a constant value to all the terms fo the matrix.
 // Return a new matrix with the result.
-func (this *Mat3) MultScalar(val float64) *Mat3 {
-	out := *this
-	return out.MultInScalar(val)
+func (this Mat3) MultScalar(val float64) Mat3 {
+	this.MultInScalar(val)
+	return this
 }
 
 // Multiplies in a constant value to all the terms fo the matrix.
@@ -207,9 +206,9 @@ func (this *Mat3) MultInScalar(val float64) *Mat3 {
 // Divides in a constant value to all the terms fo the matrix.
 // Return a new matrix with the result.
 //  precondition: val > 0
-func (this *Mat3) DivScalar(val float64) *Mat3 {
-	out := *this
-	return out.DivInScalar(val)
+func (this Mat3) DivScalar(val float64) Mat3 {
+	this.DivInScalar(val)
+	return this
 }
 
 // Divides in a constant value to all the terms fo the matrix.
@@ -224,15 +223,15 @@ func (this *Mat3) DivInScalar(val float64) *Mat3 {
 
 // Adds the two matrices together ( ie.  this + other).
 // Return a new matrix with the result.
-func (this *Mat3) Add(other *Mat3) *Mat3 {
-	out := *this
-	return out.AddIn(other)
+func (this Mat3) Add(other Mat3) Mat3 {
+	this.AddIn(other)
+	return this
 }
 
 // Adds the two matrices together ( ie.  this + other).
 // Stores the result in this.
 // Returns this.
-func (this *Mat3) AddIn(other *Mat3) *Mat3 {
+func (this *Mat3) AddIn(other Mat3) *Mat3 {
 	for k, _ := range this.mat {
 		this.mat[k] += other.mat[k]
 	}
@@ -241,15 +240,15 @@ func (this *Mat3) AddIn(other *Mat3) *Mat3 {
 
 // Subtract the two matrices together ( ie.  this - other).
 // Return a new matrix with the result.
-func (this *Mat3) Sub(other *Mat3) *Mat3 {
-	out := *this
-	return out.SubIn(other)
+func (this Mat3) Sub(other Mat3) Mat3 {
+	this.SubIn(other)
+	return this
 }
 
 // Subtract the two matrices together ( ie.  this - other).
 // Stores the result in this.
 // Returns this.
-func (this *Mat3) SubIn(other *Mat3) *Mat3 {
+func (this *Mat3) SubIn(other Mat3) *Mat3 {
 	for k, _ := range this.mat {
 		this.mat[k] -= other.mat[k]
 	}
@@ -258,16 +257,15 @@ func (this *Mat3) SubIn(other *Mat3) *Mat3 {
 
 // Multiply the two matrices together ( ie.  this * other).
 // Return a new matrix with the result.
-func (this *Mat3) Mult(other *Mat3) *Mat3 {
-	out := *this
-	out.MultIn(other)
-	return &out
+func (this Mat3) Mult(other Mat3) Mat3 {
+	this.MultIn(other)
+	return this
 }
 
 // Multiplies the two matrices together ( ie.  this * other).
 // Stores the result in this.
 // Returns this.
-func (this *Mat3) MultIn(o *Mat3) *Mat3 {
+func (this *Mat3) MultIn(o Mat3) *Mat3 {
 	// 0   1   2
 	// 3   4   5
 	// 6   7   8
@@ -288,10 +286,9 @@ func (this *Mat3) MultIn(o *Mat3) *Mat3 {
 }
 
 // Returns a new matrix which is transpose to this.
-func (this *Mat3) Transpose() *Mat3 {
-	out := *this
-	out.TransposeIn()
-	return &out
+func (this Mat3) Transpose() Mat3 {
+	this.TransposeIn()
+	return this
 }
 
 // Take the transpose of this matrix.
@@ -311,7 +308,7 @@ func (this *Mat3) TransposeIn() *Mat3 {
 
 // Get the determinant of the matrix.
 // Uses a straight-up Cramers-Rule implementation.
-func (this *Mat3) Determinant() float64 {
+func (this Mat3) Determinant() float64 {
 	// 0   1   2
 	// 3   4   5
 	// 6   7   8
@@ -324,7 +321,7 @@ func (this *Mat3) Determinant() float64 {
 }
 
 // Returns a new matrix which is the Adjoint matrix of this.
-func (this *Mat3) Adjoint() *Mat3 {
+func (this Mat3) Adjoint() Mat3 {
 	a1, a2, a3 := this.mat[0], this.mat[1], this.mat[2]
 	b1, b2, b3 := this.mat[3], this.mat[4], this.mat[5]
 	c1, c2, c3 := this.mat[6], this.mat[7], this.mat[8]
@@ -337,36 +334,35 @@ func (this *Mat3) Adjoint() *Mat3 {
 	// 0 1 2          a1 a2 a3
 	// 3 4 5          b1 b2 b3
 	// 6 7 8          c1 c2 c3
-	m := Mat3{}
-	m.mat[0] = det2x2(b2, b3, c2, c3)
-	m.mat[1] = -det2x2(b1, b3, c1, c3)
-	m.mat[2] = det2x2(b1, b2, c1, c2)
+	this.mat[0] = det2x2(b2, b3, c2, c3)
+	this.mat[1] = -det2x2(b1, b3, c1, c3)
+	this.mat[2] = det2x2(b1, b2, c1, c2)
 
-	m.mat[3] = -det2x2(a2, a3, c2, c3)
-	m.mat[4] = det2x2(a1, a3, c1, c3)
-	m.mat[5] = -det2x2(a1, a2, c1, c2)
+	this.mat[3] = -det2x2(a2, a3, c2, c3)
+	this.mat[4] = det2x2(a1, a3, c1, c3)
+	this.mat[5] = -det2x2(a1, a2, c1, c2)
 
-	m.mat[6] = det2x2(a2, a3, b2, b3)
-	m.mat[7] = -det2x2(a1, a3, b1, b3)
-	m.mat[8] = det2x2(a1, a2, b1, b2)
+	this.mat[6] = det2x2(a2, a3, b2, b3)
+	this.mat[7] = -det2x2(a1, a3, b1, b3)
+	this.mat[8] = det2x2(a1, a2, b1, b2)
 
-	return m.Transpose()
+	this.TransposeIn()
+	return this
 }
 
 // Returns a new matrix which is the inverse matrix of this.
 // The bool flag is false if an inverse does not exist.
-func (this *Mat3) Inverse() *Mat3 {
+func (this Mat3) Inverse() Mat3 {
 	// TODO: Needs further testing
 	// Try out with rotation matrices.
 	// The inverse of a valid rotation matrix should just be the transpose
-	out := *this
-	det := out.Determinant()
-	return out.Adjoint().DivInScalar(det)
+	det := this.Determinant()
+	return this.Adjoint().DivScalar(det)
 }
 
 // Returns true if the inverse of this matrix exists false otherwise.
 // Internally it checks to see if the determinant is zero.
-func (this *Mat3) HasInverse() bool {
+func (this Mat3) HasInverse() bool {
 	return !closeEq(this.Determinant(), 0, epsilon)
 }
 
@@ -383,7 +379,7 @@ func (this *Mat3) ToIdentity() *Mat3 {
 //==============================================================================
 
 // Return true if the matrix is the identity matrix.
-func (this *Mat3) IsIdentity() bool {
+func (this Mat3) IsIdentity() bool {
 	iden := [9]float64{
 		1, 0, 0,
 		0, 1, 0,
@@ -401,13 +397,13 @@ func (this *Mat3) IsIdentity() bool {
 //  The two properties it checks are
 //  1) Determinant() == 1
 //  2) m*m.Transpose  == Identity
-func (this *Mat3) IsRotation() bool {
+func (this Mat3) IsRotation() bool {
 	return closeEq(this.Determinant(), 1, epsilon) && this.Mult(this.Transpose()).IsIdentity()
 }
 
 // Implement the Stringer interface
 // Prints out each row of the matrix on its own line
-func (this *Mat3) String() string {
+func (this Mat3) String() string {
 	return fmt.Sprintf("%f %f %f\n%f %f %f\n%f %f %f",
 		this.mat[0], this.mat[1], this.mat[2],
 		this.mat[3], this.mat[4], this.mat[5],
@@ -463,15 +459,16 @@ func (this *Mat3) ToRotateZ(angle float64) *Mat3 {
 
 // Multiplies the Vec3 against the matrix ( ie. result = Matrix * Vec).
 // Returns a new vector with the result.
-func (this *Mat3) MultVec3(v *Vec3) *Vec3 {
+func (this Mat3) MultVec3(v Vec3) (out Vec3) {
 	// 0   1   2
 	// 3   4   5
 	// 6   7   8
-	return &Vec3{
+	out.Set(
 		this.mat[0]*v.X + this.mat[1]*v.Y + this.mat[2]*v.Z,
 		this.mat[3]*v.X + this.mat[4]*v.Y + this.mat[5]*v.Z,
 		this.mat[6]*v.X + this.mat[7]*v.Y + this.mat[8]*v.Z,
-	}
+	)
+	return
 }
 
 // =============================================================================
@@ -526,7 +523,7 @@ func (this *Mat3) FromEuler(pitch, yaw, roll float64) *Mat3 {
 
 // Return the axis (radians) and axis of this rotation matrix.
 // Assumes the matrix is a valid rotation matrix.
-func (this *Mat3) AxisAngle() (angle, x, y, z float64) {
+func (this Mat3) AxisAngle() (angle, x, y, z float64) {
 	// Reference
 	// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/
 	m00, m01, m02 := this.Get(0, 0), this.Get(0, 1), this.Get(0, 2)
@@ -605,7 +602,7 @@ func (this *Mat3) AxisAngle() (angle, x, y, z float64) {
 // Return the pitch,yaw and roll values for the given rotation matrix.
 // The returned euler angle may not be the exact angle in which you supplied
 // but they can be used to make an equilvalent rotation matrix.
-func (this *Mat3) Euler() (pitch, yaw, roll float64) {
+func (this Mat3) Euler() (pitch, yaw, roll float64) {
 	// The method for calculating the euler angles from a rotation matrix
 	// uses the method described in this document
 	// http://staff.city.ac.uk/~sbbh653/publications/euler.pdf
@@ -668,7 +665,8 @@ func (this *Mat3) FromQuat(q *Quat) *Mat3 {
 }
 
 // Returns the quaternion represented by this rotation matrix.
-func (this *Mat3) Quat() *Quat {
+func (this Mat3) Quat() Quat {
 	q := Quat{}
-	return  q.FromMat3(*this)
+	q.FromMat3(this)
+	return q
 }

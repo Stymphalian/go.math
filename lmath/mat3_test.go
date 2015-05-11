@@ -17,7 +17,7 @@ func TestNewMat3(t *testing.T) {
 		1, 2, 3,
 		5, 6, 7,
 		9, 10, 11)
-	if m.Eq(m2) == false {
+	if m.Eq(*m2) == false {
 		t.Errorf("TestNewMat3 ")
 	}
 }
@@ -212,7 +212,7 @@ func TestAddScalarMat3(t *testing.T) {
 		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, -1},
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		ret_mat := m.AddScalar(c.value)
@@ -225,12 +225,12 @@ func TestAddScalarMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.AddInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.AddInScalar(c.value)
+		if ret_mat2 != &m {
 			t.Errorf("TestAddInScalarMat3 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]+c.value {
 				t.Errorf("TestAddInScalarMat3 %d %d", testIndex, k)
@@ -253,7 +253,7 @@ func TestSubScalarMat3(t *testing.T) {
 		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, -1},
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		ret_mat := m.SubScalar(c.value)
@@ -266,12 +266,12 @@ func TestSubScalarMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.SubInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.SubInScalar(c.value)
+		if ret_mat2 != &m {
 			t.Errorf("TestSubInScalarMat3 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]-c.value {
 				t.Errorf("TestSubInScalarMat3 %d %d", testIndex, k)
@@ -294,7 +294,7 @@ func TestMultScalarMat3(t *testing.T) {
 		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, -1},
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		ret_mat := m.MultScalar(c.value)
@@ -307,12 +307,12 @@ func TestMultScalarMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.MultInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.MultInScalar(c.value)
+		if ret_mat2 != &m {
 			t.Errorf("TestMultInScalarMat3 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]*c.value {
 				t.Errorf("TestMultInScalarMat3 %d %d", testIndex, k)
@@ -335,7 +335,7 @@ func TestDivScalarMat3(t *testing.T) {
 		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, -2},
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		ret_mat := m.DivScalar(c.value)
@@ -348,12 +348,12 @@ func TestDivScalarMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.DivInScalar(c.value)
-		if ret_mat != m {
+		ret_mat2 := m.DivInScalar(c.value)
+		if ret_mat2 != &m {
 			t.Errorf("TestDivInScalarMat3 %d", testIndex)
 		}
 
-		get = ret_mat.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if get[k] != c.orig[k]/c.value {
 				t.Errorf("TestDivInScalarMat3 %d %d", testIndex, k)
@@ -377,8 +377,8 @@ func TestAddMat3(t *testing.T) {
 			[9]float64{-1, -2, -3, -4, -5, -6, -7, -8, -9}},
 	}
 
-	m := &Mat3{}
-	m2 := &Mat3{}
+	m := Mat3{}
+	m2 := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
@@ -392,12 +392,12 @@ func TestAddMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.AddIn(m2)
-		if ret_mat != m {
+		ret_mat2 := m.AddIn(m2)
+		if ret_mat2 != &m {
 			t.Errorf("TestAddInMat3 %d", testIndex)
 		}
 
-		get = m.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]+c.other[k], epsilon) == false {
 				t.Errorf("TestAddInMat3 %d %d", testIndex, k)
@@ -421,8 +421,8 @@ func TestSubMat3(t *testing.T) {
 			[9]float64{-1, -2, -3, -4, -5, -6, -7, -8, -9}},
 	}
 
-	m := &Mat3{}
-	m2 := &Mat3{}
+	m := Mat3{}
+	m2 := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig)
 		m2.Load(c.other)
@@ -436,12 +436,12 @@ func TestSubMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = m.SubIn(m2)
-		if ret_mat != m {
+		ret_mat2 := m.SubIn(m2)
+		if ret_mat2 != &m {
 			t.Errorf("TestSubInMat3 %d", testIndex)
 		}
 
-		get = m.Dump()
+		get = ret_mat2.Dump()
 		for k, _ := range c.orig {
 			if closeEq(get[k], c.orig[k]-c.other[k], epsilon) == false {
 				t.Errorf("TestSubInMat3 %d %d", testIndex, k)
@@ -480,8 +480,8 @@ func TestMultMat3(t *testing.T) {
 			[9]float64{30, 20, 50, 78, 53, 116, 126, 86, 182}},
 	}
 
-	orig := &Mat3{}
-	other := &Mat3{}
+	orig := Mat3{}
+	other := Mat3{}
 	for testIndex, c := range cases {
 		orig.Load(c.orig)
 		other.Load(c.other)
@@ -495,8 +495,8 @@ func TestMultMat3(t *testing.T) {
 			}
 		}
 
-		ret_mat = orig.MultIn(other)
-		if ret_mat != orig {
+		ret_mat2 := orig.MultIn(other)
+		if ret_mat2 != &orig {
 			t.Errorf("TestMultInMat3 %d", testIndex)
 		}
 	}
@@ -678,10 +678,10 @@ func TestMultVec3Mat3(t *testing.T) {
 		{[9]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, Vec3{1, 2, 3}, Vec3{14,32,50}},
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range cases {
 		m.Load(c.orig_mat)
-		get := m.MultVec3(&c.orig_v)
+		get := m.MultVec3(c.orig_v)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMultVec3Mat3 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -737,7 +737,7 @@ func TestFromAxisAngleMat3(t *testing.T) {
 		c.axis.NormalizeIn()
 		m.FromAxisAngle(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
 
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromAxisAngleMat3 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -857,11 +857,11 @@ func TestFromEulerMat3(t *testing.T) {
 		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range common_cases {
 		// m = EulerToMat3(Radians(c.yaw), Radians(c.pitch), Radians(c.roll))
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromEulerMat3 %d \n%v\n%v\n\n", testIndex, m, get)
 		}
@@ -930,7 +930,7 @@ func TestEulerMat3(t *testing.T) {
 		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
 	}
 
-	m := &Mat3{}
+	m := Mat3{}
 	for testIndex, c := range common_cases {
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		x, y, z := m.Euler()
@@ -942,7 +942,7 @@ func TestEulerMat3(t *testing.T) {
 		// The euler angles we got back didn't match, but lets see if the rotation
 		// matrix it makes is still equivalent
 		m.FromEuler(x, y, z)
-		get := m.MultVec3(&c.start_vec)
+		get := m.MultVec3(c.start_vec)
 		if get.Eq(c.want) {
 			continue
 		}
