@@ -331,51 +331,51 @@ func TestInverseQuat(t *testing.T) {
 func TestFromAxisAngleQuat(t *testing.T) {
 	cases := []struct {
 		angle     float64
-		axis      *Vec3
-		start_vec *Vec3
-		want      *Vec3
+		axis      Vec3
+		start_vec Vec3
+		want      Vec3
 	}{
 		//test basic rotations using a [1,0,0] vector
-		{90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{-90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{-90, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{360, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{180, &Vec3{0, 0, 1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
+		{90, Vec3{0, 1, 0}, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{90, Vec3{1, 0, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{90, Vec3{0, 0, 1}, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{-90, Vec3{0, 1, 0}, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{-90, Vec3{1, 0, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{-90, Vec3{0, 0, 1}, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{360, Vec3{0, 0, 1}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{180, Vec3{0, 0, 1}, Vec3{1, 0, 0}, Vec3{-1, 0, 0}},
 
 		//test basic rotations using a [0,1,0] vector
-		{90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{-90, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{-90, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{360, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{180, &Vec3{0, 0, 1}, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
+		{90, Vec3{0, 1, 0}, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{90, Vec3{1, 0, 0}, Vec3{0, 1, 0}, Vec3{0, 0, 1}},
+		{90, Vec3{0, 0, 1}, Vec3{0, 1, 0}, Vec3{-1, 0, 0}},
+		{-90, Vec3{0, 1, 0}, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{-90, Vec3{1, 0, 0}, Vec3{0, 1, 0}, Vec3{0, 0, -1}},
+		{-90, Vec3{0, 0, 1}, Vec3{0, 1, 0}, Vec3{1, 0, 0}},
+		{360, Vec3{0, 0, 1}, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{180, Vec3{0, 0, 1}, Vec3{0, 1, 0}, Vec3{0, -1, 0}},
 
 		// test negative axes
-		{90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{-90, &Vec3{0, -1, 0}, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{-90, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{-90, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{360, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{180, &Vec3{0, 0, -1}, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
+		{90, Vec3{0, -1, 0}, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{90, Vec3{-1, 0, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{90, Vec3{0, 0, -1}, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{-90, Vec3{0, -1, 0}, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{-90, Vec3{-1, 0, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{-90, Vec3{0, 0, -1}, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{360, Vec3{0, 0, -1}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{180, Vec3{0, 0, -1}, Vec3{1, 0, 0}, Vec3{-1, 0, 0}},
 
 		// test arbitraty axis
-		{360, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{90, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.5, 0.5, -0.7071067811}},
-		{45, &Vec3{1, 1, 0}, &Vec3{1, 0, 0}, &Vec3{0.85355339059, 0.1464466094067, -0.5}},
+		{360, Vec3{1, 1, 0}, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{90, Vec3{1, 1, 0}, Vec3{1, 0, 0}, Vec3{0.5, 0.5, -0.7071067811}},
+		{45, Vec3{1, 1, 0}, Vec3{1, 0, 0}, Vec3{0.85355339059, 0.1464466094067, -0.5}},
 	}
 
 	q := &Quat{}
 	for testIndex, c := range cases {
 		c.axis.NormalizeIn()
 		q.FromAxisAngle(Radians(c.angle), c.axis.X, c.axis.Y, c.axis.Z)
-		get := q.RotateVec3(c.start_vec)
+		get := q.RotateVec3(&c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromAxisAngle %d \n %v\n%v\n\n", testIndex, q, get)
 		}
@@ -385,44 +385,44 @@ func TestFromAxisAngleQuat(t *testing.T) {
 func TestFromEulerQuat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
-		start_vec        *Vec3
-		want             *Vec3
+		start_vec        Vec3
+		want             Vec3
 	}{
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+		{0, 0, 90, Vec3{0, 1, 0}, Vec3{-1, 0, 0}},
+		{0, 90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, 1}},
+		{0, 0, -90, Vec3{0, 1, 0}, Vec3{1, 0, 0}},
+		{0, -90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{-90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, -1}},
+		{0, 180, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}}, //6
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+		{0, 0, 90, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{0, 90, 0, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, -90, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{0, -90, 0, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{-90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 180, Vec3{1, 0, 0}, Vec3{-1, 0, 0}}, //13
 
 		// basic rotation using a non major axis vector
-		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+		{0, 0, 90, Vec3{1, 1, 0}, Vec3{-1, 1, 0}},
+		{0, 90, 0, Vec3{1, -1, 0}, Vec3{0, -1, -1}},
+		{90, 0, 0, Vec3{-1, -1, 0}, Vec3{-1, 0, -1}}, //16
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
-		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+		{90, 0, 45, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, Vec3{0, 0, 1}, Vec3{0, -1, 0}},
+		{45, 90, 0, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
 	}
 
 	q := &Quat{}
 	for testIndex, c := range common_cases {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
-		get := q.RotateVec3(c.start_vec)
+		get := q.RotateVec3(&c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromEuler %d \n %v\n%v\n\n", testIndex, q, get)
 		}
@@ -432,38 +432,38 @@ func TestFromEulerQuat(t *testing.T) {
 func TestFromMat4Quat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
-		start_vec        *Vec3
-		want             *Vec3
+		start_vec        Vec3
+		want             Vec3
 	}{
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+		{0, 0, 90, Vec3{0, 1, 0}, Vec3{-1, 0, 0}},
+		{0, 90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, 1}},
+		{0, 0, -90, Vec3{0, 1, 0}, Vec3{1, 0, 0}},
+		{0, -90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{-90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, -1}},
+		{0, 180, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}}, //6
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+		{0, 0, 90, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{0, 90, 0, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, -90, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{0, -90, 0, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{-90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 180, Vec3{1, 0, 0}, Vec3{-1, 0, 0}}, //13
 
 		// basic rotation using a non major axis vector
-		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+		{0, 0, 90, Vec3{1, 1, 0}, Vec3{-1, 1, 0}},
+		{0, 90, 0, Vec3{1, -1, 0}, Vec3{0, -1, -1}},
+		{90, 0, 0, Vec3{-1, -1, 0}, Vec3{-1, 0, -1}}, //16
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
-		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+		{90, 0, 45, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, Vec3{0, 0, 1}, Vec3{0, -1, 0}},
+		{45, 90, 0, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
 	}
 
 	m := &Mat4{}
@@ -471,7 +471,7 @@ func TestFromMat4Quat(t *testing.T) {
 	for testIndex, c := range common_cases {
 		m.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		q.FromMat4(m)
-		get := q.RotateVec3(c.start_vec)
+		get := q.RotateVec3(&c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestFromMat4 %d \n %v\n%v\n\n", testIndex, q, get)
 		}
@@ -506,7 +506,7 @@ func TestAxisAngleQuat(t *testing.T) {
 	//var q *Quat
 	q := &Quat{}
 	for testIndex, c := range cases {
-		v := &Vec3{c.x, c.y, c.z}
+		v := Vec3{c.x, c.y, c.z}
 		v.NormalizeIn()
 		q.FromAxisAngle(Radians(c.angle), v.X, v.Y, v.Z)
 		get_angle, get_x, get_y, get_z := q.AxisAngle()
@@ -523,38 +523,38 @@ func TestAxisAngleQuat(t *testing.T) {
 func TestMat4Quat(t *testing.T) {
 	common_cases := []struct {
 		pitch, yaw, roll float64
-		start_vec        *Vec3
-		want             *Vec3
+		start_vec        Vec3
+		want             Vec3
 	}{
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}},
-		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //6
+		{0, 0, 90, Vec3{0, 1, 0}, Vec3{-1, 0, 0}},
+		{0, 90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, 1}},
+		{0, 0, -90, Vec3{0, 1, 0}, Vec3{1, 0, 0}},
+		{0, -90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{-90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, -1}},
+		{0, 180, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}}, //6
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //13
+		{0, 0, 90, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{0, 90, 0, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, -90, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{0, -90, 0, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{-90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 180, Vec3{1, 0, 0}, Vec3{-1, 0, 0}}, //13
 
 		// basic rotation using a non major axis vector
-		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //16
+		{0, 0, 90, Vec3{1, 1, 0}, Vec3{-1, 1, 0}},
+		{0, 90, 0, Vec3{1, -1, 0}, Vec3{0, -1, -1}},
+		{90, 0, 0, Vec3{-1, -1, 0}, Vec3{-1, 0, -1}}, //16
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
-		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
+		{90, 0, 45, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, Vec3{0, 0, 1}, Vec3{0, -1, 0}},
+		{45, 90, 0, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //20
 	}
 	var m *Mat4
 	q := &Quat{}
@@ -562,7 +562,7 @@ func TestMat4Quat(t *testing.T) {
 		q.FromEuler(Radians(c.pitch), Radians(c.yaw), Radians(c.roll))
 		m = q.Mat4()
 
-		get := m.MultVec3(c.start_vec)
+		get := m.MultVec3(&c.start_vec)
 		//get := MultMat4Vec3(m, c.start_vec)
 		if get.Eq(c.want) == false {
 			t.Errorf("TestMat4 %d \n%v\n%v\n\n", testIndex, m, get)
@@ -573,63 +573,63 @@ func TestMat4Quat(t *testing.T) {
 func TestEulerQuat(t *testing.T) {
 	common_cases2 := []struct {
 		pitch, yaw, roll float64
-		start_vec        *Vec3
-		want             *Vec3
+		start_vec        Vec3
+		want             Vec3
 	}{
-		{180, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 180, 0, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //2
-		{180, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 180, &Vec3{0, 1, 0}, &Vec3{0, -1, 0}}, //5
-		{180, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, -1}},
-		{0, 0, 180, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //8
+		{180, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 180, 0, Vec3{1, 0, 0}, Vec3{-1, 0, 0}},
+		{0, 0, 180, Vec3{1, 0, 0}, Vec3{-1, 0, 0}}, //2
+		{180, 0, 0, Vec3{0, 1, 0}, Vec3{0, -1, 0}},
+		{0, 180, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{0, 0, 180, Vec3{0, 1, 0}, Vec3{0, -1, 0}}, //5
+		{180, 0, 0, Vec3{0, 0, 1}, Vec3{0, 0, -1}},
+		{0, 180, 0, Vec3{0, 0, 1}, Vec3{0, 0, -1}},
+		{0, 0, 180, Vec3{0, 0, 1}, Vec3{0, 0, 1}}, //8
 
-		{180, 0, 0, &Vec3{-1, 0, 0}, &Vec3{-1, 0, 0}},
-		{0, 180, 0, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{-1, 0, 0}, &Vec3{1, 0, 0}}, //11
-		{180, 0, 0, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}},
-		{0, 180, 0, &Vec3{0, -1, 0}, &Vec3{0, -1, 0}},
-		{0, 0, 180, &Vec3{0, -1, 0}, &Vec3{0, 1, 0}}, //14
-		{180, 0, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
-		{0, 180, 0, &Vec3{0, 0, -1}, &Vec3{0, 0, 1}},
-		{0, 0, 180, &Vec3{0, 0, -1}, &Vec3{0, 0, -1}}, //17
+		{180, 0, 0, Vec3{-1, 0, 0}, Vec3{-1, 0, 0}},
+		{0, 180, 0, Vec3{-1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 180, Vec3{-1, 0, 0}, Vec3{1, 0, 0}}, //11
+		{180, 0, 0, Vec3{0, -1, 0}, Vec3{0, 1, 0}},
+		{0, 180, 0, Vec3{0, -1, 0}, Vec3{0, -1, 0}},
+		{0, 0, 180, Vec3{0, -1, 0}, Vec3{0, 1, 0}}, //14
+		{180, 0, 0, Vec3{0, 0, -1}, Vec3{0, 0, 1}},
+		{0, 180, 0, Vec3{0, 0, -1}, Vec3{0, 0, 1}},
+		{0, 0, 180, Vec3{0, 0, -1}, Vec3{0, 0, -1}}, //17
 
-		{0, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{0, 0, 0, &Vec3{0, 0, 1}, &Vec3{0, 0, 1}}, //20
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
+		{0, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{0, 0, 0, Vec3{0, 0, 1}, Vec3{0, 0, 1}}, //20
+		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}},
 
 		//test basic rotations using a [0,1,0] vector
 		// pitch,yaw,roll
-		{0, 0, 90, &Vec3{0, 1, 0}, &Vec3{-1, 0, 0}}, //22
-		{0, 90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, 1}},
-		{0, 0, -90, &Vec3{0, 1, 0}, &Vec3{1, 0, 0}},
-		{0, -90, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}},
-		{-90, 0, 0, &Vec3{0, 1, 0}, &Vec3{0, 0, -1}},
-		{0, 180, 0, &Vec3{0, 1, 0}, &Vec3{0, 1, 0}}, //28
+		{0, 0, 90, Vec3{0, 1, 0}, Vec3{-1, 0, 0}}, //22
+		{0, 90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, 1}},
+		{0, 0, -90, Vec3{0, 1, 0}, Vec3{1, 0, 0}},
+		{0, -90, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}},
+		{-90, 0, 0, Vec3{0, 1, 0}, Vec3{0, 0, -1}},
+		{0, 180, 0, Vec3{0, 1, 0}, Vec3{0, 1, 0}}, //28
 
 		// test basic rotation using a [1,0,0] vector
-		{0, 0, 90, &Vec3{1, 0, 0}, &Vec3{0, 1, 0}},
-		{0, 90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, -1}},
-		{90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, -90, &Vec3{1, 0, 0}, &Vec3{0, -1, 0}},
-		{0, -90, 0, &Vec3{1, 0, 0}, &Vec3{0, 0, 1}},
-		{-90, 0, 0, &Vec3{1, 0, 0}, &Vec3{1, 0, 0}},
-		{0, 0, 180, &Vec3{1, 0, 0}, &Vec3{-1, 0, 0}}, //35
+		{0, 0, 90, Vec3{1, 0, 0}, Vec3{0, 1, 0}},
+		{0, 90, 0, Vec3{1, 0, 0}, Vec3{0, 0, -1}},
+		{90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, -90, Vec3{1, 0, 0}, Vec3{0, -1, 0}},
+		{0, -90, 0, Vec3{1, 0, 0}, Vec3{0, 0, 1}},
+		{-90, 0, 0, Vec3{1, 0, 0}, Vec3{1, 0, 0}},
+		{0, 0, 180, Vec3{1, 0, 0}, Vec3{-1, 0, 0}}, //35
 
 		// basic rotation using a non major axis vector
-		{0, 0, 90, &Vec3{1, 1, 0}, &Vec3{-1, 1, 0}},
-		{0, 90, 0, &Vec3{1, -1, 0}, &Vec3{0, -1, -1}},
-		{90, 0, 0, &Vec3{-1, -1, 0}, &Vec3{-1, 0, -1}}, //38
+		{0, 0, 90, Vec3{1, 1, 0}, Vec3{-1, 1, 0}},
+		{0, 90, 0, Vec3{1, -1, 0}, Vec3{0, -1, -1}},
+		{90, 0, 0, Vec3{-1, -1, 0}, Vec3{-1, 0, -1}}, //38
 
 		// two rotations
-		{90, 0, 45, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{90, 45, 0, &Vec3{0, 0, 1}, &Vec3{0, -1, 0}},
-		{45, 90, 0, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
-		{45, 90, 90, &Vec3{0, 0, 1}, &Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
+		{90, 0, 45, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{90, 45, 0, Vec3{0, 0, 1}, Vec3{0, -1, 0}},
+		{45, 90, 0, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, -math.Sqrt(2) / 2, 0}},
+		{45, 90, 90, Vec3{0, 0, 1}, Vec3{math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0}}, //42
 	}
 
 	q := &Quat{}
@@ -646,7 +646,7 @@ func TestEulerQuat(t *testing.T) {
 		// The euler angles don't match, but lets see if it forms a equivalent
 		// quaternion rotation
 		q.FromEuler(pitch, yaw, roll)
-		get := q.RotateVec3(c.start_vec)
+		get := q.RotateVec3(&c.start_vec)
 		if get.Eq(c.want) {
 			continue
 		}

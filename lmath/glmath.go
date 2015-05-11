@@ -48,7 +48,7 @@ func PerspectiveMat4(fov_y, aspect, near, far float64) *Mat4 {
 //	eye is the position of the camera.
 //	at is the position in which the camera "looksAt".
 //	up is the direction which is considered up. It is up to the user to ensure that the forward dir is not parallel to up.
-func LookAtMat4(eye, at, up *Vec3) *Mat4 {
+func LookAtMat4(eye, at, up Vec3) *Mat4 {
 	// up := &Vec3{0, 1, 0}
 	// if at.Eq(&Vec3{0, 1, 0}) {
 	//  up = &Vec3{0, 0, -1}
@@ -56,9 +56,9 @@ func LookAtMat4(eye, at, up *Vec3) *Mat4 {
 	//  up = &Vec3{0, 0, 1}
 	// }
 
-	forward := at.Sub(eye).NormalizeIn()
-	right := up.Cross(forward).NormalizeIn()
-	up = forward.Cross(right).NormalizeIn()
+	forward := at.Sub(eye).Normalize()
+	right := up.Cross(forward).Normalize()
+	up = forward.Cross(right).Normalize()
 
 	translate := &Mat4{}
 	translate.ToTranslate(-eye.X, -eye.Y, -eye.Z)
