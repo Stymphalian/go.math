@@ -8,14 +8,14 @@ import (
 
 func TestEqualVec4(t *testing.T) {
     var cases = []struct {
-        orig, other *Vec4
+        orig, other Vec4
         want        bool
     }{
-        {&Vec4{0, 0, 0,1}, &Vec4{1, 2, 3,1}, false},
-        {&Vec4{1, 2, 3,1}, &Vec4{0, 0, 0,1}, false},
-        {&Vec4{1, 2, 3,1}, &Vec4{-1, -2, -3,1}, false},
-        {&Vec4{0, 0, 0,1}, &Vec4{0, 0, 0,1}, true},
-        {&Vec4{1.0, 2.0, 3.0,1.0}, &Vec4{1.0, 2.0, 3.0,1.0}, true},
+        {Vec4{0, 0, 0,1}, Vec4{1, 2, 3,1}, false},
+        {Vec4{1, 2, 3,1}, Vec4{0, 0, 0,1}, false},
+        {Vec4{1, 2, 3,1}, Vec4{-1, -2, -3,1}, false},
+        {Vec4{0, 0, 0,1}, Vec4{0, 0, 0,1}, true},
+        {Vec4{1.0, 2.0, 3.0,1.0}, Vec4{1.0, 2.0, 3.0,1.0}, true},
     }
 
     for testIndex, test := range cases {
@@ -29,22 +29,22 @@ func TestEqualVec4(t *testing.T) {
 func TestAddVec4(t *testing.T) {
 
     var cases = []struct {
-        orig, other, want *Vec4
+        orig, other,want Vec4
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}, &Vec4{1, 2, 3,4}},
-        {&Vec4{1, 2, 3,4}, &Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}},
-        {&Vec4{1, 2, 3,4}, &Vec4{-1, -2, -3,-4}, &Vec4{0, 0, 0,0}},
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,1}, &Vec4{0, 0, 0,1}},
+        {Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}, Vec4{1, 2, 3,4}},
+        {Vec4{1, 2, 3,4}, Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}},
+        {Vec4{1, 2, 3,4}, Vec4{-1, -2, -3,-4}, Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,1}, Vec4{0, 0, 0,1}},
     }
 
     for testIndex, test := range cases {
         get := test.orig.Add(test.other)
         if get.Eq(test.want) == false {
-            t.Errorf("TestAddVec4 %d", testIndex)
+            t.Errorf("TestAddVec4 %d %v", testIndex,get)
         }
 
-        get = test.orig.AddIn(test.other)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.AddIn(test.other)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestAddVec4 AddIn %d", testIndex)
         }
     }
@@ -53,12 +53,12 @@ func TestAddVec4(t *testing.T) {
 func TestSubVec4(t *testing.T) {
 
     var cases = []struct {
-        orig, other, want *Vec4
+        orig, other, want  Vec4
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}, &Vec4{-1, -2, -3,-4}},
-        {&Vec4{1, 2, 3,4}, &Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}},
-        {&Vec4{1, 2, 3,4}, &Vec4{-1, -2, -3,-4}, &Vec4{2, 4, 6,8}},
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}, Vec4{-1, -2, -3,-4}},
+        {Vec4{1, 2, 3,4}, Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}},
+        {Vec4{1, 2, 3,4}, Vec4{-1, -2, -3,-4}, Vec4{2, 4, 6,8}},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}},
     }
 
     for testIndex, test := range cases {
@@ -67,8 +67,8 @@ func TestSubVec4(t *testing.T) {
             t.Errorf("TestSubVec4 %d", testIndex)
         }
 
-        get = test.orig.SubIn(test.other)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.SubIn(test.other)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestSubVec4 SubIn %d", testIndex)
         }
     }
@@ -76,15 +76,15 @@ func TestSubVec4(t *testing.T) {
 
 func TestAddScalarVec4(t *testing.T) {
     cases := []struct {
-        orig, want *Vec4
+        orig, want  Vec4
         scale      float64
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}, 0},
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 1, 1,1}, 1},
-        {&Vec4{0, 0, 0,0}, &Vec4{-1, -1, -1,-1}, -1},
-        {&Vec4{1, 2, 3,4}, &Vec4{5, 6, 7,8}, 4},
-        {&Vec4{1, 2, 3,4}, &Vec4{-3, -2, -1,0}, -4},
-        {&Vec4{1, -2, 3,-4}, &Vec4{5, 2, 7,0}, 4},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}, 0},
+        {Vec4{0, 0, 0,0}, Vec4{1, 1, 1,1}, 1},
+        {Vec4{0, 0, 0,0}, Vec4{-1, -1, -1,-1}, -1},
+        {Vec4{1, 2, 3,4}, Vec4{5, 6, 7,8}, 4},
+        {Vec4{1, 2, 3,4}, Vec4{-3, -2, -1,0}, -4},
+        {Vec4{1, -2, 3,-4}, Vec4{5, 2, 7,0}, 4},
     }
 
     for testIndex, test := range cases {
@@ -93,8 +93,8 @@ func TestAddScalarVec4(t *testing.T) {
             t.Errorf("TestAddScalarVec4 %d", testIndex)
         }
 
-        get = test.orig.AddInScalar(test.scale)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.AddInScalar(test.scale)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestAddInScalarVec4 %d", testIndex)
         }
     }
@@ -102,15 +102,15 @@ func TestAddScalarVec4(t *testing.T) {
 
 func TestSubScalarVec4(t *testing.T) {
     cases := []struct {
-        orig, want *Vec4
+        orig, want  Vec4
         scale      float64
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}, 0},
-        {&Vec4{0, 0, 0,0}, &Vec4{-1, -1, -1,-1}, 1},
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 1, 1,1}, -1},
-        {&Vec4{1, 2, 3,4}, &Vec4{-3, -2, -1,0}, 4},
-        {&Vec4{1, 2, 3,4}, &Vec4{5, 6, 7,8}, -4}, //4
-        {&Vec4{1, -2, 3,-4}, &Vec4{-3, -6, -1,-8}, 4},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}, 0},
+        {Vec4{0, 0, 0,0}, Vec4{-1, -1, -1,-1}, 1},
+        {Vec4{0, 0, 0,0}, Vec4{1, 1, 1,1}, -1},
+        {Vec4{1, 2, 3,4}, Vec4{-3, -2, -1,0}, 4},
+        {Vec4{1, 2, 3,4}, Vec4{5, 6, 7,8}, -4}, //4
+        {Vec4{1, -2, 3,-4}, Vec4{-3, -6, -1,-8}, 4},
     }
 
     for testIndex, test := range cases {
@@ -119,8 +119,8 @@ func TestSubScalarVec4(t *testing.T) {
             t.Errorf("TestSubScalarVec4 %d", testIndex)
         }
 
-        get = test.orig.SubInScalar(test.scale)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.SubInScalar(test.scale)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestSubInScalarVec4 %d", testIndex)
         }
     }
@@ -128,17 +128,17 @@ func TestSubScalarVec4(t *testing.T) {
 
 func TestMultScalarVec4(t *testing.T) {
     var cases = []struct {
-        orig  *Vec4
+        orig   Vec4
         scale float64
-        want  *Vec4
+        want   Vec4
     }{
-        {&Vec4{0, 0, 0,0}, 2.0, &Vec4{0, 0, 0,0}},
-        {&Vec4{0, 0, 0,0}, -2, &Vec4{0, 0, 0,0}},
-        {&Vec4{1, 2, 3,4}, 2, &Vec4{2, 4, 6,8}},
-        {&Vec4{1, 2, 3,4}, 0.5, &Vec4{0.5, 1, 1.5,2}},
-        {&Vec4{1, 2, 3,4}, -1, &Vec4{-1, -2, -3,-4}},
-        {&Vec4{1, 2, 3,4}, -0.5, &Vec4{-0.5, -1, -1.5,-2.0}},
-        {&Vec4{1, 2, 3,4}, 0, &Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, 2.0, Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, -2, Vec4{0, 0, 0,0}},
+        {Vec4{1, 2, 3,4}, 2, Vec4{2, 4, 6,8}},
+        {Vec4{1, 2, 3,4}, 0.5, Vec4{0.5, 1, 1.5,2}},
+        {Vec4{1, 2, 3,4}, -1, Vec4{-1, -2, -3,-4}},
+        {Vec4{1, 2, 3,4}, -0.5, Vec4{-0.5, -1, -1.5,-2.0}},
+        {Vec4{1, 2, 3,4}, 0, Vec4{0, 0, 0,0}},
     }
 
     for testIndex, test := range cases {
@@ -147,8 +147,8 @@ func TestMultScalarVec4(t *testing.T) {
             t.Errorf("TestMultVec4 %d", testIndex)
         }
 
-        get = test.orig.MultInScalar(test.scale)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.MultInScalar(test.scale)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestMultVec4 MultIn %d", testIndex)
         }
     }
@@ -156,16 +156,16 @@ func TestMultScalarVec4(t *testing.T) {
 
 func TestDivScalarVec4(t *testing.T) {
     var cases = []struct {
-        orig  *Vec4
+        orig   Vec4
         scale float64
-        want  *Vec4
+        want   Vec4
     }{
-        {&Vec4{0, 0, 0,0}, 2.0, &Vec4{0, 0, 0,0}},
-        {&Vec4{0, 0, 0,0}, -2.0, &Vec4{0, 0, 0,0}},
-        {&Vec4{1, 2, 3 , 4}, 2, &Vec4{0.5, 1, 1.5,2.0}},
-        {&Vec4{1, 2, 3 , 4}, 0.5, &Vec4{2, 4, 6,8}},
-        {&Vec4{1, 2, 3 , 4}, -1, &Vec4{-1, -2, -3,-4}},
-        {&Vec4{1, 2, 3 , 4}, -0.5, &Vec4{-2, -4, -6,-8}},
+        {Vec4{0, 0, 0,0}, 2.0, Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, -2.0, Vec4{0, 0, 0,0}},
+        {Vec4{1, 2, 3 , 4}, 2, Vec4{0.5, 1, 1.5,2.0}},
+        {Vec4{1, 2, 3 , 4}, 0.5, Vec4{2, 4, 6,8}},
+        {Vec4{1, 2, 3 , 4}, -1, Vec4{-1, -2, -3,-4}},
+        {Vec4{1, 2, 3 , 4}, -0.5, Vec4{-2, -4, -6,-8}},
     }
 
     for testIndex, test := range cases {
@@ -174,8 +174,8 @@ func TestDivScalarVec4(t *testing.T) {
             t.Errorf("TestDivVec4 %d", testIndex)
         }
 
-        get = test.orig.DivInScalar(test.scale)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.DivInScalar(test.scale)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestDivInVec4 %d", testIndex)
         }
     }
@@ -183,13 +183,13 @@ func TestDivScalarVec4(t *testing.T) {
 
 func TestOuterVec4(t *testing.T) {
     cases := []struct {
-        orig, other, want *Vec4
+        orig, other, want  Vec4
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}, &Vec4{0, 0, 0,0}},
-        {&Vec4{1, 2, 3,4}, &Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}},
-        {&Vec4{1, 2, 3,4}, &Vec4{-1, -2, -3,-4}, &Vec4{-1, -4, -9,-16}},
-        {&Vec4{1, 2, 3,4}, &Vec4{1, 2, 3,4}, &Vec4{1, 4, 9,16}},
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}},
+        {Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}, Vec4{0, 0, 0,0}},
+        {Vec4{1, 2, 3,4}, Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}},
+        {Vec4{1, 2, 3,4}, Vec4{-1, -2, -3,-4}, Vec4{-1, -4, -9,-16}},
+        {Vec4{1, 2, 3,4}, Vec4{1, 2, 3,4}, Vec4{1, 4, 9,16}},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}},
     }
 
     for testIndex, test := range cases {
@@ -198,8 +198,8 @@ func TestOuterVec4(t *testing.T) {
             t.Errorf("TestOuterVec4 %d", testIndex)
         }
 
-        get = test.orig.OuterIn(test.other)
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.OuterIn(test.other)
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestOuterInVec4 %d", testIndex)
         }
     }
@@ -207,15 +207,15 @@ func TestOuterVec4(t *testing.T) {
 
 func TestDotVec4(t *testing.T) {
     var cases = []struct {
-        orig  *Vec4
-        other *Vec4
+        orig   Vec4
+        other  Vec4
         want  float64
     }{
-        {&Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}, 0},
-        {&Vec4{1, 2, 3,4}, &Vec4{0, 0, 0,0}, 0},
-        {&Vec4{1, 2, 3,4}, &Vec4{-1, -2, -3,-4}, -30},
-        {&Vec4{1, 2, 3,4}, &Vec4{1, 2, 3,4}, 30},
-        {&Vec4{0, 0, 0,0}, &Vec4{0, 0, 0,0}, 0},
+        {Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}, 0},
+        {Vec4{1, 2, 3,4}, Vec4{0, 0, 0,0}, 0},
+        {Vec4{1, 2, 3,4}, Vec4{-1, -2, -3,-4}, -30},
+        {Vec4{1, 2, 3,4}, Vec4{1, 2, 3,4}, 30},
+        {Vec4{0, 0, 0,0}, Vec4{0, 0, 0,0}, 0},
     }
 
     for testIndex, test := range cases {
@@ -229,13 +229,13 @@ func TestDotVec4(t *testing.T) {
 
 func TestLengthVec4(t *testing.T) {
     var cases = []struct {
-        orig *Vec4
+        orig  Vec4
         want float64
     }{
-        {&Vec4{0, 0, 0,0}, 0},
-        {&Vec4{1, 2, 3,4}, math.Sqrt(30)},
-        {&Vec4{1, 0, 0,0}, 1},
-        {&Vec4{1 / math.Sqrt(30), 2 / math.Sqrt(30), 3 / math.Sqrt(30),4/math.Sqrt(30)}, 1},
+        {Vec4{0, 0, 0,0}, 0},
+        {Vec4{1, 2, 3,4}, math.Sqrt(30)},
+        {Vec4{1, 0, 0,0}, 1},
+        {Vec4{1 / math.Sqrt(30), 2 / math.Sqrt(30), 3 / math.Sqrt(30),4/math.Sqrt(30)}, 1},
     }
 
     for testIndex, test := range cases {
@@ -249,11 +249,11 @@ func TestLengthVec4(t *testing.T) {
 func TestNormalizeVec4(t *testing.T) {
     sqrt_30 := math.Sqrt(30)
     var cases = []struct {
-        orig, want *Vec4
+        orig, want  Vec4
     }{
-        {&Vec4{1, 2, 3,4}, &Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30,4/sqrt_30}},
-        {&Vec4{1, 0, 0,0}, &Vec4{1, 0, 0,0}},
-        {&Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30, 4/sqrt_30}, &Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30,4/sqrt_30}},
+        {Vec4{1, 2, 3,4}, Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30,4/sqrt_30}},
+        {Vec4{1, 0, 0,0}, Vec4{1, 0, 0,0}},
+        {Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30, 4/sqrt_30}, Vec4{1 / sqrt_30, 2 / sqrt_30, 3 / sqrt_30,4/sqrt_30}},
     }
 
     for testIndex, test := range cases {
@@ -262,8 +262,8 @@ func TestNormalizeVec4(t *testing.T) {
             t.Errorf("TestNormalizeVec4 %d", testIndex)
         }
 
-        get = test.orig.NormalizeIn()
-        if get != test.orig || get.Eq(test.want) == false {
+        get2 := test.orig.NormalizeIn()
+        if get2 != &test.orig || get2.Eq(test.want) == false {
             t.Errorf("TestNormalizeInVec4 %d", testIndex)
         }
     }
@@ -272,12 +272,12 @@ func TestNormalizeVec4(t *testing.T) {
 func TestSetVec4(t *testing.T) {
     var cases = []struct {
         x, y, z,w    float64
-        orig, want *Vec4
+        orig, want  Vec4
     }{
-        {1, 2, 3,4, &Vec4{0, 0, 0,0}, &Vec4{1, 2, 3,4}},
-        {0, 0, 1,0, &Vec4{0, 0, 0,0}, &Vec4{0, 0, 1,0}},
-        {0, 0, 1,0, &Vec4{1, 2, 3,4}, &Vec4{0, 0, 1,0}},
-        {-1, 2, 4,6, &Vec4{1, -1, 3,90}, &Vec4{-1, 2,4,6}},
+        {1, 2, 3,4, Vec4{0, 0, 0,0}, Vec4{1, 2, 3,4}},
+        {0, 0, 1,0, Vec4{0, 0, 0,0}, Vec4{0, 0, 1,0}},
+        {0, 0, 1,0, Vec4{1, 2, 3,4}, Vec4{0, 0, 1,0}},
+        {-1, 2, 4,6, Vec4{1, -1, 3,90}, Vec4{-1, 2,4,6}},
     }
 
     for testIndex, test := range cases {
@@ -292,12 +292,12 @@ func TestSetVec4(t *testing.T) {
 func TestProjVec4(t *testing.T) {
     v := 0.808359542/2
     var cases = []struct {
-        from,on, want*Vec4
+        from,on, want Vec4
     }{
-        {&Vec4{1,1,0,0},&Vec4{1,0,0,0},&Vec4{math.Sqrt(2)/2,0,0,0}},
-        {&Vec4{1,0,0,0},&Vec4{1,0,0,0},&Vec4{1,0,0,0}},
+        {Vec4{1,1,0,0},Vec4{1,0,0,0},Vec4{math.Sqrt(2)/2,0,0,0}},
+        {Vec4{1,0,0,0},Vec4{1,0,0,0},Vec4{1,0,0,0}},
         // should probably be checkig [0,0,0] projected [1,0,0] => {NaN,NaN,NaN}
-        {&Vec4{20,50,3,20},&Vec4{1,1,1,1},&Vec4{v,v,v,v}},
+        {Vec4{20,50,3,20},Vec4{1,1,1,1},Vec4{v,v,v,v}},
     }
 
     for testIndex, test := range cases {

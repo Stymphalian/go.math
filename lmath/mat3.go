@@ -415,7 +415,7 @@ func (this *Mat3) String() string {
 }
 
 // =============================================================================
-// Create a translation matrix for Mat3. Overwrites all values in the matrix.
+// Create a 2D translation matrix for Mat3. Overwrites all values in the matrix.
 func (this *Mat3) ToTranslate(x, y  float64) *Mat3 {
 	this.ToIdentity()
 	this.Set(0, 2, x)
