@@ -29,8 +29,6 @@ func FrustumMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 	out.Load([16]float64{
 		2 * near / (right - left), 0, (right + left) / (right - left), 0,
 		0, 2 * near / (top - bottom), (top + bottom) / (top - bottom), 0,
-		// TODO: I dont' use negative hear in my glwidget impl...
-		// I also take the transpose
 		0, 0, -(far + near) / (far - near), -2 * far * near / (far - near),
 		0, 0, -1, 0})
 	return
@@ -58,17 +56,18 @@ func LookAtMat4(eye, at, up Vec3) (out Mat4) {
 	//  up = &Vec3{0, 0, 1}
 	// }
 
-	forward := at.Sub(eye).Normalize()
+	forward := at.Sub(eye).Normalize().MultScalar(-1.0)
 	right := up.Cross(forward).Normalize()
 	up = forward.Cross(right).Normalize()
 
 	translate := Mat4{}
 	translate.ToTranslate(-eye.X, -eye.Y, -eye.Z)
-	m := Mat4{}
-	m.Load([16]float64{right.X, right.Y, right.Z, 0,
+	rot := Mat4{}
+	rot.Load([16]float64{right.X,right.Y,right.Z, 0,
 		up.X, up.Y, up.Z, 0,
 		forward.X, forward.Y, forward.Z, 0,
 		0, 0, 0, 1})
-	translate.MultIn(m)
-	return translate
+	return rot.Mult(translate)
+	// out.MultIn(rot)
+	// return
 }
