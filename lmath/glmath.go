@@ -2,6 +2,7 @@ package lmath
 
 import (
 	"math"
+	// "fmt"
 )
 
 // The below projection/perspective matrices use the derivations from here:
@@ -39,7 +40,7 @@ func FrustumMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 //	aspect - ratio between the width and the height
 //	precondition: far > near > 0
 func PerspectiveMat4(fov_y, aspect, near, far float64) (out Mat4) {
-	top := math.Atan(fov_y/2) * near
+	top := math.Tan(fov_y/2) * near
 	right := top * aspect
 	return FrustumMat4(-right, right, -top, top, near, far)
 }
@@ -63,7 +64,7 @@ func LookAtMat4(eye, at, up Vec3) (out Mat4) {
 	translate := Mat4{}
 	translate.ToTranslate(-eye.X, -eye.Y, -eye.Z)
 	rot := Mat4{}
-	rot.Load([16]float64{right.X,right.Y,right.Z, 0,
+	rot.Load([16]float64{right.X, right.Y, right.Z, 0,
 		up.X, up.Y, up.Z, 0,
 		forward.X, forward.Y, forward.Z, 0,
 		0, 0, 0, 1})
