@@ -37,7 +37,7 @@ func FrustumMat4(left, right, bottom, top, near, far float64) (out Mat4) {
 
 //Creates a normalized viewing frustum using the given perspective parameters.
 //	fov ( y-direction)  angle in radians
-//	aspect - ratio between the width and the height
+//	aspect - ratio between the width and the height (width/height)
 //	precondition: far > near > 0
 func PerspectiveMat4(fov_y, aspect, near, far float64) (out Mat4) {
 	top := math.Tan(fov_y/2) * near

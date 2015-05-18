@@ -58,12 +58,29 @@ func (this Mat3) Dump() (m [9]float64) {
 	return
 }
 
-// Retrieve a 9 float array of all the values of the matrix.
+// Retrieve a 9 float64 array of all the values of the matrix.
 // Returned in Col-Major order.
 func (this Mat3) DumpOpenGL() (m [9]float64) {
 	m[0], m[1], m[2] = this.Col(0)
 	m[3], m[4], m[5] = this.Col(1)
 	m[6], m[7], m[8] = this.Col(2)
+	return
+}
+
+// Retrieve a 9 float32 array of all the values of the matrix.
+// Returned in Col-Major order.
+func (this Mat3) DumpOpenGLf32() (m [9]float32) {
+	m[0] = float32(this.mat[0])
+	m[1] = float32(this.mat[3])
+	m[2] = float32(this.mat[6])
+
+	m[3] = float32(this.mat[1])
+	m[4] = float32(this.mat[4])
+	m[5] = float32(this.mat[7])
+
+	m[6] = float32(this.mat[2])
+	m[7] = float32(this.mat[5])
+	m[8] = float32(this.mat[8])
 	return
 }
 
