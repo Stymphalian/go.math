@@ -77,6 +77,7 @@ func (this Mat4) DumpOpenGL() (m [16]float64) {
 	m[12], m[13], m[14], m[15] = this.Col(3)
 	return
 }
+
 // Retrieve a 16 float array of all the values of the matrix.
 // Returned in Col-Major order.
 func (this Mat4) DumpOpenGLf32() (m [16]float32) {
@@ -90,8 +91,8 @@ func (this Mat4) DumpOpenGLf32() (m [16]float32) {
 	m[6] = float32(this.mat[9])
 	m[7] = float32(this.mat[13])
 
-	m[8] =  float32(this.mat[2])
-	m[9] =  float32(this.mat[6])
+	m[8] = float32(this.mat[2])
+	m[9] = float32(this.mat[6])
 	m[10] = float32(this.mat[10])
 	m[11] = float32(this.mat[14])
 

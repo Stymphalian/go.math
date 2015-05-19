@@ -117,7 +117,7 @@ func TestLoadDumpMat4(t *testing.T) {
 
 	get2 := m.DumpOpenGLf32()
 	for k, _ := range get {
-		if !closeEq(float64(get2[k]),cases[0].loadArray[k], epsilon) {
+		if !closeEq(float64(get2[k]), cases[0].loadArray[k], epsilon) {
 			t.Errorf("TestDumpOpenGLf32Mat4")
 			break
 		}
