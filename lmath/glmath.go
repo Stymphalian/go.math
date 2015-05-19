@@ -45,6 +45,13 @@ func PerspectiveMat4(fov_y, aspect, near, far float64) (out Mat4) {
 	return FrustumMat4(-right, right, -top, top, near, far)
 }
 
+
+// Retrieve the Field of View from the Perspective Matrix
+// http://paulbourke.net/miscellaneous/lens/
+func FocalLength(fov_y, height float64)(float64){
+	return (0.5*height)/(math.Tan(fov_y/2))
+}
+
 //Create a LookAt rotation matrix.
 //	eye is the position of the camera.
 //	at is the position in which the camera "looksAt".

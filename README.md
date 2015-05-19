@@ -3,7 +3,7 @@
 
 # Introduction
 lmath is a small 3D linear algebra library which provides support for
-Vec3, Mat4 and Quaternions. The library also supports rotations using euler angle,axis-angle, rotation matrices, quaternions as well as conversions between the representations.
+Vec3/4, Mat3/4 and Quaternions. The library also supports rotations using euler angle,axis-angle, rotation matrices, quaternions as well as conversions between the representations.
 
 # Goals
  * I really wanted to play around with go-lang. I thought it would be a 'good'

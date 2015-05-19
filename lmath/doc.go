@@ -11,7 +11,8 @@ package lmath
 //  All angles are specified in Radians
 //  Rotations are applied in Pitch => Yaw => Roll order
 var (
-	Version = 0.0
+    // I don't like that this is var and not a const.
+    Version = struct {Major, Minor,Patch int}{0,0,0}
 )
 
 // TODO:
