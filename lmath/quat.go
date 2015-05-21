@@ -237,7 +237,7 @@ func (this Quat) Axis() (out Vec3) {
 	return
 }
 
-// return the angle component of the quaternion
+// return the angle (radians) component of the quaternion
 func (this Quat) Angle() float64 {
 	return 2 * math.Acos(this.W)
 }

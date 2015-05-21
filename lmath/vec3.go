@@ -149,11 +149,19 @@ func (this Vec3) LengthSq() float64 {
 }
 
 // Checks for equality between the vectors.
-// Equal is all elemnets are equal within an epsilon ( < 0.0000001)
+// Equal is all elements are equal within an epsilon ( < 0.0000001)
 func (this Vec3) Eq(other Vec3) bool {
 	return closeEq(this.X, other.X, epsilon) &&
 		closeEq(this.Y, other.Y, epsilon) &&
 		closeEq(this.Z, other.Z, epsilon)
+}
+
+// Checks for equality between the vectors.
+// Equal is all elements are equal within an user specified e
+func (this Vec3) CloseEq(other Vec3, e float64) bool {
+	return closeEq(this.X, other.X, e) &&
+		closeEq(this.Y, other.Y, e) &&
+		closeEq(this.Z, other.Z, e)
 }
 
 // Return a new vector which is the normalized version of 'this'

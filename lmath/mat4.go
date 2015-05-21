@@ -61,6 +61,15 @@ func (this *Mat4) Load(m [16]float64) *Mat4 {
 	return this
 }
 
+// Load the matrix with 16 floats.
+// Specified in Row-Major order.
+func (this *Mat4) Load32(m [16]float32) *Mat4 {
+	for k, v := range m {
+		this.mat[k] = float64(v)
+	}
+	return this
+}
+
 // Retrieve a 16 float array of all the values of the matrix.
 // Returned in Row-Major order.
 func (this Mat4) Dump() (m [16]float64) {

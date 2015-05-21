@@ -51,6 +51,15 @@ func (this *Mat3) Load(m [9]float64) *Mat3 {
 	return this
 }
 
+// Load the matrix with 9 floats.
+// Specified in Row-Major order.
+func (this *Mat3) Load32(m [9]float32) *Mat3 {
+	for k, v := range m {
+		this.mat[k] = float64(v)
+	}
+	return this
+}
+
 // Retrieve a 9 float array of all the values of the matrix.
 // Returned in Row-Major order.
 func (this Mat3) Dump() (m [9]float64) {
