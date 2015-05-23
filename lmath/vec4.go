@@ -210,6 +210,16 @@ func (this Vec4) Copy() Vec4 {
 	return this
 }
 
+// Retrieve all three x,y,z,w paramters at once
+func (this Vec4) Dump() (float64, float64, float64, float64) {
+	return this.X, this.Y, this.Z, this.W
+}
+
+// Retrieve all three x,y,z,w paramters at once, returned as float32
+func (this Vec4) Dumpf32() (float32, float32, float32, float32) {
+	return float32(this.X), float32(this.Y), float32(this.Z), float32(this.W)
+}
+
 //==============================================================================
 // Vector 4 specific methods
 

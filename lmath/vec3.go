@@ -196,6 +196,16 @@ func (this Vec3) Copy() Vec3 {
 	return this
 }
 
+// Retrieve all three x,y,z paramters at once
+func (this Vec3) Dump() (float64, float64, float64) {
+	return this.X, this.Y, this.Z
+}
+
+// Retrieve all three x,y,z paramters at once, returned as float32
+func (this Vec3) Dumpf32() (float32, float32, float32) {
+	return float32(this.X), float32(this.Y), float32(this.Z)
+}
+
 //==============================================================================
 // Vector 3 specific methods
 
