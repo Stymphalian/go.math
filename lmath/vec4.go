@@ -220,6 +220,11 @@ func (this Vec4) Dumpf32() (float32, float32, float32, float32) {
 	return float32(this.X), float32(this.Y), float32(this.Z), float32(this.W)
 }
 
+// convert to Vec4. Forth component is dropped
+func (this Vec4) Vec3() Vec3{
+	return Vec3{this.X,this.Y,this.Z}
+}
+
 //==============================================================================
 // Vector 4 specific methods
 
